@@ -1,0 +1,106 @@
+'use client'
+
+import Link from 'next/link'
+import Image from 'next/image'
+import { formatPrice } from '@/lib/utils'
+
+interface ProductRowProps {
+  bike: {
+    id: number
+    brand: string
+    model: string
+    slug: string
+    category: string
+    price: number | null
+    images: string[] | null
+    year: number
+    created_at: string
+  }
+}
+
+export default function ProductRow({ bike }: ProductRowProps) {
+  const categorySlug = bike.category.toLowerCase().replace(/\s+/g, '') + 'bikes'
+
+  const handleDelete = async () => {
+    if (!confirm(`Delete ${bike.brand} ${bike.model}? This cannot be undone.`)) {
+      return
+    }
+
+    try {
+      const response = await fetch(`/api/admin/bikes/${bike.id}`, {
+        method: 'DELETE',
+      })
+
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.error || 'Failed to delete bike')
+      }
+
+      // Reload the page to show updated list
+      window.location.reload()
+    } catch (error: any) {
+      alert(`Error deleting bike: ${error.message}`)
+    }
+  }
+
+  return (
+    <tr className="hover:bg-gray-50 transition-colors">
+      <td className="px-6 py-4">
+        <div className="w-16 h-16 bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center">
+          {bike.images && bike.images.length > 0 ? (
+            <Image
+              src={bike.images[0]}
+              alt={`${bike.brand} ${bike.model}`}
+              width={64}
+              height={64}
+              className="object-contain"
+            />
+          ) : (
+            <span className="text-gray-400 text-xs">No image</span>
+          )}
+        </div>
+      </td>
+      <td className="px-6 py-4">
+        <div>
+          <div className="font-semibold text-gray-900">{bike.brand}</div>
+          <div className="text-sm text-gray-600">{bike.model}</div>
+        </div>
+      </td>
+      <td className="px-6 py-4">
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+          {bike.category}
+        </span>
+      </td>
+      <td className="px-6 py-4 text-sm text-gray-900">{bike.year}</td>
+      <td className="px-6 py-4 text-sm font-semibold text-gray-900">
+        {bike.price ? formatPrice(bike.price) : 'N/A'}
+      </td>
+      <td className="px-6 py-4 text-sm text-gray-600">
+        {new Date(bike.created_at).toLocaleDateString()}
+      </td>
+      <td className="px-6 py-4 text-right">
+        <div className="flex items-center justify-end gap-3">
+          <Link
+            href={`/${categorySlug}/${bike.slug}`}
+            target="_blank"
+            className="text-blue-600 hover:text-blue-700 font-medium text-sm"
+          >
+            View
+          </Link>
+          <Link
+            href={`/admin/products/${bike.id}/edit`}
+            className="text-green-600 hover:text-green-700 font-medium text-sm"
+          >
+            Edit
+          </Link>
+          <button
+            onClick={handleDelete}
+            className="text-red-600 hover:text-red-700 font-medium text-sm"
+          >
+            Delete
+          </button>
+        </div>
+      </td>
+    </tr>
+  )
+}

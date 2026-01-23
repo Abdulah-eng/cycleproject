@@ -1,0 +1,4 @@
+brand,model,year,category,sub_category,price,weight,frame,wheels,groupset,fork,tires,brakes,vfm_score_1_to_10,build_1_10,speed_index,ride_comfort_1_10
+Trek,Domane SL 5,2025,Road,Endurance,2999.99,8.5 kg,Carbon,700c,Shimano 105,Carbon,700x28mm,Hydraulic Disc,8,9,85,8
+Specialized,Stumpjumper Alloy,2025,Mountain,Trail,2299.99,13.5 kg,Aluminum,29in,SRAM SX Eagle,RockShox Judy,29x2.3,Hydraulic Disc,9,8,75,9
+Canyon,Grail CF SL 7,2025,Road,Gravel,2499.99,9.2 kg,Carbon,700c,Shimano GRX 600,Carbon,700x40mm,Hydraulic Disc,9,9,80,8

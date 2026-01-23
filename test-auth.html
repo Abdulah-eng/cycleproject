@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Auth</title>
+</head>
+<body>
+    <h1>Clear Cookies</h1>
+    <button onclick="clearCookies()">Clear All Cookies</button>
+    <script>
+        function clearCookies() {
+            document.cookie.split(";").forEach(function(c) { 
+                document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); 
+            });
+            alert('Cookies cleared! Now go to /admin/login');
+        }
+    </script>
+</body>
+</html>
