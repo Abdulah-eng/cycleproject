@@ -94,14 +94,6 @@ export default async function BikePage({ params }: PageProps) {
 
   return (
     <main className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
-        <div className="container mx-auto px-4 py-4">
-          <a href="/" className="text-blue-600 hover:text-blue-700 font-medium">
-            ← Back to Home
-          </a>
-        </div>
-      </header>
 
       <div className="container mx-auto px-4 py-8 max-w-7xl">
         {/* Desktop Layout */}
@@ -151,22 +143,9 @@ export default async function BikePage({ params }: PageProps) {
                 </div>
               </div>
 
-              {/* Right - Bike Image */}
+              {/* Right - Bike Image Gallery */}
               <div className="flex items-center justify-center">
-                {bike.images && bike.images.length > 0 ? (
-                  <div className="relative w-full h-64">
-                    <Image
-                      src={bike.images[0]}
-                      alt={`${bike.brand} ${bike.model}`}
-                      fill
-                      className="object-contain"
-                    />
-                  </div>
-                ) : (
-                  <div className="w-full h-64 bg-gray-200 rounded-lg flex items-center justify-center">
-                    <span className="text-gray-400">No image available</span>
-                  </div>
-                )}
+                <ImageGallery images={bike.images || []} alt={`${bike.brand} ${bike.model}`} />
               </div>
             </div>
 
@@ -293,22 +272,9 @@ export default async function BikePage({ params }: PageProps) {
         {/* Mobile Layout */}
         <div className="lg:hidden">
           <div className="bg-gradient-to-b from-gray-50 to-white rounded-2xl shadow-lg overflow-hidden mb-6">
-            {/* Bike Image at Top */}
+            {/* Bike Image Gallery at Top */}
             <div className="bg-white p-4 mb-4">
-              {bike.images && bike.images.length > 0 ? (
-                <div className="relative w-full h-64">
-                  <Image
-                    src={bike.images[0]}
-                    alt={`${bike.brand} ${bike.model}`}
-                    fill
-                    className="object-contain"
-                  />
-                </div>
-              ) : (
-                <div className="w-full h-64 bg-gray-200 rounded-lg flex items-center justify-center">
-                  <span className="text-gray-400">No image available</span>
-                </div>
-              )}
+              <ImageGallery images={bike.images || []} alt={`${bike.brand} ${bike.model}`} />
             </div>
 
             {/* Product Info */}
