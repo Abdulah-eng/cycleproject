@@ -27,19 +27,31 @@ export default function ProductRow({ bike }: ProductRowProps) {
     }
 
     try {
+      console.log('🗑️ Deleting bike:', bike.id, bike.brand, bike.model)
+
       const response = await fetch(`/api/admin/bikes/${bike.id}`, {
         method: 'DELETE',
       })
 
+      console.log('📡 Delete response status:', response.status)
+
       if (!response.ok) {
         const error = await response.json()
+        console.error('❌ Delete failed:', error)
         throw new Error(error.error || 'Failed to delete bike')
       }
+
+      const result = await response.json()
+      console.log('✅ Delete successful:', result)
+
+      // Show success message briefly before reload
+      alert(`Successfully deleted ${bike.brand} ${bike.model}`)
 
       // Reload the page to show updated list
       window.location.reload()
     } catch (error: any) {
-      alert(`Error deleting bike: ${error.message}`)
+      console.error('❌ Delete error:', error)
+      alert(`Error deleting bike: ${error.message}\n\nThis might be due to database permissions. Check the browser console for details.`)
     }
   }
 

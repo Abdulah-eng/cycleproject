@@ -10,7 +10,10 @@
       "Bash(dir:*)",
       "Bash(curl:*)",
       "Bash(npm run build:*)",
-      "Bash(git remote add:*)"
+      "Bash(git remote add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push)",
+      "Bash(if exist .next rmdir /s /q .next)"
     ]
   }
 }

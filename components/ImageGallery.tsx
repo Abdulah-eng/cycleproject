@@ -27,7 +27,7 @@ export default function ImageGallery({ images, alt, autoPlay = true, interval = 
 
   if (!images || images.length === 0) {
     return (
-      <div className="aspect-bike bg-gray-200 rounded-lg flex items-center justify-center">
+      <div className="h-96 bg-gray-200 rounded-lg flex items-center justify-center">
         <span className="text-gray-400">No image available</span>
       </div>
     )
@@ -42,9 +42,9 @@ export default function ImageGallery({ images, alt, autoPlay = true, interval = 
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 w-full">
       {/* Main Image */}
-      <div className="relative aspect-bike bg-gray-100 rounded-lg overflow-hidden group">
+      <div className="relative w-full h-96 lg:w-[600px] lg:h-[500px] bg-gray-100 rounded-lg overflow-hidden group">
         <Image
           src={images[selectedImage]}
           alt={`${alt} - Image ${selectedImage + 1}`}

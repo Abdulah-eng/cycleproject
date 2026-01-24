@@ -34,6 +34,35 @@ function createServerClient() {
 
 export const supabaseServer = createServerClient()
 
+// Helper function to fetch all rows in batches (bypasses 1000 row limit)
+export async function fetchAllBikes<T>(
+  query: (from: number, to: number) => Promise<{ data: T[] | null; error: any }>
+): Promise<T[]> {
+  const BATCH_SIZE = 1000
+  const allData: T[] = []
+  let from = 0
+  let hasMore = true
+
+  while (hasMore) {
+    const { data, error } = await query(from, from + BATCH_SIZE - 1)
+
+    if (error) {
+      console.error('Error fetching batch:', error)
+      break
+    }
+
+    if (data && data.length > 0) {
+      allData.push(...data)
+      from += BATCH_SIZE
+      hasMore = data.length === BATCH_SIZE // If we got full batch, there might be more
+    } else {
+      hasMore = false
+    }
+  }
+
+  return allData
+}
+
 // Database types
 export interface Bike {
   id: number
@@ -134,6 +163,21 @@ export interface Bike {
   battery_bucket: string | null
   created_at: string
   updated_at: string
+  // Score explanations
+  overall_score_explanation: string | null
+  performance_score_explanation: string | null
+  value_score_explanation: string | null
+  fit_score_explanation: string | null
+  general_score_explanation: string | null
+  climbing_efficiency_explanation: string | null
+  aerodynamics_explanation: string | null
+  riding_position_explanation: string | null
+  handling_explanation: string | null
+  fit_flexibility_explanation: string | null
+  ride_comfort_explanation: string | null
+  build_quality_explanation: string | null
+  value_for_money_explanation: string | null
+  surface_range_explanation: string | null
 }
 
 export interface BikeScore {

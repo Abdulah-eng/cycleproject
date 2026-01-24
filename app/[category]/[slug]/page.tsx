@@ -100,9 +100,9 @@ export default async function BikePage({ params }: PageProps) {
         <div className="hidden lg:block">
           <div className="bg-gradient-to-br from-gray-50 to-white rounded-2xl shadow-lg p-10 mb-8 border border-gray-100">
             {/* Header with Title, Description, Score and Image */}
-            <div className="grid grid-cols-3 gap-8 mb-10">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
               {/* Left - Title and Description */}
-              <div className="col-span-2">
+              <div>
                 <h1 className="text-5xl font-bold text-gray-900 mb-2">
                   {bike.brand} {bike.model}
                 </h1>
@@ -159,24 +159,28 @@ export default async function BikePage({ params }: PageProps) {
                   maxScore={metrics.performance.maxScore}
                   description={metrics.performance.description}
                   variant="primary"
+                  explanation={bike.performance_score_explanation}
                 />
                 <ScoreCard
                   label={metrics.value.label}
                   score={metrics.value.score}
                   maxScore={metrics.value.maxScore}
                   description={metrics.value.description}
+                  explanation={bike.value_score_explanation}
                 />
                 <ScoreCard
                   label={metrics.fit.label}
                   score={metrics.fit.score}
                   maxScore={metrics.fit.maxScore}
                   description={metrics.fit.description}
+                  explanation={bike.fit_score_explanation}
                 />
                 <ScoreCard
                   label={metrics.general.label}
                   score={metrics.general.score}
                   maxScore={metrics.general.maxScore}
                   description={metrics.general.description}
+                  explanation={bike.general_score_explanation}
                 />
               </div>
             </div>
@@ -192,6 +196,7 @@ export default async function BikePage({ params }: PageProps) {
                   maxScore={10}
                   description={metrics.climingEfficiency.description}
                   variant="inline"
+                  explanation={bike.climbing_efficiency_explanation}
                 />
                 <ScoreCard
                   label={metrics.aerodynamics.label}
@@ -199,6 +204,7 @@ export default async function BikePage({ params }: PageProps) {
                   maxScore={10}
                   description={metrics.aerodynamics.description}
                   variant="inline"
+                  explanation={bike.aerodynamics_explanation}
                 />
               </div>
             </div>
@@ -214,6 +220,7 @@ export default async function BikePage({ params }: PageProps) {
                   maxScore={10}
                   description={metrics.ridingPosition.description}
                   variant="inline"
+                  explanation={bike.riding_position_explanation}
                 />
                 <ScoreCard
                   label={metrics.handling.label}
@@ -221,6 +228,7 @@ export default async function BikePage({ params }: PageProps) {
                   maxScore={10}
                   description={metrics.handling.description}
                   variant="inline"
+                  explanation={bike.handling_explanation}
                 />
                 <ScoreCard
                   label={metrics.fitFlexibility.label}
@@ -228,6 +236,7 @@ export default async function BikePage({ params }: PageProps) {
                   maxScore={10}
                   description={metrics.fitFlexibility.description}
                   variant="inline"
+                  explanation={bike.fit_flexibility_explanation}
                 />
                 <ScoreCard
                   label={metrics.rideComfort.label}
@@ -235,6 +244,7 @@ export default async function BikePage({ params }: PageProps) {
                   maxScore={10}
                   description={metrics.rideComfort.description}
                   variant="inline"
+                  explanation={bike.ride_comfort_explanation}
                 />
               </div>
             </div>
@@ -249,6 +259,7 @@ export default async function BikePage({ params }: PageProps) {
                   maxScore={10}
                   description={metrics.buildQuality.description}
                   variant="inline"
+                  explanation={bike.build_quality_explanation}
                 />
                 <ScoreCard
                   label={metrics.valueForMoney.label}
@@ -256,6 +267,7 @@ export default async function BikePage({ params }: PageProps) {
                   maxScore={10}
                   description={metrics.valueForMoney.description}
                   variant="inline"
+                  explanation={bike.value_for_money_explanation}
                 />
                 <ScoreCard
                   label={metrics.surfaceRange.label}
@@ -263,6 +275,7 @@ export default async function BikePage({ params }: PageProps) {
                   maxScore={10}
                   description={metrics.surfaceRange.description}
                   variant="inline"
+                  explanation={bike.surface_range_explanation}
                 />
               </div>
             </div>
@@ -323,24 +336,28 @@ export default async function BikePage({ params }: PageProps) {
                   maxScore={metrics.performance.maxScore}
                   description={metrics.performance.description}
                   variant="primary"
+                  explanation={bike.performance_score_explanation}
                 />
                 <ScoreCard
                   label={metrics.value.label}
                   score={metrics.value.score}
                   maxScore={metrics.value.maxScore}
                   description={metrics.value.description}
+                  explanation={bike.value_score_explanation}
                 />
                 <ScoreCard
                   label={metrics.fit.label}
                   score={metrics.fit.score}
                   maxScore={metrics.fit.maxScore}
                   description={metrics.fit.description}
+                  explanation={bike.fit_score_explanation}
                 />
                 <ScoreCard
                   label={metrics.general.label}
                   score={metrics.general.score}
                   maxScore={metrics.general.maxScore}
                   description={metrics.general.description}
+                  explanation={bike.general_score_explanation}
                 />
               </div>
 
@@ -354,6 +371,7 @@ export default async function BikePage({ params }: PageProps) {
                     maxScore={10}
                     description={metrics.climingEfficiency.description}
                     variant="inline"
+                    explanation={bike.climbing_efficiency_explanation}
                   />
                   <ScoreCard
                     label={metrics.aerodynamics.label}
@@ -361,6 +379,7 @@ export default async function BikePage({ params }: PageProps) {
                     maxScore={10}
                     description={metrics.aerodynamics.description}
                     variant="inline"
+                    explanation={bike.aerodynamics_explanation}
                   />
                 </div>
               </div>
@@ -375,6 +394,7 @@ export default async function BikePage({ params }: PageProps) {
                     maxScore={10}
                     description={metrics.ridingPosition.description}
                     variant="inline"
+                    explanation={bike.riding_position_explanation}
                   />
                   <ScoreCard
                     label={metrics.handling.label}
@@ -382,6 +402,7 @@ export default async function BikePage({ params }: PageProps) {
                     maxScore={10}
                     description={metrics.handling.description}
                     variant="inline"
+                    explanation={bike.handling_explanation}
                   />
                   <ScoreCard
                     label={metrics.fitFlexibility.label}
@@ -389,6 +410,7 @@ export default async function BikePage({ params }: PageProps) {
                     maxScore={10}
                     description={metrics.fitFlexibility.description}
                     variant="inline"
+                    explanation={bike.fit_flexibility_explanation}
                   />
                   <ScoreCard
                     label={metrics.rideComfort.label}
@@ -396,6 +418,7 @@ export default async function BikePage({ params }: PageProps) {
                     maxScore={10}
                     description={metrics.rideComfort.description}
                     variant="inline"
+                    explanation={bike.ride_comfort_explanation}
                   />
                 </div>
               </div>
@@ -410,6 +433,7 @@ export default async function BikePage({ params }: PageProps) {
                     maxScore={10}
                     description={metrics.buildQuality.description}
                     variant="inline"
+                    explanation={bike.build_quality_explanation}
                   />
                   <ScoreCard
                     label={metrics.valueForMoney.label}
@@ -417,6 +441,7 @@ export default async function BikePage({ params }: PageProps) {
                     maxScore={10}
                     description={metrics.valueForMoney.description}
                     variant="inline"
+                    explanation={bike.value_for_money_explanation}
                   />
                 </div>
               </div>

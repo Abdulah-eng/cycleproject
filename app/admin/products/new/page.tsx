@@ -49,6 +49,21 @@ export default function NewProduct() {
     build_1_10: '',
     speed_index: '',
     ride_comfort_1_10: '',
+    // Score explanations
+    overall_score_explanation: '',
+    performance_score_explanation: '',
+    value_score_explanation: '',
+    fit_score_explanation: '',
+    general_score_explanation: '',
+    climbing_efficiency_explanation: '',
+    aerodynamics_explanation: '',
+    riding_position_explanation: '',
+    handling_explanation: '',
+    fit_flexibility_explanation: '',
+    ride_comfort_explanation: '',
+    build_quality_explanation: '',
+    value_for_money_explanation: '',
+    surface_range_explanation: '',
   })
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -96,6 +111,21 @@ export default function NewProduct() {
         build_1_10: formData.build_1_10 ? parseInt(formData.build_1_10) : null,
         speed_index: formData.speed_index ? parseInt(formData.speed_index) : null,
         ride_comfort_1_10: formData.ride_comfort_1_10 ? parseInt(formData.ride_comfort_1_10) : null,
+        // Score explanations
+        overall_score_explanation: formData.overall_score_explanation || null,
+        performance_score_explanation: formData.performance_score_explanation || null,
+        value_score_explanation: formData.value_score_explanation || null,
+        fit_score_explanation: formData.fit_score_explanation || null,
+        general_score_explanation: formData.general_score_explanation || null,
+        climbing_efficiency_explanation: formData.climbing_efficiency_explanation || null,
+        aerodynamics_explanation: formData.aerodynamics_explanation || null,
+        riding_position_explanation: formData.riding_position_explanation || null,
+        handling_explanation: formData.handling_explanation || null,
+        fit_flexibility_explanation: formData.fit_flexibility_explanation || null,
+        ride_comfort_explanation: formData.ride_comfort_explanation || null,
+        build_quality_explanation: formData.build_quality_explanation || null,
+        value_for_money_explanation: formData.value_for_money_explanation || null,
+        surface_range_explanation: formData.surface_range_explanation || null,
       }
 
       const response = await fetch('/api/admin/bikes', {
@@ -130,6 +160,21 @@ export default function NewProduct() {
         build_1_10: '',
         speed_index: '',
         ride_comfort_1_10: '',
+        // Score explanations
+        overall_score_explanation: '',
+        performance_score_explanation: '',
+        value_score_explanation: '',
+        fit_score_explanation: '',
+        general_score_explanation: '',
+        climbing_efficiency_explanation: '',
+        aerodynamics_explanation: '',
+        riding_position_explanation: '',
+        handling_explanation: '',
+        fit_flexibility_explanation: '',
+        ride_comfort_explanation: '',
+        build_quality_explanation: '',
+        value_for_money_explanation: '',
+        surface_range_explanation: '',
       })
 
       setTimeout(() => {
@@ -466,6 +511,220 @@ export default function NewProduct() {
           </div>
         </div>
 
+        {/* Score Explanations */}
+        <div className="mb-8">
+          <h2 className="text-xl font-bold text-gray-900 mb-2">Score Explanations</h2>
+          <p className="text-sm text-gray-600 mb-4">Add explanations for each score (optional). These will appear when users click on the score cards.</p>
+
+          <div className="space-y-6">
+            {/* Overall & Summary Scores */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Overall Score Explanation
+                </label>
+                <textarea
+                  name="overall_score_explanation"
+                  value={formData.overall_score_explanation}
+                  onChange={handleChange}
+                  rows={3}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-white resize-none"
+                  placeholder="Explain why this bike received its overall score..."
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Performance Score Explanation
+                </label>
+                <textarea
+                  name="performance_score_explanation"
+                  value={formData.performance_score_explanation}
+                  onChange={handleChange}
+                  rows={3}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-white resize-none"
+                  placeholder="Explain the performance score..."
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Value Score Explanation
+                </label>
+                <textarea
+                  name="value_score_explanation"
+                  value={formData.value_score_explanation}
+                  onChange={handleChange}
+                  rows={3}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-white resize-none"
+                  placeholder="Explain the value score..."
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Fit Score Explanation
+                </label>
+                <textarea
+                  name="fit_score_explanation"
+                  value={formData.fit_score_explanation}
+                  onChange={handleChange}
+                  rows={3}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-white resize-none"
+                  placeholder="Explain the fit score..."
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  General Score Explanation
+                </label>
+                <textarea
+                  name="general_score_explanation"
+                  value={formData.general_score_explanation}
+                  onChange={handleChange}
+                  rows={3}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-white resize-none"
+                  placeholder="Explain the general score..."
+                />
+              </div>
+            </div>
+
+            {/* Performance Metrics */}
+            <div>
+              <h3 className="text-lg font-semibold text-gray-800 mb-3">Performance Metrics</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Climbing Efficiency Explanation
+                  </label>
+                  <textarea
+                    name="climbing_efficiency_explanation"
+                    value={formData.climbing_efficiency_explanation}
+                    onChange={handleChange}
+                    rows={3}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-white resize-none"
+                    placeholder="Explain the climbing efficiency score..."
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Aerodynamics Explanation
+                  </label>
+                  <textarea
+                    name="aerodynamics_explanation"
+                    value={formData.aerodynamics_explanation}
+                    onChange={handleChange}
+                    rows={3}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-white resize-none"
+                    placeholder="Explain the aerodynamics score..."
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Fit Metrics */}
+            <div>
+              <h3 className="text-lg font-semibold text-gray-800 mb-3">Fit & Comfort Metrics</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Riding Position Explanation
+                  </label>
+                  <textarea
+                    name="riding_position_explanation"
+                    value={formData.riding_position_explanation}
+                    onChange={handleChange}
+                    rows={3}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-white resize-none"
+                    placeholder="Explain the riding position score..."
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Handling Explanation
+                  </label>
+                  <textarea
+                    name="handling_explanation"
+                    value={formData.handling_explanation}
+                    onChange={handleChange}
+                    rows={3}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-white resize-none"
+                    placeholder="Explain the handling score..."
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Fit Flexibility Explanation
+                  </label>
+                  <textarea
+                    name="fit_flexibility_explanation"
+                    value={formData.fit_flexibility_explanation}
+                    onChange={handleChange}
+                    rows={3}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-white resize-none"
+                    placeholder="Explain the fit flexibility score..."
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Ride Comfort Explanation
+                  </label>
+                  <textarea
+                    name="ride_comfort_explanation"
+                    value={formData.ride_comfort_explanation}
+                    onChange={handleChange}
+                    rows={3}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-white resize-none"
+                    placeholder="Explain the ride comfort score..."
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Value Metrics */}
+            <div>
+              <h3 className="text-lg font-semibold text-gray-800 mb-3">Value Metrics</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Build Quality Explanation
+                  </label>
+                  <textarea
+                    name="build_quality_explanation"
+                    value={formData.build_quality_explanation}
+                    onChange={handleChange}
+                    rows={3}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-white resize-none"
+                    placeholder="Explain the build quality score..."
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Value for Money Explanation
+                  </label>
+                  <textarea
+                    name="value_for_money_explanation"
+                    value={formData.value_for_money_explanation}
+                    onChange={handleChange}
+                    rows={3}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-white resize-none"
+                    placeholder="Explain the value for money score..."
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Surface Range Explanation
+                  </label>
+                  <textarea
+                    name="surface_range_explanation"
+                    value={formData.surface_range_explanation}
+                    onChange={handleChange}
+                    rows={3}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-white resize-none"
+                    placeholder="Explain the surface range score..."
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
 
         {/* Submit Button */}
         <div className="flex gap-4">

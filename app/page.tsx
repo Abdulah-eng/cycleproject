@@ -1,9 +1,12 @@
 import Link from 'next/link'
-import Image from 'next/image'
-import { supabaseServer } from '@/lib/supabase'
+import { supabaseServer, fetchAllBikes } from '@/lib/supabase'
 import FeaturedBikes from '@/components/FeaturedBikes'
 import StatsSection from '@/components/StatsSection'
 import Footer from '@/components/Footer'
+
+// Force dynamic rendering - always fetch fresh data
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
 // Category descriptions mapping
 const categoryDescriptions: Record<string, string> = {
@@ -27,10 +30,18 @@ const categoryIcons: Record<string, string> = {
 }
 
 export default async function Home() {
-  // Fetch actual categories from database
-  const { data: bikes } = await supabaseServer
-    .from('bikes')
-    .select('category, brand, price')
+  // Fetch ALL bikes using batch pagination (bypasses 1000 row limit)
+  const bikes = await fetchAllBikes<{ category: string; brand: string; price: number | null }>(
+    async (from, to) => {
+      const result = await supabaseServer
+        .from('bikes')
+        .select('category, brand, price')
+        .range(from, to)
+      return result
+    }
+  )
+
+  console.log('📊 Homepage: Fetched', bikes.length, 'bikes')
 
   // Get unique categories and count
   const categoryCounts = bikes?.reduce((acc, bike) => {

@@ -1,20 +1,36 @@
 import Link from 'next/link'
-import { supabaseServer } from '@/lib/supabase'
+import { supabaseServer, fetchAllBikes } from '@/lib/supabase'
 import ProductRow from '@/components/admin/ProductRow'
 
+// Force dynamic rendering - always fetch fresh data
+export const dynamic = 'force-dynamic'
+
+type ProductBike = {
+  id: number
+  brand: string
+  model: string
+  slug: string
+  category: string
+  price: number | null
+  images: string[] | null
+  year: number
+  created_at: string
+}
+
 export default async function ProductsPage() {
-  // Fetch all bikes with pagination support
-  const { data: bikes, error, count } = await supabaseServer
-    .from('bikes')
-    .select('id, brand, model, slug, category, price, images, year, created_at', { count: 'exact' })
-    .order('created_at', { ascending: false })
-    .limit(10000)
+  // Fetch ALL bikes using batch pagination (bypasses 1000 row limit)
+  const bikesList = await fetchAllBikes<ProductBike>(
+    async (from, to) => {
+      const result = await supabaseServer
+        .from('bikes')
+        .select('id, brand, model, slug, category, price, images, year, created_at')
+        .order('created_at', { ascending: false })
+        .range(from, to)
+      return result
+    }
+  )
 
-  if (error) {
-    console.error('Error fetching bikes:', error)
-  }
-
-  const bikesList = bikes || []
+  console.log('📊 Admin Products: Fetched', bikesList.length, 'bikes')
 
   return (
     <div className="space-y-8">

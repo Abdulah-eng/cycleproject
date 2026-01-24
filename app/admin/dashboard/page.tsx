@@ -1,28 +1,35 @@
 import Link from 'next/link'
-import { supabaseServer } from '@/lib/supabase'
+import { supabaseServer, fetchAllBikes } from '@/lib/supabase'
 import RecentBikes from '@/components/admin/RecentBikes'
 
+// Force dynamic rendering - always fetch fresh data
+export const dynamic = 'force-dynamic'
+
 export default async function AdminDashboard() {
-  // Fetch statistics
-  const [bikesResult, categoriesResult, brandsResult, recentResult] = await Promise.all([
-    supabaseServer.from('bikes').select('id, price'),
-    supabaseServer.from('bikes').select('category'),
-    supabaseServer.from('bikes').select('brand'),
+  // Fetch statistics using batch pagination (bypasses 1000 row limit)
+  const [bikes, recentResult] = await Promise.all([
+    fetchAllBikes<{ id: number; price: number | null; category: string; brand: string }>(
+      async (from, to) => {
+        const result = await supabaseServer
+          .from('bikes')
+          .select('id, price, category, brand')
+          .range(from, to)
+        return result
+      }
+    ),
     supabaseServer
       .from('bikes')
       .select('id, brand, model, category, created_at, price')
       .order('created_at', { ascending: false })
       .limit(5),
   ])
-
-  const bikes = bikesResult.data || []
   const totalBikes = bikes.length
   const avgPrice = bikes.length > 0
     ? bikes.reduce((sum, bike) => sum + (bike.price || 0), 0) / bikes.length
     : 0
 
-  const categories = Array.from(new Set((categoriesResult.data || []).map(b => b.category))).length
-  const brands = Array.from(new Set((brandsResult.data || []).map(b => b.brand))).length
+  const categories = Array.from(new Set(bikes.map(b => b.category))).length
+  const brands = Array.from(new Set(bikes.map(b => b.brand))).length
   const recentBikes = recentResult.data || []
 
   return (

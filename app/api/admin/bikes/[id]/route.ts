@@ -42,26 +42,46 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
+    console.log('🗑️ DELETE request for bike ID:', params.id)
+
     // Check authentication
     const user = await getUser()
     if (!user) {
+      console.error('❌ Unauthorized delete attempt')
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    console.log('✅ User authenticated:', user.email)
+    console.log('🔑 Using SERVICE_ROLE_KEY:', process.env.SUPABASE_SERVICE_ROLE_KEY ? 'Present' : 'MISSING!')
+
     // Delete bike
-    const { error } = await supabaseServer
+    const { data, error } = await supabaseServer
       .from('bikes')
       .delete()
       .eq('id', params.id)
+      .select()
 
     if (error) {
-      console.error('Error deleting bike:', error)
-      return NextResponse.json({ error: error.message }, { status: 500 })
+      console.error('❌ Supabase delete error:', error)
+      console.error('Error code:', error.code)
+      console.error('Error hint:', error.hint)
+      console.error('Error details:', error.details)
+      return NextResponse.json({
+        error: error.message,
+        code: error.code,
+        hint: 'This might be due to Row Level Security (RLS) policies. Check TROUBLESHOOTING_FIXES.md'
+      }, { status: 500 })
     }
 
-    return NextResponse.json({ success: true })
+    console.log('✅ Bike deleted successfully:', data)
+
+    return NextResponse.json({
+      success: true,
+      message: 'Bike deleted successfully',
+      deletedCount: data?.length || 0
+    })
   } catch (error: any) {
-    console.error('Error in DELETE /api/admin/bikes/[id]:', error)
+    console.error('❌ Error in DELETE /api/admin/bikes/[id]:', error)
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 }

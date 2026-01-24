@@ -182,6 +182,34 @@ export async function POST(request: NextRequest) {
             }
           })
 
+          // Add score explanation fields (support both new and legacy column names)
+          // Map legacy "reason" columns to new "explanation" columns
+          const explanationMapping: Record<string, string[]> = {
+            'fit_flexibility_explanation': ['fit_flexibility_explanation', 'fit_reason'],
+            'value_for_money_explanation': ['value_for_money_explanation', 'vfm_reason'],
+            'build_quality_explanation': ['build_quality_explanation', 'build_reason'],
+            'aerodynamics_explanation': ['aerodynamics_explanation', 'aero_reason'],
+            'climbing_efficiency_explanation': ['climbing_efficiency_explanation', 'climb_reason'],
+            'riding_position_explanation': ['riding_position_explanation', 'posture_reason'],
+            'handling_explanation': ['handling_explanation', 'responsiveness_reason'],
+            'ride_comfort_explanation': ['ride_comfort_explanation', 'comfort_reason'],
+            'surface_range_explanation': ['surface_range_explanation', 'surface_reason'],
+            'overall_score_explanation': ['overall_score_explanation'],
+            'performance_score_explanation': ['performance_score_explanation', 'speed_reason'],
+            'value_score_explanation': ['value_score_explanation'],
+            'fit_score_explanation': ['fit_score_explanation'],
+            'general_score_explanation': ['general_score_explanation'],
+          }
+
+          Object.entries(explanationMapping).forEach(([dbField, possibleColumns]) => {
+            for (const column of possibleColumns) {
+              if (rowData[column]) {
+                bikeData[dbField] = rowData[column]
+                break // Use first matching column found
+              }
+            }
+          })
+
           bikesToInsert.push(bikeData)
           progress.processed++
         } catch (error: any) {

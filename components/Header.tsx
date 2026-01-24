@@ -1,13 +1,33 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+
+interface Category {
+  name: string
+  slug: string
+  count: number
+}
 
 export default function Header() {
   const [searchQuery, setSearchQuery] = useState('')
   const [isSearchOpen, setIsSearchOpen] = useState(false)
+  const [categories, setCategories] = useState<Category[]>([])
   const router = useRouter()
+
+  // Fetch categories on mount
+  useEffect(() => {
+    fetch('/api/categories')
+      .then(res => res.json())
+      .then(data => {
+        if (data.categories) {
+          // Take top 5 categories by count for the header
+          setCategories(data.categories.slice(0, 5))
+        }
+      })
+      .catch(err => console.error('Error fetching categories:', err))
+  }, [])
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
@@ -16,6 +36,27 @@ export default function Header() {
       setSearchQuery('')
       setIsSearchOpen(false)
     }
+  }
+
+  // Format category name for display (shorten if needed)
+  const formatCategoryName = (name: string) => {
+    const lower = name.toLowerCase().replace(/[-\s]/g, '') // Remove dashes and spaces for comparison
+
+    // Check for e-bike mountain variants (must check BEFORE generic e-bike)
+    if (lower.includes('ebikemountain') || lower.includes('emtb')) {
+      return 'E-MTB'
+    }
+    // Check for e-bike road variants
+    if (lower.includes('ebikeroad') || lower.includes('eroad')) {
+      return 'E-Road'
+    }
+    // Generic e-bike (only if not mountain or road)
+    if (lower.includes('ebike') || lower.includes('electric')) {
+      return 'E-Bike'
+    }
+
+    // Return the name as-is for simple categories
+    return name
   }
 
   return (
@@ -29,20 +70,27 @@ export default function Header() {
             </div>
           </Link>
 
-          {/* Desktop Navigation */}
+          {/* Desktop Navigation - Dynamic Categories */}
           <nav className="hidden md:flex items-center gap-6">
-            <Link href="/roadbikes" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">
-              Road
-            </Link>
-            <Link href="/mountainbikes" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">
-              Mountain
-            </Link>
-            <Link href="/gravelbikes" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">
-              Gravel
-            </Link>
-            <Link href="/electricbikes" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">
-              Electric
-            </Link>
+            {categories.length > 0 ? (
+              categories.map((category) => (
+                <Link
+                  key={category.slug}
+                  href={`/${category.slug}`}
+                  className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
+                  title={`${category.name} (${category.count} bikes)`}
+                >
+                  {formatCategoryName(category.name)}
+                </Link>
+              ))
+            ) : (
+              // Fallback while loading
+              <>
+                <span className="text-gray-400">Road</span>
+                <span className="text-gray-400">Mountain</span>
+                <span className="text-gray-400">E-Bike</span>
+              </>
+            )}
           </nav>
 
           {/* Search Bar - Desktop */}
