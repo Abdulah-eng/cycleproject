@@ -95,6 +95,27 @@ export function calculateBikeMetrics(bike: Bike): BikeMetrics {
     return 'Stable'
   }
 
+  const getSpeedLabel = (score: number): string => {
+    if (score >= 8.5) return 'Extremely Fast'
+    if (score >= 7) return 'Very Fast'
+    if (score >= 5.5) return 'Fast'
+    if (score >= 4) return 'Moderate Speed'
+    return 'Relaxed Pace'
+  }
+
+  const speedScore = bike.speed_index || 5
+
+  const getBatteryLabel = (score: number): string => {
+    if (score >= 8) return 'Excellent Range'
+    if (score >= 6) return 'Good Range'
+    if (score >= 4) return 'Moderate Range'
+    return 'Limited Range'
+  }
+
+  const isEBike = bike.category?.toLowerCase().includes('e-bike') ||
+                  bike.category?.toLowerCase().includes('e-road') ||
+                  bike.category?.toLowerCase().includes('e-mountain')
+
   return {
     overallScore,
     performance: {
@@ -120,6 +141,12 @@ export function calculateBikeMetrics(bike: Bike): BikeMetrics {
       score: generalScore,
       maxScore: 10,
       description: getBuildLabel(generalScore),
+    },
+    speed: {
+      label: 'Speed',
+      score: speedScore,
+      maxScore: 10,
+      description: bike.speed_bucket || getSpeedLabel(speedScore),
     },
     climingEfficiency: {
       label: 'Climbing Efficiency',
@@ -175,6 +202,12 @@ export function calculateBikeMetrics(bike: Bike): BikeMetrics {
       maxScore: 10,
       description: bike.surface_range || 'All-Road Capable',
     },
+    battery: isEBike ? {
+      label: 'Battery',
+      score: 7, // Default, can be calculated based on battery fields
+      maxScore: 10,
+      description: bike.battery_bucket || getBatteryLabel(7),
+    } : undefined,
   }
 }
 
@@ -227,4 +260,59 @@ export function getRatingColor(score: number): string {
  */
 export function formatCategoryForUrl(category: string): string {
   return category.toLowerCase().replace(/\s+/g, '')
+}
+
+/**
+ * Generate SEO-friendly URL slug from text
+ */
+export function generateUrlSlug(text: string | null): string {
+  if (!text) return ''
+  return text
+    .toLowerCase()
+    .replace(/[^\w\s-]/g, '') // Remove special characters
+    .replace(/\s+/g, '-') // Replace spaces with hyphens
+    .replace(/-+/g, '-') // Replace multiple hyphens with single hyphen
+    .trim()
+}
+
+/**
+ * Generate new SEO-friendly bike URL
+ * Format: /category/sub-category/brand/year/model
+ */
+export function generateBikeUrl(bike: {
+  category: string
+  sub_category?: string | null
+  brand: string
+  year?: number | null
+  model: string
+  slug?: string // Old slug for fallback
+}): string {
+  const categorySlug = formatCategoryForUrl(bike.category) + 'bikes'
+  const subCategorySlug = bike.sub_category ? generateUrlSlug(bike.sub_category) : 'general'
+  const brandSlug = generateUrlSlug(bike.brand)
+  const yearSlug = bike.year ? bike.year.toString() : 'unknown'
+  const modelSlug = generateUrlSlug(bike.model)
+
+  return `/${categorySlug}/${subCategorySlug}/${brandSlug}/${yearSlug}/${modelSlug}`
+}
+
+/**
+ * Parse bike details from new URL format
+ */
+export function parseBikeUrl(segments: string[]): {
+  category: string
+  subCategory: string
+  brand: string
+  year: string
+  model: string
+} | null {
+  if (segments.length < 5) return null
+
+  return {
+    category: segments[0],
+    subCategory: segments[1],
+    brand: segments[2],
+    year: segments[3],
+    model: segments[4],
+  }
 }

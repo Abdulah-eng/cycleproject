@@ -13,6 +13,20 @@ interface SpecSection {
 export default function SpecsTable({ bike }: SpecsTableProps) {
   const sections: SpecSection[] = [
     {
+      title: 'General',
+      specs: [
+        { label: 'Brand', value: bike.brand },
+        { label: 'Model', value: bike.model },
+        { label: 'Year', value: bike.year?.toString() || null },
+        { label: 'Price', value: bike.price ? formatPrice(bike.price) : null },
+        { label: 'Weight', value: bike.weight },
+        { label: 'Category', value: bike.category },
+        { label: 'Sub Category', value: bike.sub_category },
+        { label: 'Groupset', value: bike.groupset },
+        { label: 'Wheels', value: bike.wheels },
+      ],
+    },
+    {
       title: 'Frame',
       specs: [
         { label: 'Frame', value: bike.frame_description || bike.frame },
@@ -62,20 +76,6 @@ export default function SpecsTable({ bike }: SpecsTableProps) {
       specs: [
         { label: 'Saddle', value: bike.saddle },
         { label: 'Seatpost', value: bike.seatpost },
-      ],
-    },
-    {
-      title: 'General',
-      specs: [
-        { label: 'Brand', value: bike.brand },
-        { label: 'Model', value: bike.model },
-        { label: 'Year', value: bike.year?.toString() || null },
-        { label: 'Price', value: bike.price ? formatPrice(bike.price) : null },
-        { label: 'Weight', value: bike.weight },
-        { label: 'Category', value: bike.category },
-        { label: 'Sub Category', value: bike.sub_category },
-        { label: 'Groupset', value: bike.groupset },
-        { label: 'Wheels', value: bike.wheels },
       ],
     },
   ]

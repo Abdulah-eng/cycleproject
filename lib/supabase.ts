@@ -161,6 +161,7 @@ export interface Bike {
   surface_range: string | null
   battery_range: string | null
   battery_bucket: string | null
+  bike_desc: string | null
   created_at: string
   updated_at: string
   // Score explanations
@@ -178,6 +179,8 @@ export interface Bike {
   build_quality_explanation: string | null
   value_for_money_explanation: string | null
   surface_range_explanation: string | null
+  speed_reason: string | null
+  battery_reason: string | null
 }
 
 export interface BikeScore {
@@ -193,6 +196,7 @@ export interface BikeMetrics {
   value: BikeScore
   fit: BikeScore
   general: BikeScore
+  speed: BikeScore
   climingEfficiency: BikeScore
   aerodynamics: BikeScore
   ridingPosition: BikeScore
@@ -202,4 +206,5 @@ export interface BikeMetrics {
   buildQuality: BikeScore
   valueForMoney: BikeScore
   surfaceRange: BikeScore
+  battery?: BikeScore
 }

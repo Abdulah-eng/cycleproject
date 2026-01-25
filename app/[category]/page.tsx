@@ -1,7 +1,7 @@
 import { Metadata } from 'next'
 import Link from 'next/link'
 import { supabaseServer } from '@/lib/supabase'
-import InfiniteScrollBikes from '@/components/InfiniteScrollBikes'
+import CategoryPageContent from '@/components/CategoryPageContent'
 
 // Force dynamic rendering - always fetch fresh data
 export const dynamic = 'force-dynamic'
@@ -41,7 +41,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 }
 
-const INITIAL_LOAD = 16
+const INITIAL_LOAD = 15
 
 async function getInitialBikes(categorySlug: string) {
   // Convert slug back to category name (e.g., 'roadbikes' -> 'Road')
@@ -58,10 +58,10 @@ async function getInitialBikes(categorySlug: string) {
   // Fetch first batch + total count
   const { data, error, count } = await supabaseServer
     .from('bikes')
-    .select('id, brand, model, year, price, slug, category, sub_category, images, vfm_score_1_to_10, build_1_10, speed_index', { count: 'exact' })
+    .select('id, brand, model, year, price, slug, category, sub_category, images, vfm_score_1_to_10, build_1_10, speed_index, frame', { count: 'exact' })
     .ilike('category', `%${categoryName}%`)
+    .order('year', { ascending: false })
     .order('brand', { ascending: true })
-    .order('model', { ascending: true })
     .range(0, INITIAL_LOAD - 1)
 
   if (error) {
@@ -108,9 +108,9 @@ export default async function CategoryPage({ params }: PageProps) {
           </p>
         </div>
 
-        {/* Bike Grid with Infinite Scroll */}
+        {/* Bike Grid with Filters and Sorting */}
         {bikes && bikes.length > 0 ? (
-          <InfiniteScrollBikes
+          <CategoryPageContent
             initialBikes={bikes}
             categorySlug={params.category}
             totalCount={totalCount}
