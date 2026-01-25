@@ -1,0 +1,53 @@
+{
+    "nav": {
+        "home": "Startseite",
+        "compare": "Vergleichen",
+        "admin": "Admin",
+        "search_placeholder": "Fahrräder suchen...",
+        "road": "Rennrad",
+        "mountain": "Mountainbike",
+        "ebike": "E-Bike"
+    },
+    "common": {
+        "add_to_compare": "Vergleichen",
+        "remove_from_compare": "Entfernen",
+        "added": "Hinzugefügt",
+        "loading": "Laden...",
+        "back_to_home": "Zurück zur Startseite",
+        "specifications": "Spezifikationen",
+        "geometry": "Geometrie",
+        "measurement": "Messung",
+        "read_more": "Mehr lesen"
+    },
+    "scores": {
+        "summary_title": "Bewertungsübersicht",
+        "overall": "Gesamtbewertung",
+        "performance": "Leistung",
+        "value": "Wert",
+        "fit": "Passform",
+        "general": "Allgemein",
+        "battery": "Batterie",
+        "speed": "Geschwindigkeit",
+        "climbing": "Klettereffizienz",
+        "aerodynamics": "Aerodynamik",
+        "riding_position": "Fahrposition",
+        "handling": "Handhabung",
+        "fit_flexibility": "Passform-Flexibilität",
+        "ride_comfort": "Fahrkomfort",
+        "build_quality": "Verarbeitungsqualität",
+        "value_for_money": "Preis-Leistungs-Verhältnis",
+        "surface_range": "Oberflächenbereich"
+    },
+    "compare_page": {
+        "title": "Fahrräder vergleichen",
+        "subtitle": "Vergleichen Sie bis zu 4 Fahrräder nebeneinander.",
+        "clear_all": "Alle löschen",
+        "no_bikes": "Keine Fahrräder ausgewählt",
+        "browse_bikes": "Fahrräder durchsuchen"
+    },
+    "recommendations": {
+        "same_brand": "Andere Fahrräder von {brand}",
+        "year_models": "{year} Modelle",
+        "better_value": "Besseres Preis-Leistungs-Verhältnis"
+    }
+}

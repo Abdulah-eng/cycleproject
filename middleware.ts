@@ -1,88 +1,70 @@
-import { createServerClient, type CookieOptions } from '@supabase/ssr'
-import { NextResponse, type NextRequest } from 'next/server'
+import { NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
+import { createClient } from '@supabase/supabase-js'
 import { generateBikeUrl } from '@/lib/utils'
 
-export async function middleware(request: NextRequest) {
-  let response = NextResponse.next({
-    request,
-  })
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get(name: string) {
-          return request.cookies.get(name)?.value
-        },
-        set(name: string, value: string, options: CookieOptions) {
-          response.cookies.set({
-            name,
-            value,
-            ...options,
-          })
-        },
-        remove(name: string, options: CookieOptions) {
-          response.cookies.set({
-            name,
-            value: '',
-            ...options,
-          })
-        },
-      },
-    }
+const locales = ['en', 'de']
+const defaultLocale = 'en'
+
+export async function middleware(request: NextRequest) {
+  const pathname = request.nextUrl.pathname
+
+  // Check if pathname is missing locale
+  const pathnameIsMissingLocale = locales.every(
+    (locale) => !pathname.startsWith(`/${locale}/`) && pathname !== `/${locale}`
   )
 
-  // Refresh session if it exists
-  const { data: { session } } = await supabase.auth.getSession()
+  // 1. Handle Old URL pattern: /category/slug (2 segments)
+  // Only check if missing locale
+  if (pathnameIsMissingLocale) {
+    const segments = pathname.split('/').filter(Boolean)
 
-  // Handle old URL format redirects (category/slug -> category/subcategory/brand/year/model)
-  const pathname = request.nextUrl.pathname
-  const segments = pathname.split('/').filter(Boolean)
-  
-  // Check if this matches old URL pattern: /category/slug (2 segments)
-  // Exclude admin, api, search, and other special routes
-  if (segments.length === 2 && 
-      !pathname.startsWith('/admin') && 
+    // Filter out potential non-bike paths
+    if (segments.length === 2 &&
+      !pathname.startsWith('/admin') &&
       !pathname.startsWith('/api') &&
-      !pathname.startsWith('/search')) {
-    
-    const slug = segments[1]
-    
-    // Try to find bike by slug and redirect to new URL
-    const { data: bike, error } = await supabase
-      .from('bikes')
-      .select('category, sub_category, brand, year, model, slug')
-      .eq('slug', slug)
-      .single()
-    
-    if (!error && bike) {
-      // Generate new SEO-friendly URL and redirect (301 permanent redirect)
-      const newUrl = generateBikeUrl(bike)
-      return NextResponse.redirect(new URL(newUrl, request.url), { status: 301 })
+      !pathname.startsWith('/search') &&
+      !pathname.startsWith('/_next') &&
+      !pathname.includes('.')) {
+
+      const slug = segments[1]
+
+      try {
+        const { data: bike } = await supabase
+          .from('bikes')
+          .select('category, sub_category, brand, year, model, slug')
+          .eq('slug', slug)
+          .single()
+
+        if (bike) {
+          // Redirect to new URL structure with default locale
+          // generateBikeUrl returns relative path like /category/sub...
+          // We prepend /en
+          const bikeUrl = generateBikeUrl(bike)
+          return NextResponse.redirect(new URL(`/${defaultLocale}${bikeUrl}`, request.url), { status: 301 })
+        }
+      } catch (e) {
+        // Ignore error, proceed to locale redirect
+      }
     }
   }
 
-  // If accessing admin routes (except login) and not authenticated, redirect to login
-  if (request.nextUrl.pathname.startsWith('/admin') &&
-      !request.nextUrl.pathname.startsWith('/admin/login') &&
-      !session) {
-    const redirectUrl = new URL('/admin/login', request.url)
-    return NextResponse.redirect(redirectUrl)
+  // 2. Redirect if missing locale
+  if (pathnameIsMissingLocale) {
+    // Redirect to default locale
+    return NextResponse.redirect(
+      new URL(`/${defaultLocale}${pathname.startsWith('/') ? '' : '/'}${pathname}`, request.url)
+    )
   }
-
-  // If accessing login page and already authenticated, redirect to dashboard
-  if (request.nextUrl.pathname.startsWith('/admin/login') && session) {
-    const redirectUrl = new URL('/admin/dashboard', request.url)
-    return NextResponse.redirect(redirectUrl)
-  }
-
-  return response
 }
 
 export const config = {
   matcher: [
-    '/admin/:path*',
-    '/((?!_next/static|_next/image|favicon.ico|.*\\..*|api).*)',
+    // Skip all internal paths (_next) and API routes
+    '/((?!api|_next/static|_next/image|favicon.ico).*)',
   ],
 }

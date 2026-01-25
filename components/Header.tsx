@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
+import { useComparison } from '@/context/ComparisonContext'
 
 interface Category {
   name: string
@@ -33,6 +34,7 @@ export default function Header() {
   const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false)
   const searchRef = useRef<HTMLDivElement>(null)
   const router = useRouter()
+  const { selectedBikes } = useComparison()
 
   // Fetch categories on mount
   useEffect(() => {
@@ -263,13 +265,29 @@ export default function Header() {
             </svg>
           </button>
 
-          {/* Admin Link */}
-          <Link
-            href="/admin/login"
-            className="hidden md:block text-gray-700 hover:text-blue-600 font-medium transition-colors"
-          >
-            Admin
-          </Link>
+          {/* Admin Link & Compare Link */}
+          <div className="hidden md:flex items-center gap-4">
+            {/* Compare Link */}
+            <Link
+              href="/compare"
+              className="relative text-gray-700 hover:text-blue-600 font-medium transition-colors flex items-center gap-1"
+            >
+              Compare
+              {selectedBikes.length > 0 && (
+                <span className="bg-blue-600 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                  {selectedBikes.length}
+                </span>
+              )}
+            </Link>
+
+            {/* Admin Link */}
+            <Link
+              href="/admin/login"
+              className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
+            >
+              Admin
+            </Link>
+          </div>
         </div>
 
         {/* Mobile Search Bar */}

@@ -1,0 +1,251 @@
+'use client'
+
+import { useEffect, useState } from 'react'
+import Image from 'next/image'
+import Link from 'next/link'
+import { useComparison } from '@/context/ComparisonContext'
+import { supabase } from '@/lib/supabase'
+import { calculateBikeMetrics, formatPrice, generateBikeUrl } from '@/lib/utils'
+import type { Bike, BikeMetrics } from '@/lib/supabase'
+
+interface BikeWithMetrics extends Bike {
+    metrics: BikeMetrics
+}
+
+export default function ComparisonTable() {
+    const { selectedBikes, removeFromCompare, clearCompare } = useComparison()
+    const [bikes, setBikes] = useState<BikeWithMetrics[]>([])
+    const [loading, setLoading] = useState(true)
+
+    useEffect(() => {
+        const fetchBikes = async () => {
+            if (selectedBikes.length === 0) {
+                setBikes([])
+                setLoading(false)
+                return
+            }
+
+            setLoading(true)
+            const ids = selectedBikes.map(b => b.id)
+
+            const { data, error } = await supabase
+                .from('bikes')
+                .select('*')
+                .in('id', ids)
+
+            if (error) {
+                console.error('Error fetching comparison bikes:', error)
+                setLoading(false)
+                return
+            }
+
+            if (data) {
+                // Enforce order based on selectedBikes
+                const orderedBikes = ids.map(id => data.find(b => b.id === id)).filter(Boolean) as Bike[]
+
+                const bikesWithMetrics = orderedBikes.map(bike => ({
+                    ...bike,
+                    metrics: calculateBikeMetrics(bike)
+                }))
+                setBikes(bikesWithMetrics)
+            }
+            setLoading(false)
+        }
+
+        fetchBikes()
+    }, [selectedBikes])
+
+    if (loading) {
+        return (
+            <div className="flex justify-center items-center py-20">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+            </div>
+        )
+    }
+
+    if (bikes.length === 0) {
+        return (
+            <div className="text-center py-20 bg-white rounded-lg shadow-sm border border-gray-200">
+                <div className="bg-gray-100 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4">
+                    <svg className="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2z" />
+                    </svg>
+                </div>
+                <h2 className="text-xl font-bold text-gray-900 mb-2">No bikes selected</h2>
+                <p className="text-gray-600 mb-6">Select up to 4 bikes to compare their specs and scores.</p>
+                <Link
+                    href="/"
+                    className="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors"
+                >
+                    Browse Bikes
+                </Link>
+            </div>
+        )
+    }
+
+    // Helper to render score row
+    const ScoreRow = ({ label, metricKey, isBold = false }: { label: string, metricKey: keyof BikeMetrics, isBold?: boolean }) => (
+        <tr className="border-b border-gray-100 last:border-0 hover:bg-gray-50">
+            <td className={`py-4 px-4 text-sm text-gray-600 ${isBold ? 'font-bold' : ''}`}>{label}</td>
+            {bikes.map(bike => {
+                // @ts-ignore
+                const metric = bike.metrics[metricKey]
+                // Handle nested score object or direct value if any
+                const score = typeof metric === 'object' && metric?.score ? metric.score : metric
+                const desc = typeof metric === 'object' && metric?.description ? metric.description : ''
+
+                return (
+                    <td key={bike.id} className="py-4 px-4 text-center">
+                        {typeof score === 'number' ? (
+                            <div className="flex flex-col items-center">
+                                <span className={`text-lg font-bold ${score >= 8.5 ? 'text-green-600' :
+                                        score >= 7 ? 'text-blue-600' :
+                                            score >= 5.5 ? 'text-yellow-600' : 'text-red-600'
+                                    }`}>
+                                    {score.toFixed(1)}
+                                </span>
+                                <span className="text-xs text-gray-500 mt-1">{desc}</span>
+                            </div>
+                        ) : '-'}
+                    </td>
+                )
+            })}
+        </tr>
+    )
+
+    // Helper to render spec row
+    const SpecRow = ({ label, field }: { label: string, field: keyof Bike }) => (
+        <tr className="border-b border-gray-100 last:border-0 hover:bg-gray-50">
+            <td className="py-4 px-4 text-sm text-gray-600 font-medium">{label}</td>
+            {bikes.map(bike => (
+                <td key={bike.id} className="py-4 px-4 text-center text-sm text-gray-800">
+                    {/* @ts-ignore */}
+                    {bike[field] ? String(bike[field]) : '-'}
+                </td>
+            ))}
+        </tr>
+    )
+
+    return (
+        <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+            {/* Header Controls */}
+            <div className="p-4 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
+                <h2 className="font-semibold text-gray-700">Comparing {bikes.length} Bikes</h2>
+                <button
+                    onClick={clearCompare}
+                    className="text-sm text-red-600 hover:text-red-700 font-medium"
+                >
+                    Clear All
+                </button>
+            </div>
+
+            <div className="overflow-x-auto">
+                <table className="w-full min-w-[800px]">
+                    <thead>
+                        <tr className="border-b border-gray-200 bg-white">
+                            <th className="w-48 py-4 px-4 text-left text-sm font-semibold text-gray-500">Model</th>
+                            {bikes.map(bike => (
+                                <th key={bike.id} className="w-64 py-6 px-4 align-top">
+                                    <div className="relative group">
+                                        <button
+                                            onClick={() => removeFromCompare(bike.id)}
+                                            className="absolute -top-2 -right-2 bg-gray-200 hover:bg-red-100 hover:text-red-600 text-gray-500 rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                                            title="Remove"
+                                        >
+                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                            </svg>
+                                        </button>
+
+                                        <div className="aspect-video relative rounded-lg overflow-hidden mb-4 bg-gray-100">
+                                            {bike.images?.[0] ? (
+                                                <Image
+                                                    src={bike.images[0]}
+                                                    alt={bike.model}
+                                                    fill
+                                                    className="object-cover"
+                                                />
+                                            ) : (
+                                                <div className="w-full h-full flex items-center justify-center text-gray-400">
+                                                    No Image
+                                                </div>
+                                            )}
+                                        </div>
+                                        <Link
+                                            href={generateBikeUrl(bike)}
+                                            className="block text-lg font-bold text-gray-900 hover:text-blue-600 mb-1"
+                                        >
+                                            {bike.model}
+                                        </Link>
+                                        <p className="text-gray-600 font-medium mb-2">{bike.brand}</p>
+                                        <p className="text-xl font-bold text-blue-600">
+                                            {formatPrice(bike.price)}
+                                        </p>
+                                    </div>
+                                </th>
+                            ))}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {/* Scores Section */}
+                        <tr className="bg-gray-50">
+                            <td colSpan={bikes.length + 1} className="py-2 px-4 text-xs font-bold text-gray-500 uppercase tracking-wider">
+                                Scores
+                            </td>
+                        </tr>
+                        <tr className="border-b border-gray-100 hover:bg-gray-50 bg-blue-50/30">
+                            <td className="py-4 px-4 text-sm font-bold text-gray-800">Overall Score</td>
+                            {bikes.map(bike => (
+                                <td key={bike.id} className="py-4 px-4 text-center">
+                                    <div className="flex flex-col items-center">
+                                        <span className="text-2xl font-bold text-gray-900">{bike.metrics.overallScore.toFixed(1)}</span>
+                                    </div>
+                                </td>
+                            ))}
+                        </tr>
+                        <ScoreRow label="Performance" metricKey="performance" />
+                        <ScoreRow label="Value" metricKey="value" />
+                        <ScoreRow label="Fit" metricKey="fit" />
+                        <ScoreRow label="Speed" metricKey="speed" />
+                        <ScoreRow label="Climbing" metricKey="climingEfficiency" />
+                        <ScoreRow label="Comfort" metricKey="rideComfort" />
+
+                        {/* Specs Section */}
+                        <tr className="bg-gray-50">
+                            <td colSpan={bikes.length + 1} className="py-2 px-4 text-xs font-bold text-gray-500 uppercase tracking-wider">
+                                Key Specs
+                            </td>
+                        </tr>
+                        <SpecRow label="Year" field="year" />
+                        <SpecRow label="Frame Material" field="frame" />
+                        <SpecRow label="Groupset" field="groupset" />
+                        <SpecRow label="Weight" field="weight" />
+                        <SpecRow label="Wheels" field="wheels" />
+
+                        {/* Drivetrain Section */}
+                        <tr className="bg-gray-50">
+                            <td colSpan={bikes.length + 1} className="py-2 px-4 text-xs font-bold text-gray-500 uppercase tracking-wider">
+                                Drivetrain
+                            </td>
+                        </tr>
+                        <SpecRow label="Crank" field="crank" />
+                        <SpecRow label="Cassette" field="cassette" />
+                        <SpecRow label="Rear Derailleur" field="rear_derailleur" />
+
+                        {/* Components Section */}
+                        <tr className="bg-gray-50">
+                            <td colSpan={bikes.length + 1} className="py-2 px-4 text-xs font-bold text-gray-500 uppercase tracking-wider">
+                                Components
+                            </td>
+                        </tr>
+                        <SpecRow label="Brakes" field="brakes" />
+                        <SpecRow label="Handlebar" field="handlebar" />
+                        <SpecRow label="Saddle" field="saddle" />
+                        <SpecRow label="Tires" field="tires" />
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    )
+}

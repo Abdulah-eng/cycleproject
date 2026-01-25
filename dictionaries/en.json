@@ -1,0 +1,53 @@
+{
+    "nav": {
+        "home": "Home",
+        "compare": "Compare",
+        "admin": "Admin",
+        "search_placeholder": "Search bikes...",
+        "road": "Road",
+        "mountain": "Mountain",
+        "ebike": "E-Bike"
+    },
+    "common": {
+        "add_to_compare": "Add to Compare",
+        "remove_from_compare": "Remove from Compare",
+        "added": "Added",
+        "loading": "Loading...",
+        "back_to_home": "Back to Home",
+        "specifications": "Specifications",
+        "geometry": "Geometry",
+        "measurement": "Measurement",
+        "read_more": "Read More"
+    },
+    "scores": {
+        "summary_title": "Score Summary",
+        "overall": "Overall Score",
+        "performance": "Performance",
+        "value": "Value",
+        "fit": "Fit",
+        "general": "General",
+        "battery": "Battery",
+        "speed": "Speed",
+        "climbing": "Climbing Efficiency",
+        "aerodynamics": "Aerodynamics",
+        "riding_position": "Riding Position",
+        "handling": "Handling",
+        "fit_flexibility": "Fit Flexibility",
+        "ride_comfort": "Ride Comfort",
+        "build_quality": "Build Quality",
+        "value_for_money": "Value for Money",
+        "surface_range": "Surface Range"
+    },
+    "compare_page": {
+        "title": "Compare Bikes",
+        "subtitle": "Compare up to 4 bikes side-by-side to find your perfect ride.",
+        "clear_all": "Clear All",
+        "no_bikes": "No bikes selected",
+        "browse_bikes": "Browse Bikes"
+    },
+    "recommendations": {
+        "same_brand": "Other bikes from {brand}",
+        "year_models": "{year} Models",
+        "better_value": "More Value for Money Options"
+    }
+}

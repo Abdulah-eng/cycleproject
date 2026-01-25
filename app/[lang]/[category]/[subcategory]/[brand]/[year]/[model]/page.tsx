@@ -1,11 +1,14 @@
 import { Metadata } from 'next'
-import { notFound, redirect } from 'next/navigation'
+import { notFound } from 'next/navigation'
 import { supabaseServer, Bike } from '@/lib/supabase'
 import { calculateBikeMetrics, parseGeometryData, generateUrlSlug, formatCategoryForUrl } from '@/lib/utils'
 import ScoreCard from '@/components/ScoreCard'
 import ScoreSection from '@/components/ScoreSection'
 import SpecsTable from '@/components/SpecsTable'
 import ImageGallery from '@/components/ImageGallery'
+import AddToCompareButton from '@/components/AddToCompareButton'
+import BikeCarousel from '@/components/BikeCarousel'
+import { getSameBrandBikes, getBikesByYear, getBetterValueBikes } from '@/lib/recommendations'
 
 // Enable ISR with 1 hour revalidation
 export const revalidate = 3600
@@ -25,7 +28,7 @@ export async function generateStaticParams() {
   const { data: bikes } = await supabaseServer
     .from('bikes')
     .select('category, sub_category, brand, year, model')
-    .limit(1000) // Generate first 1000 pages at build time
+    .limit(10) // Generate first 10 pages at build time
 
   if (!bikes) return []
 
@@ -123,6 +126,35 @@ export default async function BikePage({ params }: PageProps) {
   const metrics = calculateBikeMetrics(bike)
   const geometryData = parseGeometryData(bike.geometry_data)
 
+  const comparisonBike = {
+    id: bike.id,
+    brand: bike.brand,
+    model: bike.model,
+    year: bike.year,
+    image: bike.images?.[0] || null,
+    category: bike.category,
+    sub_category: bike.sub_category,
+    price: bike.price,
+    slug: bike.slug
+  }
+
+  // Fetch recommendations
+  const [
+    sameBrandBikes,
+    bikes2025,
+    bikes2024,
+    bikes2023,
+    bikes2022,
+    betterValueBikes
+  ] = await Promise.all([
+    getSameBrandBikes(bike),
+    getBikesByYear(2025, bike.category),
+    getBikesByYear(2024, bike.category),
+    getBikesByYear(2023, bike.category),
+    getBikesByYear(2022, bike.category),
+    getBetterValueBikes(bike)
+  ])
+
   return (
     <main className="min-h-screen bg-gray-50">
 
@@ -142,9 +174,13 @@ export default async function BikePage({ params }: PageProps) {
                   <p className="text-lg text-gray-500 mb-6 font-medium">{bike.sub_category}</p>
                 )}
 
-                <p className="text-gray-700 mb-8 leading-relaxed text-lg">
+                <p className="text-gray-700 mb-6 leading-relaxed text-lg">
                   {bike.bike_desc || bike.meta_desc || `A high-performance ${bike.category} bike designed for long rides, offering a balance of comfort, efficiency, and value.`}
                 </p>
+
+                <div className="mb-8">
+                  <AddToCompareButton bike={comparisonBike} variant="full" className="max-w-xs" />
+                </div>
 
                 {/* Overall Score */}
                 <div className="flex items-center gap-6">
@@ -365,6 +401,11 @@ export default async function BikePage({ params }: PageProps) {
                 </div>
               )}
 
+              {/* Add to Compare - Mobile */}
+              <div className="mb-6">
+                <AddToCompareButton bike={comparisonBike} variant="full" />
+              </div>
+
               {/* Overall Score - Mobile */}
               <div className="flex items-center gap-3 mb-6">
                 <span className="text-6xl font-bold text-gray-900">
@@ -583,6 +624,23 @@ export default async function BikePage({ params }: PageProps) {
             </div>
           </div>
         )}
+        {/* Recommendations Carousels */}
+        <div className="mt-12 space-y-8">
+          <BikeCarousel
+            title={`Other bikes from ${bike.brand}`}
+            bikes={sameBrandBikes}
+          />
+
+          <BikeCarousel title="2025 Models" bikes={bikes2025} />
+          <BikeCarousel title="2024 Models" bikes={bikes2024} />
+          <BikeCarousel title="2023 Models" bikes={bikes2023} />
+          <BikeCarousel title="2022 Models" bikes={bikes2022} />
+
+          <BikeCarousel
+            title="More Value for Money Options"
+            bikes={betterValueBikes}
+          />
+        </div>
       </div>
     </main>
   )
