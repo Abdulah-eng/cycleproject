@@ -251,18 +251,11 @@ export function parseGeometryData(geometryData: string | null): Record<string, s
  * For value/VFM scores, high scores (>= 7) are shown in green instead of blue
  */
 export function getRatingColor(score: number, metricType?: 'value' | 'performance' | 'fit' | 'general' | 'default'): string {
-  // For value scores, use green for scores >= 7 (instead of blue)
-  if (metricType === 'value') {
-    if (score >= 7) return '#10b981' // green
-    if (score >= 5.5) return '#f59e0b' // orange
-    return '#ef4444' // red
-  }
+  // High value scores should be green and not blue
+  if (score >= 7) return '#10b981' // green (Success/High)
 
-  // Default color scheme for all other metrics
-  if (score >= 8.5) return '#10b981' // green
-  if (score >= 7) return '#3b82f6' // blue
-  if (score >= 5.5) return '#f59e0b' // orange
-  return '#ef4444' // red
+  if (score >= 5.5) return '#f59e0b' // orange (Warning/Medium)
+  return '#ef4444' // red (Danger/Low)
 }
 
 /**

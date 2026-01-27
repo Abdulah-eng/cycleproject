@@ -8,6 +8,15 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      keyframes: {
+        'subtle-zoom': {
+          '0%': { transform: 'scale(1)' },
+          '100%': { transform: 'scale(1.1)' },
+        }
+      },
+      animation: {
+        'subtle-zoom': 'subtle-zoom 20s infinite alternate ease-in-out',
+      },
       colors: {
         primary: {
           DEFAULT: '#1a1a1a',

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useRouter, useParams } from 'next/navigation'
 import Image from 'next/image'
 import { useComparison } from '@/context/ComparisonContext'
 
@@ -34,6 +34,8 @@ export default function Header() {
   const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false)
   const searchRef = useRef<HTMLDivElement>(null)
   const router = useRouter()
+  const params = useParams()
+  const lang = params?.lang || 'en'
   const { selectedBikes } = useComparison()
 
   // Fetch categories on mount
@@ -92,7 +94,7 @@ export default function Header() {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
     if (searchQuery.trim()) {
-      router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`)
+      router.push(`/${lang}/search?q=${encodeURIComponent(searchQuery.trim())}`)
       setSearchQuery('')
       setIsSearchOpen(false)
       setShowSuggestions(false)

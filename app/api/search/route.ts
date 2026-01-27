@@ -11,14 +11,24 @@ export async function GET(request: NextRequest) {
 
   try {
     const searchTerm = query.trim()
+    const terms = searchTerm.split(/\s+/).filter(t => t.length > 0)
 
-    // Search across brand, model, title, and sub_category fields with more results
-    const { data: bikes, error, count } = await supabaseServer
+    let queryBuilder = supabaseServer
       .from('bikes')
       .select('*', { count: 'exact' })
-      .or(`brand.ilike.%${searchTerm}%,model.ilike.%${searchTerm}%,title.ilike.%${searchTerm}%,sub_category.ilike.%${searchTerm}%`)
+
+    // Build a complex filter: all terms must match at least one field
+    // Since Supabase .or() is a bit limited for complex "AND(OR, OR)" structures via the standard SDK,
+    // we use a RAW filter or multiple filter chains if possible.
+    // For simplicity and effectiveness, we'll use a single .or() with all fields for each term.
+
+    terms.forEach(term => {
+      queryBuilder = queryBuilder.or(`brand.ilike.%${term}%,model.ilike.%${term}%,title.ilike.%${term}%,sub_category.ilike.%${term}%`)
+    })
+
+    const { data: bikes, error, count } = await queryBuilder
       .order('year', { ascending: false })
-      .limit(50) // Return more results for search page
+      .limit(50)
 
     if (error) {
       console.error('Search error:', error)

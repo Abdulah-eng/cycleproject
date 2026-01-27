@@ -99,8 +99,8 @@ export default function ComparisonTable() {
                         {typeof score === 'number' ? (
                             <div className="flex flex-col items-center">
                                 <span className={`text-lg font-bold ${score >= 8.5 ? 'text-green-600' :
-                                        score >= 7 ? 'text-blue-600' :
-                                            score >= 5.5 ? 'text-yellow-600' : 'text-red-600'
+                                    score >= 7 ? 'text-blue-600' :
+                                        score >= 5.5 ? 'text-yellow-600' : 'text-red-600'
                                     }`}>
                                     {score.toFixed(1)}
                                 </span>
@@ -149,7 +149,7 @@ export default function ComparisonTable() {
                                     <div className="relative group">
                                         <button
                                             onClick={() => removeFromCompare(bike.id)}
-                                            className="absolute -top-2 -right-2 bg-gray-200 hover:bg-red-100 hover:text-red-600 text-gray-500 rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                                            className="absolute -top-3 -right-3 bg-white hover:bg-red-50 hover:text-red-600 text-gray-400 rounded-full p-2 shadow-md border border-gray-100 z-30 transition-all opacity-90 group-hover:opacity-100"
                                             title="Remove"
                                         >
                                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

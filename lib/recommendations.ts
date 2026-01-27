@@ -13,12 +13,18 @@ export async function getSameBrandBikes(currentBike: Bike, limit = 10): Promise<
     return data || []
 }
 
-export async function getBikesByYear(year: number, category: string, limit = 10): Promise<Bike[]> {
-    const { data } = await supabaseServer
+export async function getBikesByYear(year: number, category: string, subCategory?: string | null, limit = 10): Promise<Bike[]> {
+    let query = supabaseServer
         .from('bikes')
         .select('*')
         .eq('year', year)
-        .ilike('category', `%${category}%`) // Use ilike for partial match or safety
+        .ilike('category', `%${category}%`)
+
+    if (subCategory) {
+        query = query.ilike('sub_category', `%${subCategory}%`)
+    }
+
+    const { data } = await query
         .limit(limit)
         .order('vfm_score_1_to_10', { ascending: false }) // Show best value bikes first for that year
 
