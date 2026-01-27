@@ -12,9 +12,10 @@ interface ScoreCardProps {
   explanation?: string | null
   isExpanded?: boolean
   onToggle?: () => void
+  metricType?: 'value' | 'performance' | 'fit' | 'general' | 'default'
 }
 
-export default function ScoreCard({ label, score, maxScore, description, variant = 'default', explanation, isExpanded: externalIsExpanded, onToggle }: ScoreCardProps) {
+export default function ScoreCard({ label, score, maxScore, description, variant = 'default', explanation, isExpanded: externalIsExpanded, onToggle, metricType = 'default' }: ScoreCardProps) {
   const [internalIsExpanded, setInternalIsExpanded] = useState(false)
 
   // Use external state if provided, otherwise use internal state
@@ -27,7 +28,7 @@ export default function ScoreCard({ label, score, maxScore, description, variant
     }
   }
   const percentage = (score / maxScore) * 100
-  const color = getRatingColor(score)
+  const color = getRatingColor(score, metricType)
 
   if (variant === 'primary') {
     return (

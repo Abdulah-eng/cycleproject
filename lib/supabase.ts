@@ -164,7 +164,28 @@ export interface Bike {
   bike_desc: string | null
   created_at: string
   updated_at: string
-  // Score explanations
+  // Pre-calculated scores from CSV
+  overall_score: number | null
+  performance_score: number | null
+  value_score: number | null
+  fit_score: number | null
+  general_score: number | null
+  // SEO
+  title_seo: string | null
+  // Score explanations (reason columns from CSV)
+  fit_reason: string | null
+  vfm_reason: string | null
+  build_reason: string | null
+  aero_reason: string | null
+  climb_reason: string | null
+  suspension_reason: string | null
+  posture_reason: string | null
+  responsiveness_reason: string | null
+  comfort_reason: string | null
+  surface_reason: string | null
+  speed_reason: string | null
+  battery_reason: string | null
+  // Legacy explanation columns (may be deprecated)
   overall_score_explanation: string | null
   performance_score_explanation: string | null
   value_score_explanation: string | null
@@ -179,8 +200,6 @@ export interface Bike {
   build_quality_explanation: string | null
   value_for_money_explanation: string | null
   surface_range_explanation: string | null
-  speed_reason: string | null
-  battery_reason: string | null
 }
 
 export interface BikeScore {

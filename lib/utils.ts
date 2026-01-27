@@ -17,26 +17,27 @@ export function generateSlug(brand: string, model: string, year?: number | null)
  * Calculate bike metrics from raw data
  */
 export function calculateBikeMetrics(bike: Bike): BikeMetrics {
-  // Performance Score (average of climbing and aerodynamics)
+  // Use pre-calculated scores from CSV if available, otherwise calculate
+  // Performance Score (use column if available, else calculate from climbing and aerodynamics)
   const climbScore = bike.climb_1_10 || 5
   const aeroScore = bike.aero_1_10 || 5
-  const performanceScore = Math.round(((climbScore + aeroScore) / 2) * 10) / 10
+  const performanceScore = bike.performance_score ?? Math.round(((climbScore + aeroScore) / 2) * 10) / 10
 
-  // Value Score
-  const valueScore = bike.vfm_score_1_to_10 || 5
+  // Value Score (use column if available, else use vfm_score_1_to_10)
+  const valueScore = bike.value_score ?? bike.vfm_score_1_to_10 ?? 5
 
-  // Fit Score (average of fit flexibility and posture)
+  // Fit Score (use column if available, else calculate from fit flexibility and posture)
   const fitFlexScore = bike.fit_flexibility_1_10 || 5
   const postureScore = bike.posture_1_10 || 5
-  const fitScore = Math.round(((fitFlexScore + postureScore) / 2) * 10) / 10
+  const fitScore = bike.fit_score ?? Math.round(((fitFlexScore + postureScore) / 2) * 10) / 10
 
-  // General Score (average of build quality and ride comfort)
+  // General Score (use column if available, else calculate from build quality and ride comfort)
   const buildScore = bike.build_1_10 || 5
   const comfortScore = bike.ride_comfort_1_10 || 5
-  const generalScore = Math.round(((buildScore + comfortScore) / 2) * 10) / 10
+  const generalScore = bike.general_score ?? Math.round(((buildScore + comfortScore) / 2) * 10) / 10
 
-  // Overall Score
-  const overallScore = Math.round(((performanceScore + valueScore + fitScore + generalScore) / 4) * 10) / 10
+  // Overall Score (use column if available, else calculate average)
+  const overallScore = bike.overall_score ?? Math.round(((performanceScore + valueScore + fitScore + generalScore) / 4) * 10) / 10
 
   // Get descriptive labels
   const getPerformanceLabel = (score: number): string => {
@@ -112,9 +113,9 @@ export function calculateBikeMetrics(bike: Bike): BikeMetrics {
     return 'Limited Range'
   }
 
-  const isEBike = bike.category?.toLowerCase().includes('e-bike') ||
-                  bike.category?.toLowerCase().includes('e-road') ||
-                  bike.category?.toLowerCase().includes('e-mountain')
+  // Battery should only show for E-bikeRoad and E-bikeMountain categories
+  const categoryLower = bike.category?.toLowerCase() || ''
+  const isEBikeWithBattery = categoryLower === 'e-bikeroad' || categoryLower === 'e-bikemountain'
 
   return {
     overallScore,
@@ -202,7 +203,7 @@ export function calculateBikeMetrics(bike: Bike): BikeMetrics {
       maxScore: 10,
       description: bike.surface_range || 'All-Road Capable',
     },
-    battery: isEBike ? {
+    battery: isEBikeWithBattery ? {
       label: 'Battery',
       score: 7, // Default, can be calculated based on battery fields
       maxScore: 10,
@@ -247,8 +248,17 @@ export function parseGeometryData(geometryData: string | null): Record<string, s
 
 /**
  * Get rating color based on score
+ * For value/VFM scores, high scores (>= 7) are shown in green instead of blue
  */
-export function getRatingColor(score: number): string {
+export function getRatingColor(score: number, metricType?: 'value' | 'performance' | 'fit' | 'general' | 'default'): string {
+  // For value scores, use green for scores >= 7 (instead of blue)
+  if (metricType === 'value') {
+    if (score >= 7) return '#10b981' // green
+    if (score >= 5.5) return '#f59e0b' // orange
+    return '#ef4444' // red
+  }
+
+  // Default color scheme for all other metrics
   if (score >= 8.5) return '#10b981' // green
   if (score >= 7) return '#3b82f6' // blue
   if (score >= 5.5) return '#f59e0b' // orange

@@ -4,6 +4,7 @@ import { supabaseServer, Bike } from '@/lib/supabase'
 import { calculateBikeMetrics, parseGeometryData, generateUrlSlug, formatCategoryForUrl } from '@/lib/utils'
 import ScoreCard from '@/components/ScoreCard'
 import ScoreSection from '@/components/ScoreSection'
+import ScoreSectionWithToggle from '@/components/ScoreSectionWithToggle'
 import SpecsTable from '@/components/SpecsTable'
 import ImageGallery from '@/components/ImageGallery'
 import AddToCompareButton from '@/components/AddToCompareButton'
@@ -59,8 +60,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     }
   }
 
-  const title = bike.title || `${bike.brand} ${bike.model} ${bike.year || ''}`
-  const description = bike.bike_desc || bike.meta_desc || `Discover the ${bike.brand} ${bike.model}, a ${bike.category} bike with premium features and performance.`
+  // Use title_seo for the title tag (SEO), fallback to regular title
+  const title = bike.title_seo || bike.title || `${bike.brand} ${bike.model} ${bike.year || ''}`
+  // Use meta_desc for the meta description tag (SEO)
+  const description = bike.meta_desc || bike.bike_desc || `Discover the ${bike.brand} ${bike.model}, a ${bike.category} bike with premium features and performance.`
   const images = bike.images && bike.images.length > 0 ? [bike.images[0]] : []
 
   return {
@@ -82,38 +85,76 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 async function getBikeFromParams(params: PageProps['params']): Promise<Bike | null> {
-  // Decode URL parameters
-  const brand = decodeURIComponent(params.brand).replace(/-/g, ' ')
-  const model = decodeURIComponent(params.model).replace(/-/g, ' ')
+  // Decode URL parameters - replace hyphens with spaces for matching
+  const brand = decodeURIComponent(params.brand).replace(/-/g, ' ').trim()
+  const model = decodeURIComponent(params.model).replace(/-/g, ' ').trim()
   const year = params.year !== 'unknown' ? parseInt(params.year) : null
 
-  // Try to find bike by brand, model, and year
-  const { data, error } = await supabaseServer
-    .from('bikes')
-    .select('*')
-    .ilike('brand', brand)
-    .ilike('model', model)
-    .eq('year', year)
-    .single()
-
-  if (error || !data) {
-    // If not found, try without year
-    const { data: dataWithoutYear, error: errorWithoutYear } = await supabaseServer
+  try {
+    // Try to find bike by brand, model, and year using flexible matching
+    let query = supabaseServer
       .from('bikes')
       .select('*')
       .ilike('brand', brand)
       .ilike('model', model)
-      .limit(1)
-      .single()
 
-    if (errorWithoutYear || !dataWithoutYear) {
-      return null
+    if (year) {
+      query = query.eq('year', year)
     }
 
-    return dataWithoutYear as Bike
-  }
+    const { data, error } = await query.maybeSingle()
 
-  return data as Bike
+    if (data) {
+      return data as Bike
+    }
+
+    // If not found with exact match, try with partial model name matching
+    // Sometimes URLs might be shortened or formatted differently
+    const modelWords = model.split(' ').filter(w => w.length > 2)
+
+    if (modelWords.length > 0) {
+      let partialQuery = supabaseServer
+        .from('bikes')
+        .select('*')
+        .ilike('brand', brand)
+
+      // Build a query that matches if model contains key words
+      const modelPattern = modelWords.join('%')
+      partialQuery = partialQuery.ilike('model', `%${modelPattern}%`)
+
+      if (year) {
+        partialQuery = partialQuery.eq('year', year)
+      }
+
+      const { data: partialData, error: partialError } = await partialQuery
+        .limit(1)
+        .maybeSingle()
+
+      if (partialData) {
+        return partialData as Bike
+      }
+    }
+
+    // Last resort: try without year if we had year specified
+    if (year) {
+      const { data: dataWithoutYear } = await supabaseServer
+        .from('bikes')
+        .select('*')
+        .ilike('brand', brand)
+        .ilike('model', model)
+        .limit(1)
+        .maybeSingle()
+
+      if (dataWithoutYear) {
+        return dataWithoutYear as Bike
+      }
+    }
+
+    return null
+  } catch (error) {
+    console.error('Error fetching bike:', error)
+    return null
+  }
 }
 
 export default async function BikePage({ params }: PageProps) {
@@ -155,8 +196,41 @@ export default async function BikePage({ params }: PageProps) {
     getBetterValueBikes(bike)
   ])
 
+  // Prepare Product structured data for SEO
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://cycleproject.vercel.app'
+  const bikeUrl = `${baseUrl}/en/${params.category}/${params.subcategory}/${params.brand}/${params.year}/${params.model}`
+
+  const productStructuredData = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    '@id': `${bikeUrl}#product`,
+    name: `${bike.brand} ${bike.model}`,
+    brand: {
+      '@type': 'Brand',
+      name: bike.brand
+    },
+    description: bike.bike_desc || bike.meta_desc || `${bike.brand} ${bike.model} - ${bike.category} bike`,
+    ...(bike.images && bike.images.length > 0 && {
+      image: bike.images
+    }),
+    ...(bike.price && {
+      offers: {
+        '@type': 'AggregateOffer',
+        priceCurrency: 'EUR',
+        lowPrice: bike.price.toString(),
+        highPrice: (bike.price * 1.15).toFixed(0), // Estimate 15% price range
+        offerCount: 3
+      }
+    })
+  }
+
   return (
     <main className="min-h-screen bg-gray-50">
+      {/* Product Structured Data for SEO */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productStructuredData) }}
+      />
 
       <div className="container mx-auto px-4 py-8 max-w-7xl">
         {/* Desktop Layout */}
@@ -226,6 +300,7 @@ export default async function BikePage({ params }: PageProps) {
                   maxScore={metrics.performance.maxScore}
                   description={metrics.performance.description}
                   variant="primary"
+                  metricType="performance"
                   explanation={bike.performance_score_explanation}
                 />
                 <ScoreCard
@@ -233,20 +308,23 @@ export default async function BikePage({ params }: PageProps) {
                   score={metrics.value.score}
                   maxScore={metrics.value.maxScore}
                   description={metrics.value.description}
-                  explanation={bike.value_score_explanation}
+                  metricType="value"
+                  explanation={bike.vfm_reason || bike.value_score_explanation}
                 />
                 <ScoreCard
                   label={metrics.fit.label}
                   score={metrics.fit.score}
                   maxScore={metrics.fit.maxScore}
                   description={metrics.fit.description}
-                  explanation={bike.fit_score_explanation}
+                  metricType="fit"
+                  explanation={bike.fit_reason || bike.fit_score_explanation}
                 />
                 <ScoreCard
                   label={metrics.general.label}
                   score={metrics.general.score}
                   maxScore={metrics.general.maxScore}
                   description={metrics.general.description}
+                  metricType="general"
                   explanation={bike.general_score_explanation}
                 />
               </div>
@@ -254,111 +332,102 @@ export default async function BikePage({ params }: PageProps) {
 
             {/* Performance Section */}
             <ScoreSection>
-              <div className="mb-10">
-                <h3 className="text-xl font-bold text-gray-900 mb-2">Performance</h3>
-                <p className="text-sm text-gray-600 mb-5">Built for speed and efficiency</p>
-                <div className="grid grid-cols-3 gap-4">
-                  <ScoreCard
-                    label={metrics.speed.label}
-                    score={metrics.speed.score}
-                    maxScore={10}
-                    description={metrics.speed.description}
-                    variant="inline"
-                    explanation={bike.speed_reason}
-                  />
-                  <ScoreCard
-                    label={metrics.climingEfficiency.label}
-                    score={metrics.climingEfficiency.score}
-                    maxScore={10}
-                    description={metrics.climingEfficiency.description}
-                    variant="inline"
-                    explanation={bike.climbing_efficiency_explanation}
-                  />
-                  <ScoreCard
-                    label={metrics.aerodynamics.label}
-                    score={metrics.aerodynamics.score}
-                    maxScore={10}
-                    description={metrics.aerodynamics.description}
-                    variant="inline"
-                    explanation={bike.aerodynamics_explanation}
-                  />
-                </div>
-              </div>
+              <ScoreSectionWithToggle title="Performance" subtitle="Built for speed and efficiency" gridCols="grid-cols-3">
+                <ScoreCard
+                  label={metrics.speed.label}
+                  score={metrics.speed.score}
+                  maxScore={10}
+                  description={metrics.speed.description}
+                  variant="inline"
+                  explanation={bike.speed_reason}
+                />
+                <ScoreCard
+                  label={metrics.climingEfficiency.label}
+                  score={metrics.climingEfficiency.score}
+                  maxScore={10}
+                  description={metrics.climingEfficiency.description}
+                  variant="inline"
+                  explanation={bike.climb_reason || bike.climbing_efficiency_explanation}
+                />
+                <ScoreCard
+                  label={metrics.aerodynamics.label}
+                  score={metrics.aerodynamics.score}
+                  maxScore={10}
+                  description={metrics.aerodynamics.description}
+                  variant="inline"
+                  explanation={bike.aero_reason || bike.aerodynamics_explanation}
+                />
+              </ScoreSectionWithToggle>
             </ScoreSection>
 
             {/* Fit Score Section */}
             <ScoreSection>
-              <div className="mb-10">
-                <h3 className="text-xl font-bold text-gray-900 mb-2">Fit Score</h3>
-                <p className="text-sm text-gray-600 mb-5">Dialed-in Fit & Comfort</p>
-                <div className="grid grid-cols-4 gap-4">
-                  <ScoreCard
-                    label={metrics.ridingPosition.label}
-                    score={metrics.ridingPosition.score}
-                    maxScore={10}
-                    description={metrics.ridingPosition.description}
-                    variant="inline"
-                    explanation={bike.riding_position_explanation}
-                  />
-                  <ScoreCard
-                    label={metrics.handling.label}
-                    score={metrics.handling.score}
-                    maxScore={10}
-                    description={metrics.handling.description}
-                    variant="inline"
-                    explanation={bike.handling_explanation}
-                  />
-                  <ScoreCard
-                    label={metrics.fitFlexibility.label}
-                    score={metrics.fitFlexibility.score}
-                    maxScore={10}
-                    description={metrics.fitFlexibility.description}
-                    variant="inline"
-                    explanation={bike.fit_flexibility_explanation}
-                  />
-                  <ScoreCard
-                    label={metrics.rideComfort.label}
-                    score={metrics.rideComfort.score}
-                    maxScore={10}
-                    description={metrics.rideComfort.description}
-                    variant="inline"
-                    explanation={bike.ride_comfort_explanation}
-                  />
-                </div>
-              </div>
+              <ScoreSectionWithToggle title="Fit Score" subtitle="Dialed-in Fit & Comfort" gridCols="grid-cols-4">
+                <ScoreCard
+                  label={metrics.ridingPosition.label}
+                  score={metrics.ridingPosition.score}
+                  maxScore={10}
+                  description={metrics.ridingPosition.description}
+                  variant="inline"
+                  explanation={bike.posture_reason || bike.riding_position_explanation}
+                />
+                <ScoreCard
+                  label={metrics.handling.label}
+                  score={metrics.handling.score}
+                  maxScore={10}
+                  description={metrics.handling.description}
+                  variant="inline"
+                  explanation={bike.responsiveness_reason || bike.handling_explanation}
+                />
+                <ScoreCard
+                  label={metrics.fitFlexibility.label}
+                  score={metrics.fitFlexibility.score}
+                  maxScore={10}
+                  description={metrics.fitFlexibility.description}
+                  variant="inline"
+                  explanation={bike.fit_reason || bike.fit_flexibility_explanation}
+                />
+                <ScoreCard
+                  label={metrics.rideComfort.label}
+                  score={metrics.rideComfort.score}
+                  maxScore={10}
+                  description={metrics.rideComfort.description}
+                  variant="inline"
+                  explanation={bike.comfort_reason || bike.ride_comfort_explanation}
+                />
+              </ScoreSectionWithToggle>
             </ScoreSection>
 
             {/* Value Section */}
             <ScoreSection>
-              <div className="mb-10">
-                <h3 className="text-xl font-bold text-gray-900 mb-5">Value</h3>
-                <div className="grid grid-cols-3 gap-4">
-                  <ScoreCard
-                    label={metrics.buildQuality.label}
-                    score={metrics.buildQuality.score}
-                    maxScore={10}
-                    description={metrics.buildQuality.description}
-                    variant="inline"
-                    explanation={bike.build_quality_explanation}
-                  />
-                  <ScoreCard
-                    label={metrics.valueForMoney.label}
-                    score={metrics.valueForMoney.score}
-                    maxScore={10}
-                    description={metrics.valueForMoney.description}
-                    variant="inline"
-                    explanation={bike.value_for_money_explanation}
-                  />
-                  <ScoreCard
-                    label={metrics.surfaceRange.label}
-                    score={metrics.surfaceRange.score}
-                    maxScore={10}
-                    description={metrics.surfaceRange.description}
-                    variant="inline"
-                    explanation={bike.surface_range_explanation}
-                  />
-                </div>
-              </div>
+              <ScoreSectionWithToggle title="Value" gridCols="grid-cols-3">
+                <ScoreCard
+                  label={metrics.buildQuality.label}
+                  score={metrics.buildQuality.score}
+                  maxScore={10}
+                  description={metrics.buildQuality.description}
+                  variant="inline"
+                  metricType="value"
+                  explanation={bike.build_reason || bike.build_quality_explanation}
+                />
+                <ScoreCard
+                  label={metrics.valueForMoney.label}
+                  score={metrics.valueForMoney.score}
+                  maxScore={10}
+                  description={metrics.valueForMoney.description}
+                  variant="inline"
+                  metricType="value"
+                  explanation={bike.vfm_reason || bike.value_for_money_explanation}
+                />
+                <ScoreCard
+                  label={metrics.surfaceRange.label}
+                  score={metrics.surfaceRange.score}
+                  maxScore={10}
+                  description={metrics.surfaceRange.description}
+                  variant="inline"
+                  explanation={bike.surface_reason || bike.surface_range_explanation}
+                />
+              </ScoreSectionWithToggle>
             </ScoreSection>
 
             {/* Battery Section - Only for E-bikes */}

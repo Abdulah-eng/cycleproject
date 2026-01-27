@@ -14,16 +14,12 @@ export default function SearchPage({ params }: { params: { lang: string } }) {
     useEffect(() => {
         if (query) {
             setLoading(true)
-            fetch(`/api/search-suggestions?q=${encodeURIComponent(query)}`)
-                // Using search-suggestions API or search API?
-                // Step 204 Header uses `/api/search-suggestions`.
-                // I assume detailed search needs `/api/search`? 
-                // I'll check api folder later. I'll use /api/search assuming it exists.
+            fetch(`/api/search?q=${encodeURIComponent(query)}`)
                 .then(res => {
                     if (res.ok) return res.json()
                     return { bikes: [] }
                 })
-                .then(data => setResults(data.bikes || data.suggestions || [])) // Handle mismatch
+                .then(data => setResults(data.bikes || []))
                 .finally(() => setLoading(false))
         }
     }, [query])
