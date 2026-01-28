@@ -17,14 +17,15 @@ export async function GET(request: NextRequest) {
       .from('bikes')
       .select('*', { count: 'exact' })
 
-    // Build a complex filter: all terms must match at least one field
-    // Since Supabase .or() is a bit limited for complex "AND(OR, OR)" structures via the standard SDK,
-    // we use a RAW filter or multiple filter chains if possible.
-    // For simplicity and effectiveness, we'll use a single .or() with all fields for each term.
+    // Build OR filter: match if ANY term appears in ANY field
+    // This creates a more permissive search that returns results if any word matches
+    const orConditions = terms.map(term =>
+      `brand.ilike.%${term}%,model.ilike.%${term}%,title.ilike.%${term}%,sub_category.ilike.%${term}%,category.ilike.%${term}%`
+    ).join(',')
 
-    terms.forEach(term => {
-      queryBuilder = queryBuilder.or(`brand.ilike.%${term}%,model.ilike.%${term}%,title.ilike.%${term}%,sub_category.ilike.%${term}%`)
-    })
+    if (orConditions) {
+      queryBuilder = queryBuilder.or(orConditions)
+    }
 
     const { data: bikes, error, count } = await queryBuilder
       .order('year', { ascending: false })

@@ -61,16 +61,7 @@ export default function ScoreCard({ label, score, maxScore, description, variant
         <span className="text-xs text-gray-600">{description}</span>
 
         {explanation && (
-          <div
-            className="mt-4 pt-4 border-t border-gray-200 transition-all duration-300 overflow-hidden"
-            style={{
-              maxHeight: isExpanded ? '1000px' : '0',
-              opacity: isExpanded ? 1 : 0,
-              marginTop: isExpanded ? '1rem' : '0',
-              paddingTop: isExpanded ? '1rem' : '0',
-              borderTopWidth: isExpanded ? '1px' : '0'
-            }}
-          >
+          <div className={`mt-4 pt-4 border-t border-gray-200 transition-all duration-300 ${isExpanded ? '' : 'hidden'}`}>
             <p className="text-sm text-gray-700 leading-relaxed">{explanation}</p>
           </div>
         )}
@@ -109,16 +100,7 @@ export default function ScoreCard({ label, score, maxScore, description, variant
         <span className="text-xs text-gray-600">{description}</span>
 
         {explanation && (
-          <div
-            className="mt-4 pt-4 border-t border-gray-200 transition-all duration-300 overflow-hidden"
-            style={{
-              maxHeight: isExpanded ? '1000px' : '0',
-              opacity: isExpanded ? 1 : 0,
-              marginTop: isExpanded ? '1rem' : '0',
-              paddingTop: isExpanded ? '1rem' : '0',
-              borderTopWidth: isExpanded ? '1px' : '0'
-            }}
-          >
+          <div className={`mt-4 pt-4 border-t border-gray-200 transition-all duration-300 ${isExpanded ? '' : 'hidden'}`}>
             <p className="text-sm text-gray-700 leading-relaxed">{explanation}</p>
           </div>
         )}
@@ -156,16 +138,7 @@ export default function ScoreCard({ label, score, maxScore, description, variant
       <span className="text-xs text-gray-600">{description}</span>
 
       {explanation && (
-        <div
-          className="mt-4 pt-4 border-t border-gray-200 transition-all duration-300 overflow-hidden"
-          style={{
-            maxHeight: isExpanded ? '1000px' : '0',
-            opacity: isExpanded ? 1 : 0,
-            marginTop: isExpanded ? '1rem' : '0',
-            paddingTop: isExpanded ? '1rem' : '0',
-            borderTopWidth: isExpanded ? '1px' : '0'
-          }}
-        >
+        <div className={`mt-4 pt-4 border-t border-gray-200 transition-all duration-300 ${isExpanded ? '' : 'hidden'}`}>
           <p className="text-sm text-gray-700 leading-relaxed">{explanation}</p>
         </div>
       )}

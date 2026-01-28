@@ -37,12 +37,18 @@ async function getBikeFromParams(params: PageProps['params']): Promise<Bike | nu
   const model = decodeURIComponent(params.model).replace(/-/g, ' ').trim()
   const year = params.year !== 'unknown' ? parseInt(params.year) : null
 
+  console.log('[Bike Lookup] Searching for:', { brand, model, year, params })
+
   try {
     let query = supabaseServer.from('bikes').select('*').ilike('brand', brand).ilike('model', model)
     if (year) query = query.eq('year', year)
     const { data } = await query.maybeSingle()
-    if (data) return data as Bike
+    if (data) {
+      console.log('[Bike Lookup] Found exact match:', data.id, data.brand, data.model)
+      return data as Bike
+    }
 
+    console.log('[Bike Lookup] No exact match, trying partial match...')
     // Partial matching fallback
     const modelWords = model.split(' ').filter(w => w.length > 2)
     if (modelWords.length > 0) {
@@ -50,16 +56,24 @@ async function getBikeFromParams(params: PageProps['params']): Promise<Bike | nu
       let partialQuery = supabaseServer.from('bikes').select('*').ilike('brand', brand).ilike('model', `%${modelPattern}%`)
       if (year) partialQuery = partialQuery.eq('year', year)
       const { data: partialData } = await partialQuery.limit(1).maybeSingle()
-      if (partialData) return partialData as Bike
+      if (partialData) {
+        console.log('[Bike Lookup] Found partial match:', partialData.id, partialData.brand, partialData.model)
+        return partialData as Bike
+      }
     }
 
+    console.log('[Bike Lookup] No partial match, trying without year...')
     if (year) {
       const { data: dataWithoutYear } = await supabaseServer.from('bikes').select('*').ilike('brand', brand).ilike('model', model).limit(1).maybeSingle()
-      if (dataWithoutYear) return dataWithoutYear as Bike
+      if (dataWithoutYear) {
+        console.log('[Bike Lookup] Found match without year:', dataWithoutYear.id, dataWithoutYear.brand, dataWithoutYear.model)
+        return dataWithoutYear as Bike
+      }
     }
+    console.log('[Bike Lookup] No bike found for params:', { brand, model, year })
     return null
   } catch (error) {
-    console.error('Error fetching bike:', error)
+    console.error('[Bike Lookup] Error fetching bike:', error)
     return null
   }
 }

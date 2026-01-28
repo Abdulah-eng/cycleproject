@@ -146,10 +146,10 @@ export default function ComparisonTable() {
                             <th className="w-48 py-4 px-4 text-left text-sm font-semibold text-gray-500">Model</th>
                             {bikes.map(bike => (
                                 <th key={bike.id} className="w-64 py-6 px-4 align-top">
-                                    <div className="relative group">
+                                    <div className="relative group isolate">
                                         <button
                                             onClick={() => removeFromCompare(bike.id)}
-                                            className="absolute -top-3 -right-3 bg-white hover:bg-red-50 hover:text-red-600 text-gray-400 rounded-full p-2 shadow-md border border-gray-100 z-30 transition-all opacity-90 group-hover:opacity-100"
+                                            className="absolute -top-3 -right-3 bg-white hover:bg-red-50 hover:text-red-600 text-gray-400 rounded-full p-2 shadow-md border border-gray-100 z-50 transition-all opacity-100"
                                             title="Remove"
                                         >
                                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
