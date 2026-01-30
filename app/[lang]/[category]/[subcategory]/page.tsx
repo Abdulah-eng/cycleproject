@@ -1,5 +1,7 @@
+import { Metadata } from 'next'
 import { supabaseServer } from '@/lib/supabase'
 import CategoryPageContent from '@/components/CategoryPageContent'
+import BikeDetailView from '@/components/BikeDetailView'
 import Link from 'next/link'
 import { generateUrlSlug, formatCategoryForUrl } from '@/lib/utils'
 
@@ -13,11 +15,48 @@ interface PageProps {
     }
 }
 
+async function getBikeBySlug(slug: string) {
+    const { data } = await supabaseServer
+        .from('bikes')
+        .select('*')
+        .eq('slug', slug)
+        .single()
+    return data
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+    // 1. Check if it's a bike
+    const bike = await getBikeBySlug(params.subcategory)
+    if (bike) {
+        return {
+            title: bike.title_seo || `${bike.brand} ${bike.model} ${bike.year || ''} - Specs & Review`,
+            description: bike.meta_desc || bike.bike_desc?.substring(0, 160) || `Full specifications and review for ${bike.brand} ${bike.model}.`,
+        }
+    }
+
+    // 2. Fallback to Subcategory/Brand metadata logic
+    const displayName = params.subcategory.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
+    const categoryName = params.category.replace(/bikes$/i, ' Bikes').replace(/([A-Z])/g, ' $1').trim()
+
+    return {
+        title: `${displayName} - ${categoryName} | BikeMax`,
+        description: `Explore our collection of ${displayName} ${categoryName}. Compare specs, prices, and reviews.`,
+    }
+}
+
 export default async function SubCategoryPage({ params }: PageProps) {
+    // 1. Try matching as a specific Bike (Product Page)
+    const bike = await getBikeBySlug(params.subcategory)
+
+    if (bike) {
+        return <BikeDetailView bike={bike} lang={params.lang} />
+    }
+
+    // 2. If not a bike, proceed with Sub-Category / Brand logic
     const slug = params.subcategory
     const categorySlug = params.category.replace(/bikes$/i, '')
 
-    // 1. Try matching as a sub_category first
+    // Try matching as a sub_category first
     const subCategoryName = slug.replace(/-/g, ' ')
     const { data: subCatBikes, count: subCatCount } = await supabaseServer
         .from('bikes')
@@ -31,7 +70,7 @@ export default async function SubCategoryPage({ params }: PageProps) {
     let type = 'subcategory'
     let displayName = subCategoryName
 
-    // 2. If no sub-category matches, try matching as a brand within this category
+    // If no sub-category matches, try matching as a brand within this category
     if (!bikes || bikes.length === 0) {
         const brandName = slug.replace(/-/g, ' ')
         const { data: brandBikes, count: brandCount } = await supabaseServer

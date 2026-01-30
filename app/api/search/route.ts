@@ -10,22 +10,20 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const searchTerm = query.trim()
-    const terms = searchTerm.split(/\s+/).filter(t => t.length > 0)
+    // User requested strict "side-by-side" matching.
+    // We treat the query as a single phrase/substring.
+    // We normalize multiple spaces to single space to be slightly forgiving, but keep sequence.
+    const searchTerm = query.trim().replace(/\s+/g, ' ')
 
     let queryBuilder = supabaseServer
       .from('bikes')
       .select('*', { count: 'exact' })
 
-    // Build OR filter: match if ANY term appears in ANY field
-    // This creates a more permissive search that returns results if any word matches
-    const orConditions = terms.map(term =>
-      `brand.ilike.%${term}%,model.ilike.%${term}%,title.ilike.%${term}%,sub_category.ilike.%${term}%,category.ilike.%${term}%`
-    ).join(',')
-
-    if (orConditions) {
-      queryBuilder = queryBuilder.or(orConditions)
-    }
+    // Strict substring match across fields
+    // Strict substring match across fields
+    // Removing title.ilike because database has misaligned titles (some rows have title of different bike)
+    const orClause = `brand.ilike.%${searchTerm}%,model.ilike.%${searchTerm}%,sub_category.ilike.%${searchTerm}%,category.ilike.%${searchTerm}%,slug.ilike.%${searchTerm}%`
+    queryBuilder = queryBuilder.or(orClause)
 
     const { data: bikes, error, count } = await queryBuilder
       .order('year', { ascending: false })

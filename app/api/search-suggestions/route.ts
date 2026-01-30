@@ -16,7 +16,8 @@ export async function GET(request: NextRequest) {
     const { data: bikes, error } = await supabaseServer
       .from('bikes')
       .select('id, brand, model, year, category, sub_category, slug, price, images')
-      .or(`brand.ilike.%${searchTerm}%,model.ilike.%${searchTerm}%,title.ilike.%${searchTerm}%`)
+      // Removing title search due to data misalignment in DB
+      .or(`brand.ilike.%${searchTerm}%,model.ilike.%${searchTerm}%`)
       .order('year', { ascending: false })
       .limit(8)
 

@@ -52,7 +52,7 @@ export default async function RootLayout({
                 <ComparisonProvider>
                     <Header />
                     {children}
-                    <Footer categories={categories} />
+                    <Footer categories={categories} lang={params.lang || 'en'} />
                 </ComparisonProvider>
             </body>
         </html>
