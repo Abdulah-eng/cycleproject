@@ -33,6 +33,7 @@ export default function Header() {
   const [showSuggestions, setShowSuggestions] = useState(false)
   const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false)
   const searchRef = useRef<HTMLDivElement>(null)
+  const mobileSearchRef = useRef<HTMLDivElement>(null)
   const router = useRouter()
   const params = useParams()
   const lang = params?.lang || 'en'
@@ -82,7 +83,11 @@ export default function Header() {
   // Close suggestions when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+      const target = event.target as Node
+      const isOutsideDesktop = searchRef.current && !searchRef.current.contains(target)
+      const isOutsideMobile = mobileSearchRef.current && !mobileSearchRef.current.contains(target)
+
+      if (isOutsideDesktop && isOutsideMobile) {
         setShowSuggestions(false)
       }
     }
@@ -294,7 +299,7 @@ export default function Header() {
 
         {/* Mobile Search Bar */}
         {isSearchOpen && (
-          <div className="md:hidden pb-4">
+          <div className="md:hidden pb-4" ref={mobileSearchRef}>
             <form onSubmit={handleSearch} className="relative">
               <input
                 type="text"

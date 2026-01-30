@@ -63,7 +63,7 @@ async function getInitialBikes(slug: string) {
   const { data: brandData, count: brandCount } = await supabaseServer
     .from('bikes')
     .select('id, brand, model, year, price, slug, category, sub_category, images, vfm_score_1_to_10, build_1_10, speed_index, frame', { count: 'exact' })
-    .ilike('brand', brandName)
+    .ilike('brand', `%${brandName}%`)
     .order('year', { ascending: false })
     .limit(INITIAL_LOAD)
 

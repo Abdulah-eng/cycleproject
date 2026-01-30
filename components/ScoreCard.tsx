@@ -36,10 +36,10 @@ export default function ScoreCard({ label, score, maxScore, description, variant
         className={`bg-white border-2 border-gray-200 text-gray-900 rounded-lg p-5 shadow-sm transition-all ${explanation ? 'cursor-pointer hover:shadow-lg' : ''}`}
         onClick={() => explanation && handleToggle()}
       >
-        <div className="flex justify-between items-start mb-3">
-          <span className="text-sm font-semibold uppercase tracking-wide text-gray-700">{label}</span>
+        <div className="flex flex-wrap justify-between items-baseline mb-3 gap-y-1">
+          <span className="text-xs sm:text-sm font-semibold uppercase tracking-wide text-gray-700 mr-2">{label}</span>
           <div className="flex items-center gap-2">
-            <span className="text-3xl font-bold text-gray-900">{score.toFixed(1)}</span>
+            <span className="text-2xl sm:text-3xl font-bold text-gray-900">{score.toFixed(1)}</span>
             {explanation && (
               <svg
                 className={`w-5 h-5 text-gray-600 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
@@ -113,10 +113,10 @@ export default function ScoreCard({ label, score, maxScore, description, variant
       className={`bg-white border border-gray-200 rounded-lg p-5 shadow-sm hover:shadow-md transition-all ${explanation ? 'cursor-pointer' : ''}`}
       onClick={() => explanation && handleToggle()}
     >
-      <div className="flex justify-between items-start mb-3">
-        <span className="text-sm font-semibold text-gray-800 uppercase tracking-wide">{label}</span>
+      <div className="flex flex-wrap justify-between items-baseline mb-3 gap-y-1">
+        <span className="text-xs sm:text-sm font-semibold text-gray-800 uppercase tracking-wide mr-2">{label}</span>
         <div className="flex items-center gap-2">
-          <span className="text-3xl font-bold text-gray-900">{score.toFixed(1)}</span>
+          <span className="text-2xl sm:text-3xl font-bold text-gray-900">{score.toFixed(1)}</span>
           {explanation && (
             <svg
               className={`w-5 h-5 text-gray-600 transition-transform ${isExpanded ? 'rotate-180' : ''}`}

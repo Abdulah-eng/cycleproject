@@ -136,11 +136,11 @@ export default async function Home({ params }: { params: { lang: string } }) {
                 />
                 <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-[2px]"></div>
 
-                <div className="container mx-auto px-4 text-center relative z-10">
+                <div className="container mx-auto px-4 text-center relative z-10 pt-20 md:pt-0">
                     <div className="inline-block px-4 py-1.5 mb-6 rounded-full bg-blue-500/20 border border-blue-400/30 backdrop-blur-md">
                         <span className="text-blue-200 text-sm font-bold tracking-widest uppercase">The Future of Cycling</span>
                     </div>
-                    <h1 className="text-6xl md:text-8xl font-black mb-8 tracking-tighter text-white leading-none">
+                    <h1 className="text-4xl sm:text-6xl md:text-8xl font-black mb-8 tracking-tighter text-white leading-none">
                         ULTIMATE <br />
                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400">BIKE DATABASE</span>
                     </h1>
@@ -235,7 +235,7 @@ export default async function Home({ params }: { params: { lang: string } }) {
                             {latestBikes.map(bike => (
                                 <Link
                                     key={bike.id}
-                                    href={`/${params.lang}/${formatCategoryForUrl(bike.category)}/${bike.sub_category ? generateUrlSlug(bike.sub_category) + '/' : ''}${bike.slug}`}
+                                    href={`/${params.lang}/${formatCategoryForUrl(bike.category)}/${bike.slug}`}
                                     className="group block"
                                 >
                                     <div className="bg-gray-100 rounded-2xl aspect-[4/3] relative overflow-hidden mb-4">
@@ -301,7 +301,7 @@ export default async function Home({ params }: { params: { lang: string } }) {
                             {topRatedBikes.map(bike => (
                                 <Link
                                     key={bike.id}
-                                    href={`/${params.lang}/${formatCategoryForUrl(bike.category)}/${bike.sub_category ? generateUrlSlug(bike.sub_category) + '/' : ''}${bike.slug}`}
+                                    href={`/${params.lang}/${formatCategoryForUrl(bike.category)}/${bike.slug}`}
                                     className="group block"
                                 >
                                     <div className="bg-gray-100 rounded-2xl aspect-[4/3] relative overflow-hidden mb-4">
