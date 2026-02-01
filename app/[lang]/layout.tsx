@@ -48,7 +48,7 @@ export default async function RootLayout({
 
     return (
         <html lang={params.lang || 'en'} suppressHydrationWarning>
-            <body className={inter.className}>
+            <body className={inter.className} suppressHydrationWarning>
                 <ComparisonProvider>
                     <Header />
                     {children}

@@ -2,67 +2,109 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { supabaseServer } from '@/lib/supabase'
 import { generateUrlSlug, formatCategoryForUrl } from '@/lib/utils'
+import SubCategoryCarousel from '@/components/SubCategoryCarousel'
 
 export const dynamic = 'force-dynamic'
 
-async function getCategoryImages() {
-    const categories = [
-        { name: 'Road', pattern: 'Road', fallback: '/category-road.png' },
-        { name: 'Mountain', pattern: 'Mountain', fallback: '/category-mountain.png' },
-        { name: 'E-Bike', pattern: 'E-bike', fallback: '/category-ebike.png' }
-    ]
+// Helper to format category names for display
+const formatDisplayName = (name: string) => {
+    if (!name) return ''
+    if (name === 'E-bikeRoad') return 'Road E-Bikes'
+    if (name === 'E-bikeMountain') return 'Mountain E-Bikes'
+    return name.replace(/([A-Z])/g, ' $1').trim()
+}
 
+async function getAllCategories() {
     try {
-        const results = await Promise.all(categories.map(async (cat) => {
+        // 1. Get distinct categories
+        const { data: allBikes } = await supabaseServer
+            .from('bikes')
+            .select('category')
+            .not('category', 'is', null)
+
+        if (!allBikes) return []
+
+        const uniqueCategories = Array.from(new Set(allBikes.map(b => b.category))).sort()
+
+        // 2. Fetch image for each
+        const results = await Promise.all(uniqueCategories.map(async (cat) => {
             const { data } = await supabaseServer
                 .from('bikes')
-                .select('images, brand, model')
-                .ilike('category', `%${cat.pattern}%`)
+                .select('images')
+                .eq('category', cat)
                 .not('images', 'is', null)
                 .limit(1)
 
-            const dbImage = data && data.length > 0 ? data[0].images?.[0] : null
+            const image = (data && data.length > 0 && data[0].images?.[0]) || '/category-road.png'
 
             return {
-                name: cat.name,
-                image: dbImage || cat.fallback,
-                alt: data && data.length > 0 ? `${data[0].brand} ${data[0].model}` : cat.name
+                name: cat, // DB name
+                displayName: formatDisplayName(cat),
+                slug: `${formatCategoryForUrl(cat)}bikes`, // e.g. e-bikeroadbikes
+                image
             }
         }))
+
+        // Optional: Add 'View All' if you still want it, or strictly stick to DB. 
+        // User asked for "all categories present in db", so I will stick to that predominantly.
+        // But for UX, a "View All" is usually good. I'll append it.
+        results.push({
+            name: 'View All',
+            displayName: 'Browse All Bikes',
+            slug: 'search',
+            image: '/category-ebike.png'
+        })
+
         return results
     } catch (e) {
-        console.error("Error fetching category images", e)
-        return categories.map(c => ({ ...c, image: c.fallback, alt: c.name }))
+        console.error("Error in getAllCategories", e)
+        return []
     }
 }
 
-async function getSubCategoryData() {
-    const subCats = [
-        { name: 'Enduro', category: 'E-bikeMountain', image: '/enduro.png' },
-        { name: 'Trail', category: 'E-bikeMountain', image: '/trail.png' },
-        { name: 'Gravel', category: 'Road', image: '/gravel.png' },
-        { name: 'Aero', category: 'Road', image: '/aero.png' }
-    ]
-
+async function getAllSubCategories() {
     try {
-        const results = await Promise.all(subCats.map(async (sc) => {
+        // 1. Get distinct subcategories
+        const { data: allBikes } = await supabaseServer
+            .from('bikes')
+            .select('sub_category, category') // Get category too for linking
+            .not('sub_category', 'is', null)
+
+        if (!allBikes) return []
+
+        // Create a map to keep track of one category parent for each subcat (mostly 1:1, but just in case)
+        const subCatMap = new Map<string, string>()
+        allBikes.forEach(b => {
+            if (b.sub_category) subCatMap.set(b.sub_category, b.category)
+        })
+
+        const uniqueSubCategories = Array.from(subCatMap.keys()).sort()
+
+        // 2. Fetch image for each
+        const results = await Promise.all(uniqueSubCategories.map(async (sub) => {
             const { data } = await supabaseServer
                 .from('bikes')
-                .select('images, brand, model')
-                .ilike('sub_category', `%${sc.name}%`)
+                .select('images')
+                .eq('sub_category', sub)
                 .not('images', 'is', null)
                 .limit(1)
 
+            const image = (data && data.length > 0 && data[0].images?.[0]) || '/enduro.png'
+            const parentCat = subCatMap.get(sub) || 'road'
+
             return {
-                ...sc,
-                image: (data && data.length > 0 && data[0].images?.[0]) || sc.image,
-                alt: data && data.length > 0 ? `${data[0].brand} ${data[0].model}` : sc.name
+                name: sub,
+                displayName: formatDisplayName(sub),
+                category: parentCat,
+                slug: generateUrlSlug(sub),
+                image
             }
         }))
+
         return results
     } catch (e) {
-        console.error("Error fetching subcategory data", e)
-        return subCats.map(sc => ({ ...sc, alt: sc.name })) // Return with fallback images and alt
+        console.error("Error in getAllSubCategories", e)
+        return []
     }
 }
 
@@ -116,8 +158,8 @@ async function getTopRatedBikes() {
 }
 
 export default async function Home({ params }: { params: { lang: string } }) {
-    const categoryImages = await getCategoryImages()
-    const subCategories = await getSubCategoryData()
+    const categories = await getAllCategories()
+    const subCategories = await getAllSubCategories()
     const brands = await getBrandData()
     const latestBikes = await getLatestBikes()
     const topRatedBikes = await getTopRatedBikes()
@@ -162,61 +204,110 @@ export default async function Home({ params }: { params: { lang: string } }) {
                 <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white to-transparent"></div>
             </div>
 
-            <div className="container mx-auto px-4 -mt-16 relative z-20 pb-24">
-                {/* Category Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-24">
-                    {categoryImages.map((cat, idx) => (
-                        <Link
-                            key={cat.name}
-                            href={`/${params.lang}/${cat.name.toLowerCase().replace('-', '')}bikes`}
-                            className={`group relative h-96 rounded-3xl overflow-hidden shadow-2xl transition-all duration-700 hover:-translate-y-4 ${idx === 1 ? 'md:-translate-y-8' : ''}`}
-                        >
-                            <Image
-                                src={cat.image}
-                                alt={cat.alt}
-                                fill
-                                className="object-cover group-hover:scale-110 transition-transform duration-1000"
-                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                            />
-                            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/40 to-transparent"></div>
-                            <div className="absolute bottom-8 left-8 text-white">
-                                <div className="w-12 h-1 bg-blue-500 mb-4 rounded-full group-hover:w-20 transition-all duration-500"></div>
-                                <h3 className="text-4xl font-black mb-2 tracking-tight">{cat.name}</h3>
-                                <span className="inline-flex items-center text-sm font-bold text-blue-400 group-hover:text-blue-300 tracking-wider uppercase">
-                                    Explore collection
-                                </span>
-                            </div>
-                        </Link>
-                    ))}
+            {/* Remove negative margin to prevent overlap */}
+            <div className="container mx-auto px-4 relative z-20 pb-24 pt-12">
+                {/* Browse by Category */}
+                <div className="mb-20">
+                    <div className="text-center mb-12">
+                        <h2 className="text-4xl font-black text-slate-900 tracking-tight mb-4">BROWSE BY CATEGORY</h2>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        {categories.map((cat, idx) => (
+                            <Link
+                                key={cat.name}
+                                href={`/${params.lang}/${cat.slug}`}
+                                className={`group relative h-96 rounded-3xl overflow-hidden shadow-2xl transition-all duration-700 hover:-translate-y-4 font-normal`}
+                            >
+                                <Image
+                                    src={cat.image}
+                                    alt={cat.displayName}
+                                    fill
+                                    className="object-cover group-hover:scale-110 transition-transform duration-700"
+                                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80 group-hover:opacity-90 transition-opacity"></div>
+                                <div className="absolute inset-x-0 bottom-0 p-8">
+                                    <div className="border-l-4 border-blue-500 pl-4">
+                                        <h3 className="text-3xl font-black text-white uppercase tracking-wider mb-2">{cat.displayName}</h3>
+                                        <span className="text-blue-400 font-bold flex items-center gap-2">
+                                            Explore Collection
+                                            <svg className="w-5 h-5 group-hover:translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+                                        </span>
+                                    </div>
+                                </div>
+                            </Link>
+                        ))}
+                    </div>
                 </div>
 
-                {/* Sub-Category Highlights */}
-                <div className="text-center mb-12">
-                    <h2 className="text-4xl font-black text-slate-900 tracking-tight mb-4">BROWSE BY CATEGORY</h2>
-                    <p className="text-gray-500 text-lg max-w-2xl mx-auto">Find the perfect bike for your riding style.</p>
+                {/* Browse by Sub-Category */}
+                <div className="mb-20">
+                    <div className="text-center mb-12">
+                        <h2 className="text-4xl font-black text-slate-900 tracking-tight mb-4">BROWSE BY SUB-CATEGORY</h2>
+                    </div>
+
+                    <SubCategoryCarousel subCategories={subCategories} lang={params.lang} />
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-32">
-                    {subCategories.map((sc) => (
-                        <Link
-                            key={sc.name}
-                            href={`/${params.lang}/${formatCategoryForUrl(sc.category)}/${generateUrlSlug(sc.name)}`}
-                            className="group relative h-80 rounded-[2rem] overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500"
-                        >
-                            <Image
-                                src={sc.image}
-                                alt={sc.alt}
-                                fill
-                                className="object-cover group-hover:scale-110 transition-transform duration-700"
-                                sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                            />
-                            <div className="absolute inset-0 bg-slate-900/30 group-hover:bg-blue-900/20 transition-colors"></div>
-                            <div className="absolute inset-x-0 bottom-0 p-8 transform translate-y-2 group-hover:translate-y-0 transition-transform">
-                                <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-6 shadow-2xl">
-                                    <h3 className="text-2xl font-bold text-white tracking-wide uppercase text-center">{sc.name}</h3>
+
+                {/* Road Bike Collections */}
+                <div className="mb-20">
+                    <div className="flex items-end justify-between mb-8">
+                        <div>
+                            <h2 className="text-3xl font-black text-slate-900 tracking-tight">ROAD COLLECTIONS</h2>
+                            <p className="text-gray-500">Speed, endurance, and performance.</p>
+                        </div>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        {[
+                            { name: 'Top Rated Road', slug: 'top-road-bikes', img: '/category-road.png' },
+                            { name: 'Best Value Road', slug: 'top-value-road-bikes', img: '/gravel.png' },
+                            { name: 'Top Performance', slug: 'top-performance', img: '/aero.png' }
+                        ].map((col) => (
+                            <Link
+                                key={col.name}
+                                href={`/${params.lang}/e-bikeroadbikes/${col.slug}`}
+                                className="group relative h-56 rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-500"
+                            >
+                                <Image src={col.img} alt={col.name} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent"></div>
+                                <div className="absolute bottom-0 left-0 p-6">
+                                    <h3 className="text-2xl font-bold text-white mb-1">{col.name}</h3>
+                                    <span className="text-blue-400 text-sm font-bold uppercase tracking-wider">View Collection</span>
                                 </div>
-                            </div>
-                        </Link>
-                    ))}
+                            </Link>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Mountain Bike Collections */}
+                <div className="mb-32">
+                    <div className="flex items-end justify-between mb-8">
+                        <div>
+                            <h2 className="text-3xl font-black text-slate-900 tracking-tight">MOUNTAIN COLLECTIONS</h2>
+                            <p className="text-gray-500">Trail, enduro, and cross-country.</p>
+                        </div>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        {[
+                            { name: 'Top Rated MTB', slug: 'top-mountain-bikes', img: '/category-mountain.png' },
+                            { name: 'Best Value MTB', slug: 'top-value-mountain-bikes', img: '/enduro.png' },
+                            { name: 'Trail Blazers', slug: 'top-performance', img: '/trail.png' }
+                        ].map((col) => (
+                            <Link
+                                key={col.name}
+                                href={`/${params.lang}/e-bikemountainbikes/${col.slug}`}
+                                className="group relative h-56 rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-500"
+                            >
+                                <Image src={col.img} alt={col.name} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent"></div>
+                                <div className="absolute bottom-0 left-0 p-6">
+                                    <h3 className="text-2xl font-bold text-white mb-1">{col.name}</h3>
+                                    <span className="text-emerald-400 text-sm font-bold uppercase tracking-wider">View Collection</span>
+                                </div>
+                            </Link>
+                        ))}
+                    </div>
                 </div>
 
                 {/* Latest Arrivals */}

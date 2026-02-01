@@ -88,17 +88,42 @@ export default async function SubCategoryPage({ params }: PageProps) {
         }
     }
 
-    const categoryDisplayName = params.category
-        .replace(/bikes$/i, ' Bikes')
-        .replace(/([A-Z])/g, ' $1')
-        .trim()
+    // Helper to format category name nicely
+    const formatCategoryName = (slug: string) => {
+        if (slug.includes('road')) return 'Road E-Bikes' // Based on DB 'E-bikeRoad'
+        if (slug.includes('mountain') || slug.includes('mtb')) return 'Mountain E-Bikes'
+        return slug.replace(/bikes$/i, ' Bikes').replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
+    }
+
+    const categoryDisplayName = formatCategoryName(params.category)
 
     // Detect "Top X" pages
     let initialSortBy = 'newest'
-    if (params.subcategory === 'top-road-bikes' || params.subcategory === 'top-performance') {
-        initialSortBy = 'score'
-    } else if (params.subcategory === 'top-value-road-bikes' || params.subcategory === 'top-value') {
-        initialSortBy = 'score' // Adjust if value score sort needed, 'score' maps to (vfm+build)/2
+
+    if (params.subcategory.startsWith('top-')) {
+        const isValue = params.subcategory.includes('value')
+
+        const { data: topBikes, count: topCount } = await supabaseServer
+            .from('bikes')
+            .select('id, brand, model, year, price, slug, category, sub_category, images, vfm_score_1_to_10, build_1_10, speed_index, frame, overall_score, value_score, performance_score', { count: 'exact' })
+            .ilike('category', `%${categorySlug}%`)
+            .order(isValue ? 'value_score' : 'overall_score', { ascending: false })
+            .limit(50)
+
+        if (topBikes && topBikes.length > 0) {
+            bikes = topBikes
+            totalCount = topCount || 0
+            type = 'top-list'
+            // Set displayName to be the FULL title, so we don't append categoryDisplayName later
+            displayName = isValue ? `Top Value ${categoryDisplayName}` : `Top Rated ${categoryDisplayName}`
+            // If it's performance
+            if (params.subcategory.includes('performance')) displayName = `Top Performance ${categoryDisplayName}`
+
+            initialSortBy = 'score'
+
+            // Override categoryDisplayName to empty string for this view to avoid duplication in H1
+            // OR handle it in the return statement
+        }
     }
 
     return (
@@ -113,7 +138,9 @@ export default async function SubCategoryPage({ params }: PageProps) {
 
             <div className="container mx-auto px-4 py-8">
                 <div className="mb-8">
-                    <h1 className="text-4xl font-bold text-gray-900 mb-2 capitalize">{displayName} {categoryDisplayName}</h1>
+                    <h1 className="text-4xl font-bold text-gray-900 mb-2">
+                        {type === 'top-list' ? displayName : `${displayName} ${categoryDisplayName}`}
+                    </h1>
                     <p className="text-gray-600">
                         Browse {totalCount.toLocaleString()} {displayName.toLowerCase()} {categoryDisplayName.toLowerCase()} in our catalog
                     </p>
