@@ -133,6 +133,8 @@ export async function POST(request: NextRequest) {
             url: rowData.url,
             title: rowData.title,
             meta_desc: rowData.meta_desc,
+            bike_desc: rowData.bike_desc,
+            title_seo: rowData.title_seo,
           }
 
           // Add numeric fields with proper conversion
@@ -140,7 +142,8 @@ export async function POST(request: NextRequest) {
             'stack_reach_ratio', 'bottom_bracket_height', 'front_center', 'rake', 'trail',
             'stack', 'reach', 'top_tube_length', 'seat_tube_angle', 'seat_tube_length',
             'head_tube_angle', 'head_tube_length', 'chainstay_length', 'wheelbase',
-            'bottom_bracket_drop', 'standover_height', 'rider_min_height', 'rider_max_height'
+            'bottom_bracket_drop', 'standover_height', 'rider_min_height', 'rider_max_height',
+            'overall_score', 'performance_score', 'value_score', 'fit_score', 'general_score'
           ]
 
           numericFields.forEach(field => {

@@ -23,22 +23,34 @@ interface CategoryPageContentProps {
   initialBikes: Bike[]
   categorySlug: string
   totalCount: number
+  filterType?: 'category' | 'brand' | 'subcategory'
+  filterValue?: string
+  initialSubCategory?: string
+  initialSortBy?: string
 }
 
-export default function CategoryPageContent({ initialBikes, categorySlug, totalCount }: CategoryPageContentProps) {
+export default function CategoryPageContent({
+  initialBikes,
+  categorySlug,
+  totalCount,
+  filterType = 'category',
+  filterValue = '',
+  initialSubCategory = '',
+  initialSortBy = 'newest'
+}: CategoryPageContentProps) {
   const [bikes, setBikes] = useState<Bike[]>(initialBikes)
   const [filteredBikes, setFilteredBikes] = useState<Bike[]>(initialBikes)
   const [loading, setLoading] = useState(false)
 
   // Filter states
-  const [selectedSubCategory, setSelectedSubCategory] = useState<string>('')
+  const [selectedSubCategory, setSelectedSubCategory] = useState<string>(initialSubCategory)
   const [selectedBrand, setSelectedBrand] = useState<string>('')
   const [selectedFrame, setSelectedFrame] = useState<string>('')
   const [selectedYear, setSelectedYear] = useState<string>('')
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 20000])
 
   // Sort state
-  const [sortBy, setSortBy] = useState<string>('newest')
+  const [sortBy, setSortBy] = useState<string>(initialSortBy)
 
   // Pagination state
   const [displayCount, setDisplayCount] = useState(15)
@@ -54,14 +66,36 @@ export default function CategoryPageContent({ initialBikes, categorySlug, totalC
   // Load all bikes for filtering
   useEffect(() => {
     const loadAllBikes = async () => {
-      if (bikes.length >= totalCount) return
+      // If we already have all bikes (from initial load or previous fetch), don't fetch again
+      if (bikes.length >= totalCount && totalCount > 0 && bikes.length > 0) return
+
+      // If initialBikes covers everything (totalCount small), no need to fetch
+      if (initialBikes.length >= totalCount && totalCount > 0) return
 
       setLoading(true)
       try {
-        const categoryName = categorySlug.replace(/bikes$/i, '').trim()
-        const response = await fetch(
-          `/api/bikes?category=${encodeURIComponent(categoryName)}&limit=1000`
-        )
+        let url = `/api/bikes?limit=1000`
+
+        if (filterType === 'brand') {
+          if (filterValue) {
+            const categoryName = categorySlug.replace(/bikes$/i, '').trim()
+            url += `&category=${encodeURIComponent(categoryName)}`
+            url += `&brand=${encodeURIComponent(filterValue)}`
+          } else {
+            const brandName = categorySlug.replace(/-/g, ' ')
+            url += `&brand=${encodeURIComponent(brandName)}`
+          }
+        } else if (filterType === 'subcategory') {
+          const categoryName = categorySlug.replace(/bikes$/i, '').trim()
+          url += `&category=${encodeURIComponent(categoryName)}`
+          const subCatName = filterValue || ''
+          url += `&subcategory=${encodeURIComponent(subCatName)}`
+        } else {
+          const categoryName = categorySlug.replace(/bikes$/i, '').trim()
+          url += `&category=${encodeURIComponent(categoryName)}`
+        }
+
+        const response = await fetch(url)
         const data = await response.json()
         if (data.bikes) {
           setBikes(data.bikes)
@@ -74,7 +108,7 @@ export default function CategoryPageContent({ initialBikes, categorySlug, totalC
     }
 
     loadAllBikes()
-  }, [categorySlug, totalCount, bikes.length])
+  }, [categorySlug, totalCount, filterType, filterValue])
 
   // Apply filters and sorting
   useEffect(() => {

@@ -96,8 +96,9 @@ export default async function CategoryPage({ params }: PageProps) {
         {bikes && bikes.length > 0 ? (
           <CategoryPageContent
             initialBikes={bikes}
-            categorySlug={type === 'brand' ? 'all' : params.category}
+            categorySlug={type === 'brand' ? params.category : params.category}
             totalCount={totalCount}
+            filterType={type === 'brand' ? 'brand' : 'category'}
           />
         ) : (
           <div className="text-center py-12">

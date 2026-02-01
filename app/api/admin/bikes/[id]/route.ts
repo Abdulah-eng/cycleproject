@@ -54,6 +54,18 @@ export async function DELETE(
     console.log('✅ User authenticated:', user.email)
     console.log('🔑 Using SERVICE_ROLE_KEY:', process.env.SUPABASE_SERVICE_ROLE_KEY ? 'Present' : 'MISSING!')
 
+    // Delete dependent translations first
+    const { error: translationError } = await supabaseServer
+      .from('bike_translations')
+      .delete()
+      .eq('bike_id', params.id)
+
+    if (translationError) {
+      console.error('❌ Error deleting translations:', translationError)
+      // Continue anyway as the constraint might prevent bike delete if this fails, 
+      // or if it doesn't exist it's fine.
+    }
+
     // Delete bike
     const { data, error } = await supabaseServer
       .from('bikes')

@@ -12,7 +12,7 @@ import BikeCarousel from '@/components/BikeCarousel'
 import { getSameBrandBikes, getBikesByYear, getBetterValueBikes } from '@/lib/recommendations'
 import InteractiveScoreSummary from '@/components/InteractiveScoreSummary'
 
-export const revalidate = 3600
+export const revalidate = 0
 
 interface PageProps {
   params: {
@@ -94,7 +94,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const bike = await getBikeFromParams(params)
   if (!bike) return { title: 'Bike Not Found' }
   const title = bike.title_seo || bike.title || `${bike.brand} ${bike.model} ${bike.year || ''}`
-  const description = bike.meta_desc || bike.bike_desc || `Discover the ${bike.brand} ${bike.model}.`
+  const description = bike.meta_desc || ''
   return { title, description }
 }
 
@@ -147,7 +147,7 @@ export default async function BikePage({ params }: PageProps) {
               <p className="text-xl lg:text-2xl text-gray-600 mb-4 font-semibold">{bike.brand}</p>
               {bike.sub_category && <p className="text-lg text-gray-500 mb-6 font-medium">{bike.sub_category}</p>}
               <p className="text-gray-700 mb-6 leading-relaxed text-lg">
-                {bike.bike_desc || bike.meta_desc || `A high-performance ${bike.category} bike.`}
+                {bike.bike_desc}
               </p>
               <div className="mb-8"><AddToCompareButton bike={comparisonBike} variant="full" className="max-w-xs" /></div>
               <div className="flex items-center gap-6">

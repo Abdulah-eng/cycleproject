@@ -26,6 +26,16 @@ export async function GET(request: NextRequest) {
       query = query.ilike('category', `%${categoryName}%`)
     }
 
+    const brand = searchParams.get('brand') || ''
+    if (brand) {
+      query = query.ilike('brand', `%${brand}%`)
+    }
+
+    const subcategory = searchParams.get('subcategory') || ''
+    if (subcategory) {
+      query = query.ilike('sub_category', `%${subcategory}%`)
+    }
+
     // Add ordering and pagination
     const { data, error, count } = await query
       .order('brand', { ascending: true })

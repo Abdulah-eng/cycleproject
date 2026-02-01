@@ -39,7 +39,7 @@ export default function InteractiveScoreSummary({ metrics, bike }: InteractiveSc
                     maxScore={metrics.value.maxScore}
                     description={metrics.value.description}
                     metricType="value"
-                    explanation={bike.vfm_reason || bike.value_score_explanation}
+                    explanation={bike.value_score_explanation}
                     isExpanded={showAllExplanations}
                 />
                 <ScoreCard
@@ -48,7 +48,7 @@ export default function InteractiveScoreSummary({ metrics, bike }: InteractiveSc
                     maxScore={metrics.fit.maxScore}
                     description={metrics.fit.description}
                     metricType="fit"
-                    explanation={bike.fit_reason || bike.fit_score_explanation}
+                    explanation={bike.fit_score_explanation}
                     isExpanded={showAllExplanations}
                 />
                 <ScoreCard

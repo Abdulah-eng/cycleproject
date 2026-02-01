@@ -30,7 +30,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     if (bike) {
         return {
             title: bike.title_seo || `${bike.brand} ${bike.model} ${bike.year || ''} - Specs & Review`,
-            description: bike.meta_desc || bike.bike_desc?.substring(0, 160) || `Full specifications and review for ${bike.brand} ${bike.model}.`,
+            description: bike.meta_desc || '',
         }
     }
 
@@ -93,6 +93,14 @@ export default async function SubCategoryPage({ params }: PageProps) {
         .replace(/([A-Z])/g, ' $1')
         .trim()
 
+    // Detect "Top X" pages
+    let initialSortBy = 'newest'
+    if (params.subcategory === 'top-road-bikes' || params.subcategory === 'top-performance') {
+        initialSortBy = 'score'
+    } else if (params.subcategory === 'top-value-road-bikes' || params.subcategory === 'top-value') {
+        initialSortBy = 'score' // Adjust if value score sort needed, 'score' maps to (vfm+build)/2
+    }
+
     return (
         <main className="min-h-screen bg-gray-50">
             <header className="bg-white border-b border-gray-200">
@@ -116,6 +124,9 @@ export default async function SubCategoryPage({ params }: PageProps) {
                         initialBikes={bikes}
                         categorySlug={params.category}
                         totalCount={totalCount}
+                        filterType={type as any}
+                        filterValue={displayName}
+                        initialSortBy={initialSortBy}
                     />
                 ) : (
                     <div className="text-center py-12">

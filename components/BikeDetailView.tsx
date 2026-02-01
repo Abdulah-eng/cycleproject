@@ -33,7 +33,7 @@ export default function BikeDetailView({ bike, lang }: BikeDetailViewProps) {
         },
         general: {
             label: 'Overall',
-            score: bike.general_score || bike.overall_score || 0,
+            score: bike.general_score || 0,
             maxScore: 10,
             description: 'General assessment of the bike.'
         }
@@ -50,7 +50,7 @@ export default function BikeDetailView({ bike, lang }: BikeDetailViewProps) {
             'name': bike.brand
         },
         'image': bike.images || [],
-        'description': bike.bike_desc || bike.meta_desc || `${bike.brand} ${bike.model}`,
+        'description': bike.bike_desc || '',
         'offers': {
             '@type': 'AggregateOffer',
             'priceCurrency': 'EUR', // Assuming EUR based on user input, or USD? Codebase usually has generic price. User sample said EUR.
