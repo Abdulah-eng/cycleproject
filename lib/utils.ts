@@ -215,11 +215,14 @@ export function calculateBikeMetrics(bike: Bike): BikeMetrics {
 /**
  * Format price with currency
  */
-export function formatPrice(price: number | null): string {
+export function formatPrice(price: number | null, locale: string = 'en-US'): string {
   if (!price) return 'Price not available'
-  return new Intl.NumberFormat('en-US', {
+  // Map our short codes to full locales if needed, or rely on browser support for 'en', 'de', etc.
+  // 'en' defaults to 'en-US' behavior mostly. 'de' -> 'de-DE'.
+  // Simple mapping or pass-through.
+  return new Intl.NumberFormat(locale, {
     style: 'currency',
-    currency: 'USD',
+    currency: 'USD', // Assuming USD is base currency for now, or could change currency symbol based on locale if needed, but likely keeping USD values.
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   }).format(price)
@@ -289,14 +292,14 @@ export function generateBikeUrl(bike: {
   year?: number | null
   model: string
   slug?: string // Old slug for fallback
-}): string {
+}, lang: string = 'en'): string {
   const categorySlug = formatCategoryForUrl(bike.category) + 'bikes'
   const subCategorySlug = bike.sub_category ? generateUrlSlug(bike.sub_category) : 'general'
   const brandSlug = generateUrlSlug(bike.brand)
   const yearSlug = bike.year ? bike.year.toString() : 'unknown'
   const modelSlug = generateUrlSlug(bike.model)
 
-  return `/${categorySlug}/${subCategorySlug}/${brandSlug}/${yearSlug}/${modelSlug}`
+  return `/${lang}/${categorySlug}/${subCategorySlug}/${brandSlug}/${yearSlug}/${modelSlug}`
 }
 
 /**

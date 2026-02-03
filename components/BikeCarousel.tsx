@@ -8,9 +8,10 @@ interface BikeCarouselProps {
     title: string
     bikes: Bike[]
     categorySlug?: string
+    lang: string
 }
 
-export default function BikeCarousel({ title, bikes, categorySlug }: BikeCarouselProps) {
+export default function BikeCarousel({ title, bikes, categorySlug, lang }: BikeCarouselProps) {
     const scrollContainerRef = useRef<HTMLDivElement>(null)
 
     const scroll = (direction: 'left' | 'right') => {
@@ -62,6 +63,7 @@ export default function BikeCarousel({ title, bikes, categorySlug }: BikeCarouse
                         <BikeCard
                             bike={bike}
                             categorySlug={categorySlug || bike.category.toLowerCase().replace(/\s+/g, '') + 'bikes'}
+                            lang={lang}
                         />
                     </div>
                 ))}

@@ -13,11 +13,22 @@ export async function GET(request: NextRequest) {
     const searchTerm = query.trim()
 
     // Search across brand, model, and title fields
-    const { data: bikes, error } = await supabaseServer
+
+    // Split query into individual terms
+    const terms = searchTerm.split(/\s+/).filter(t => t.length > 0)
+
+    let queryBuilder = supabaseServer
       .from('bikes')
       .select('id, brand, model, year, category, sub_category, slug, price, images')
-      // Removing title search due to data misalignment in DB
-      .or(`brand.ilike.%${searchTerm}%,model.ilike.%${searchTerm}%`)
+
+    // Apply filters for each term
+    terms.forEach(term => {
+      // Must match brand OR model (OR category/sub_category optionally, but stick to brand/model/category logic for suggestions)
+      // Including category/sub_category to be consistent with main search if reasonable
+      queryBuilder = queryBuilder.or(`brand.ilike.%${term}%,model.ilike.%${term}%,category.ilike.%${term}%`)
+    })
+
+    const { data: bikes, error } = await queryBuilder
       .order('year', { ascending: false })
       .limit(8)
 

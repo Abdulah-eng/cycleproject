@@ -109,25 +109,14 @@ async function getAllSubCategories() {
 }
 
 async function getBrandData() {
-    const brands = ['Specialized', 'Trek', 'Giant', 'Canyon', 'Santa Cruz']
-    try {
-        const results = await Promise.all(brands.map(async (brand) => {
-            const { data } = await supabaseServer
-                .from('bikes')
-                .select('images')
-                .ilike('brand', brand)
-                .not('images', 'is', null)
-                .limit(1)
-            return {
-                name: brand,
-                image: data && data.length > 0 ? data[0].images?.[0] : null
-            }
-        }))
-        return results
-    } catch (e) {
-        console.error("Error fetching brand data", e)
-        return brands.map(b => ({ name: b, image: null }))
-    }
+    const brands = [
+        { name: 'Specialized', image: '/logo/specialized.png', slug: 'specialized' },
+        { name: 'Trek', image: '/logo/trek.jpg', slug: 'trek' },
+        { name: 'Giant', image: '/logo/giant.png', slug: 'giant' },
+        { name: 'Canyon', image: '/logo/Canyon_Bicycles-Logo.wine.svg', slug: 'canyon' },
+        { name: 'Santa Cruz', image: '/logo/santa.png', slug: 'santa-cruz' },
+    ]
+    return brands
 }
 
 async function getLatestBikes() {
@@ -157,17 +146,22 @@ async function getTopRatedBikes() {
     }
 }
 
+import { getDictionary } from '@/lib/dictionaries'
+
+// ... existing imports
+
 export default async function Home({ params }: { params: { lang: string } }) {
     const categories = await getAllCategories()
     const subCategories = await getAllSubCategories()
     const brands = await getBrandData()
     const latestBikes = await getLatestBikes()
     const topRatedBikes = await getTopRatedBikes()
+    const dict = await getDictionary(params.lang)
 
     return (
         <main className="min-h-screen bg-white">
             {/* Hero Section with Glassmorphism */}
-            <div className="relative h-[80vh] flex items-center justify-center overflow-hidden">
+            <div className="relative min-h-[85vh] flex items-center justify-center overflow-hidden">
                 <Image
                     src="/hero.png"
                     alt="Biking hero"
@@ -178,24 +172,33 @@ export default async function Home({ params }: { params: { lang: string } }) {
                 />
                 <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-[2px]"></div>
 
-                <div className="container mx-auto px-4 text-center relative z-10 pt-20 md:pt-0">
+                <div className="container mx-auto px-4 text-center relative z-10 pt-24 pb-20 md:py-0">
                     <div className="inline-block px-4 py-1.5 mb-6 rounded-full bg-blue-500/20 border border-blue-400/30 backdrop-blur-md">
-                        <span className="text-blue-200 text-sm font-bold tracking-widest uppercase">The Future of Cycling</span>
+                        <span className="text-blue-200 text-sm font-bold tracking-widest uppercase">{dict.home.future_cycling}</span>
                     </div>
                     <h1 className="text-4xl sm:text-6xl md:text-8xl font-black mb-8 tracking-tighter text-white leading-none">
-                        ULTIMATE <br />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400">BIKE DATABASE</span>
+                        {dict.home.hero_title_1} <br />
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400">{dict.home.hero_title_2}</span>
                     </h1>
                     <p className="text-xl md:text-2xl mb-12 text-gray-300 max-w-3xl mx-auto font-light leading-relaxed">
-                        Data-driven insights, Expert analysis, and the most comprehensive bike comparisons on the planet.
+                        {dict.home.hero_subtitle}
                     </p>
-                    <div className="flex justify-center gap-6 flex-wrap">
-                        <Link href={`/${params.lang}/e-bikeroadbikes`} className="group bg-blue-600 text-white px-12 py-5 rounded-full font-bold hover:bg-blue-700 transition-all shadow-[0_0_30px_-5px_rgba(37,99,235,0.4)] flex items-center">
-                            Road E-Bikes
+                    <div className="flex justify-center gap-4 md:gap-6 flex-wrap w-full max-w-4xl mx-auto">
+                        <Link href={`/${params.lang}/roadbikes`} className="group bg-blue-600 text-white px-6 py-3 md:px-8 md:py-4 rounded-full font-bold hover:bg-blue-700 transition-all shadow-lg flex items-center justify-center text-sm md:text-base min-w-[140px] md:min-w-[160px]">
+                            {dict.home.road_bikes}
                             <svg className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
                         </Link>
-                        <Link href={`/${params.lang}/e-bikemountainbikes`} className="bg-white/10 backdrop-blur-md border border-white/20 text-white px-12 py-5 rounded-full font-bold hover:bg-white/20 transition-all shadow-xl">
-                            Mountain E-Bikes
+                        <Link href={`/${params.lang}/mountainbikes`} className="group bg-emerald-600 text-white px-6 py-3 md:px-8 md:py-4 rounded-full font-bold hover:bg-emerald-700 transition-all shadow-lg flex items-center justify-center text-sm md:text-base min-w-[140px] md:min-w-[160px]">
+                            {dict.home.mountain_bikes}
+                            <svg className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+                        </Link>
+                        <Link href={`/${params.lang}/e-bikeroadbikes`} className="group bg-indigo-600 text-white px-6 py-3 md:px-8 md:py-4 rounded-full font-bold hover:bg-indigo-700 transition-all shadow-lg flex items-center justify-center text-sm md:text-base min-w-[140px] md:min-w-[160px]">
+                            {dict.home.e_road}
+                            <svg className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                        </Link>
+                        <Link href={`/${params.lang}/e-bikemountainbikes`} className="group bg-teal-600 text-white px-6 py-3 md:px-8 md:py-4 rounded-full font-bold hover:bg-teal-700 transition-all shadow-lg flex items-center justify-center text-sm md:text-base min-w-[140px] md:min-w-[160px]">
+                            {dict.home.e_mountain}
+                            <svg className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
                         </Link>
                     </div>
                 </div>
@@ -209,7 +212,7 @@ export default async function Home({ params }: { params: { lang: string } }) {
                 {/* Browse by Category */}
                 <div className="mb-20">
                     <div className="text-center mb-12">
-                        <h2 className="text-4xl font-black text-slate-900 tracking-tight mb-4">BROWSE BY CATEGORY</h2>
+                        <h2 className="text-4xl font-black text-slate-900 tracking-tight mb-4">{dict.home.browse_category}</h2>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -231,7 +234,7 @@ export default async function Home({ params }: { params: { lang: string } }) {
                                     <div className="border-l-4 border-blue-500 pl-4">
                                         <h3 className="text-3xl font-black text-white uppercase tracking-wider mb-2">{cat.displayName}</h3>
                                         <span className="text-blue-400 font-bold flex items-center gap-2">
-                                            Explore Collection
+                                            {dict.home.explore_collection}
                                             <svg className="w-5 h-5 group-hover:translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
                                         </span>
                                     </div>
@@ -244,7 +247,7 @@ export default async function Home({ params }: { params: { lang: string } }) {
                 {/* Browse by Sub-Category */}
                 <div className="mb-20">
                     <div className="text-center mb-12">
-                        <h2 className="text-4xl font-black text-slate-900 tracking-tight mb-4">BROWSE BY SUB-CATEGORY</h2>
+                        <h2 className="text-4xl font-black text-slate-900 tracking-tight mb-4">{dict.home.browse_subcategory}</h2>
                     </div>
 
                     <SubCategoryCarousel subCategories={subCategories} lang={params.lang} />
@@ -254,8 +257,8 @@ export default async function Home({ params }: { params: { lang: string } }) {
                 <div className="mb-20">
                     <div className="flex items-end justify-between mb-8">
                         <div>
-                            <h2 className="text-3xl font-black text-slate-900 tracking-tight">ROAD COLLECTIONS</h2>
-                            <p className="text-gray-500">Speed, endurance, and performance.</p>
+                            <h2 className="text-3xl font-black text-slate-900 tracking-tight">{dict.home.road_collections}</h2>
+                            <p className="text-gray-500">{dict.home.road_desc}</p>
                         </div>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -273,7 +276,7 @@ export default async function Home({ params }: { params: { lang: string } }) {
                                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent"></div>
                                 <div className="absolute bottom-0 left-0 p-6">
                                     <h3 className="text-2xl font-bold text-white mb-1">{col.name}</h3>
-                                    <span className="text-blue-400 text-sm font-bold uppercase tracking-wider">View Collection</span>
+                                    <span className="text-blue-400 text-sm font-bold uppercase tracking-wider">{dict.home.view_collection}</span>
                                 </div>
                             </Link>
                         ))}
@@ -284,8 +287,8 @@ export default async function Home({ params }: { params: { lang: string } }) {
                 <div className="mb-32">
                     <div className="flex items-end justify-between mb-8">
                         <div>
-                            <h2 className="text-3xl font-black text-slate-900 tracking-tight">MOUNTAIN COLLECTIONS</h2>
-                            <p className="text-gray-500">Trail, enduro, and cross-country.</p>
+                            <h2 className="text-3xl font-black text-slate-900 tracking-tight">{dict.home.mountain_collections}</h2>
+                            <p className="text-gray-500">{dict.home.mountain_desc}</p>
                         </div>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -303,7 +306,7 @@ export default async function Home({ params }: { params: { lang: string } }) {
                                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent"></div>
                                 <div className="absolute bottom-0 left-0 p-6">
                                     <h3 className="text-2xl font-bold text-white mb-1">{col.name}</h3>
-                                    <span className="text-emerald-400 text-sm font-bold uppercase tracking-wider">View Collection</span>
+                                    <span className="text-emerald-400 text-sm font-bold uppercase tracking-wider">{dict.home.view_collection}</span>
                                 </div>
                             </Link>
                         ))}
@@ -315,11 +318,11 @@ export default async function Home({ params }: { params: { lang: string } }) {
                     <div className="mb-32">
                         <div className="flex justify-between items-end mb-12">
                             <div>
-                                <h2 className="text-4xl font-black text-slate-900 tracking-tight mb-2">LATEST ARRIVALS</h2>
-                                <p className="text-gray-500">Fresh from the factory.</p>
+                                <h2 className="text-4xl font-black text-slate-900 tracking-tight mb-2">{dict.home.latest_arrivals}</h2>
+                                <p className="text-gray-500">{dict.home.latest_desc}</p>
                             </div>
                             <Link href={`/${params.lang}/search`} className="text-blue-600 font-bold hover:text-blue-800">
-                                View all new bikes →
+                                {dict.home.view_all_new} →
                             </Link>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -353,29 +356,35 @@ export default async function Home({ params }: { params: { lang: string } }) {
                 <div className="mb-32">
                     <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
                         <div>
-                            <h2 className="text-5xl font-black text-slate-900 tracking-tight leading-none mb-4">TOP TIER <br />BRANDS</h2>
-                            <p className="text-gray-500 text-lg">Leading innovators in the cycling industry.</p>
+                            <h2 className="text-5xl font-black text-slate-900 tracking-tight leading-none mb-4">{dict.home.top_brands.split(' ').slice(0, 2).join(' ')} <br />{dict.home.top_brands.split(' ').slice(2).join(' ')}</h2>
+                            <p className="text-gray-500 text-lg">{dict.home.brands_desc}</p>
                         </div>
                         <Link href={`/${params.lang}/search`} className="text-blue-600 font-bold flex items-center hover:text-blue-800 transition-colors">
-                            View all manufacturers
+                            {dict.home.view_manufacturers}
                             <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
                         </Link>
                     </div>
-                    <div className="grid grid-cols-2 lg:grid-cols-5 gap-8">
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
                         {brands.map((brand, i) => (
                             <Link
-                                key={brand.name + i}
-                                href={`/${params.lang}/${generateUrlSlug(brand.name)}`}
-                                className="group bg-gray-50 p-10 rounded-3xl flex flex-col items-center justify-center hover:bg-white hover:shadow-[0_20px_50px_-15px_rgba(0,0,0,0.1)] transition-all duration-500 border border-transparent hover:border-gray-100"
+                                key={brand.name}
+                                href={`/${params.lang}/${brand.slug}`}
+                                className="group relative bg-white border border-gray-100 p-8 rounded-2xl flex flex-col items-center justify-center hover:shadow-xl hover:border-blue-100 transition-all duration-300 h-48"
                             >
-                                <div className="relative w-full aspect-[3/2] mb-6 grayscale opacity-40 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500 transform group-hover:scale-110">
-                                    {brand.image ? (
-                                        <Image src={brand.image} alt={brand.name} fill className="object-contain" />
-                                    ) : (
-                                        <div className="w-full h-full flex items-center justify-center text-gray-300 font-bold">{brand.name[0]}</div>
-                                    )}
+                                <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <svg className="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
                                 </div>
-                                <span className="text-xl font-black text-slate-400 group-hover:text-slate-900 bg-slate-200 group-hover:bg-blue-100 px-4 py-1 rounded-lg transition-all">{brand.name}</span>
+
+                                <div className="relative w-full h-full grayscale group-hover:grayscale-0 transition-all duration-500">
+                                    <Image
+                                        src={brand.image}
+                                        alt={brand.name}
+                                        fill
+                                        className={`object-contain ${brand.name === 'Canyon' || brand.name === 'Santa Cruz' ? 'px-2' : 'p-4'}`}
+                                        sizes="(max-width: 768px) 50vw, 20vw"
+                                    />
+                                </div>
+                                <span className="sr-only">{brand.name}</span>
                             </Link>
                         ))}
                     </div>
@@ -385,8 +394,8 @@ export default async function Home({ params }: { params: { lang: string } }) {
                 {topRatedBikes.length > 0 && (
                     <div>
                         <div className="text-center mb-12">
-                            <h2 className="text-4xl font-black text-slate-900 tracking-tight mb-2">TOP RATED</h2>
-                            <p className="text-gray-500">The best bikes as scored by our experts.</p>
+                            <h2 className="text-4xl font-black text-slate-900 tracking-tight mb-2">{dict.home.top_rated}</h2>
+                            <p className="text-gray-500">{dict.home.top_rated_desc}</p>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                             {topRatedBikes.map(bike => (

@@ -50,7 +50,7 @@ export default function Footer({ categories, lang }: FooterProps) {
               {categories.slice(0, 6).map((category) => (
                 <li key={category.slug}>
                   <Link
-                    href={`/${category.slug}`}
+                    href={`/${lang}/${category.slug}`}
                     className="text-gray-400 hover:text-white transition-colors flex items-center gap-2"
                   >
                     <span>→</span>

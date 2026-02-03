@@ -60,7 +60,7 @@ export default async function SubCategoryPage({ params }: PageProps) {
     const subCategoryName = slug.replace(/-/g, ' ')
     const { data: subCatBikes, count: subCatCount } = await supabaseServer
         .from('bikes')
-        .select('id, brand, model, year, price, slug, category, sub_category, images, vfm_score_1_to_10, build_1_10, speed_index, frame', { count: 'exact' })
+        .select('id, brand, model, year, price, slug, category, sub_category, images, vfm_score_1_to_10, build_1_10, speed_index, frame, performance_score, value_score, ride_comfort_1_10, posture_1_10', { count: 'exact' })
         .ilike('sub_category', `%${subCategoryName}%`)
         .ilike('category', `%${categorySlug}%`)
         .order('year', { ascending: false })
@@ -75,7 +75,7 @@ export default async function SubCategoryPage({ params }: PageProps) {
         const brandName = slug.replace(/-/g, ' ')
         const { data: brandBikes, count: brandCount } = await supabaseServer
             .from('bikes')
-            .select('id, brand, model, year, price, slug, category, sub_category, images, vfm_score_1_to_10, build_1_10, speed_index, frame', { count: 'exact' })
+            .select('id, brand, model, year, price, slug, category, sub_category, images, vfm_score_1_to_10, build_1_10, speed_index, frame, performance_score, value_score, ride_comfort_1_10, posture_1_10', { count: 'exact' })
             .ilike('brand', brandName)
             .ilike('category', `%${categorySlug}%`)
             .order('year', { ascending: false })
@@ -105,7 +105,7 @@ export default async function SubCategoryPage({ params }: PageProps) {
 
         const { data: topBikes, count: topCount } = await supabaseServer
             .from('bikes')
-            .select('id, brand, model, year, price, slug, category, sub_category, images, vfm_score_1_to_10, build_1_10, speed_index, frame, overall_score, value_score, performance_score', { count: 'exact' })
+            .select('id, brand, model, year, price, slug, category, sub_category, images, vfm_score_1_to_10, build_1_10, speed_index, frame, overall_score, value_score, performance_score, ride_comfort_1_10, posture_1_10', { count: 'exact' })
             .ilike('category', `%${categorySlug}%`)
             .order(isValue ? 'value_score' : 'overall_score', { ascending: false })
             .limit(50)
@@ -148,7 +148,7 @@ export default async function SubCategoryPage({ params }: PageProps) {
 
                 {bikes && bikes.length > 0 ? (
                     <CategoryPageContent
-                        initialBikes={bikes}
+                        initialBikes={bikes as any}
                         categorySlug={params.category}
                         totalCount={totalCount}
                         filterType={type as any}

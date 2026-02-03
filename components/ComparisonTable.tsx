@@ -12,7 +12,12 @@ interface BikeWithMetrics extends Bike {
     metrics: BikeMetrics
 }
 
-export default function ComparisonTable() {
+interface ComparisonTableProps {
+    dict?: any
+    lang?: string
+}
+
+export default function ComparisonTable({ dict, lang = 'en' }: ComparisonTableProps) {
     const { selectedBikes, removeFromCompare, clearCompare } = useComparison()
     const [bikes, setBikes] = useState<BikeWithMetrics[]>([])
     const [loading, setLoading] = useState(true)
@@ -71,13 +76,13 @@ export default function ComparisonTable() {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2z" />
                     </svg>
                 </div>
-                <h2 className="text-xl font-bold text-gray-900 mb-2">No bikes selected</h2>
-                <p className="text-gray-600 mb-6">Select up to 4 bikes to compare their specs and scores.</p>
+                <h2 className="text-xl font-bold text-gray-900 mb-2">{dict?.compare_page?.no_bikes || 'No bikes selected'}</h2>
+                <p className="text-gray-600 mb-6">{dict?.compare_page?.subtitle || 'Select up to 4 bikes to compare.'}</p>
                 <Link
-                    href="/"
+                    href={`/${lang}`}
                     className="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors"
                 >
-                    Browse Bikes
+                    {dict?.compare_page?.browse_bikes || 'Browse Bikes'}
                 </Link>
             </div>
         )
@@ -130,12 +135,12 @@ export default function ComparisonTable() {
         <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
             {/* Header Controls */}
             <div className="p-4 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
-                <h2 className="font-semibold text-gray-700">Comparing {bikes.length} Bikes</h2>
+                <h2 className="font-semibold text-gray-700">{dict?.compare_page?.title || 'Comparing'} {bikes.length} {dict?.filters?.bikes || 'Bikes'}</h2>
                 <button
                     onClick={clearCompare}
                     className="text-sm text-red-600 hover:text-red-700 font-medium"
                 >
-                    Clear All
+                    {dict?.compare_page?.clear_all || 'Clear All'}
                 </button>
             </div>
 
@@ -143,14 +148,14 @@ export default function ComparisonTable() {
                 <table className="w-full min-w-[800px]">
                     <thead>
                         <tr className="border-b border-gray-200 bg-white">
-                            <th className="w-48 py-4 px-4 text-left text-sm font-semibold text-gray-500">Model</th>
+                            <th className="w-48 py-4 px-4 text-left text-sm font-semibold text-gray-500">{dict?.filters?.model || 'Model'}</th>
                             {bikes.map(bike => (
                                 <th key={bike.id} className="w-64 py-6 px-4 align-top">
                                     <div className="relative group isolate">
                                         <button
                                             onClick={() => removeFromCompare(bike.id)}
                                             className="absolute -top-3 -right-3 bg-white hover:bg-red-50 hover:text-red-600 text-gray-400 rounded-full p-2 shadow-md border border-gray-100 z-50 transition-all opacity-100"
-                                            title="Remove"
+                                            title={dict?.common?.remove_from_compare || "Remove"}
                                         >
                                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -172,14 +177,14 @@ export default function ComparisonTable() {
                                             )}
                                         </div>
                                         <Link
-                                            href={generateBikeUrl(bike)}
+                                            href={generateBikeUrl(bike, lang)}
                                             className="block text-lg font-bold text-gray-900 hover:text-blue-600 mb-1"
                                         >
                                             {bike.model}
                                         </Link>
                                         <p className="text-gray-600 font-medium mb-2">{bike.brand}</p>
                                         <p className="text-xl font-bold text-blue-600">
-                                            {formatPrice(bike.price)}
+                                            {formatPrice(bike.price, lang)}
                                         </p>
                                     </div>
                                 </th>
@@ -190,11 +195,11 @@ export default function ComparisonTable() {
                         {/* Scores Section */}
                         <tr className="bg-gray-50">
                             <td colSpan={bikes.length + 1} className="py-2 px-4 text-xs font-bold text-gray-500 uppercase tracking-wider">
-                                Scores
+                                {dict?.scores?.summary_title || 'Scores'}
                             </td>
                         </tr>
                         <tr className="border-b border-gray-100 hover:bg-gray-50 bg-blue-50/30">
-                            <td className="py-4 px-4 text-sm font-bold text-gray-800">Overall Score</td>
+                            <td className="py-4 px-4 text-sm font-bold text-gray-800">{dict?.scores?.overall || 'Overall Score'}</td>
                             {bikes.map(bike => (
                                 <td key={bike.id} className="py-4 px-4 text-center">
                                     <div className="flex flex-col items-center">
@@ -207,17 +212,22 @@ export default function ComparisonTable() {
                         <ScoreRow label="Value" metricKey="value" />
                         <ScoreRow label="Fit" metricKey="fit" />
                         <ScoreRow label="Speed" metricKey="speed" />
-                        <ScoreRow label="Climbing" metricKey="climingEfficiency" />
-                        <ScoreRow label="Comfort" metricKey="rideComfort" />
+                        <ScoreRow label={dict?.scores?.climbing || 'Climbing Efficiency'} metricKey="climingEfficiency" />
+                        <ScoreRow label={dict?.scores?.ride_comfort || 'Ride Comfort'} metricKey="rideComfort" />
+                        <ScoreRow label={dict?.scores?.aerodynamics || 'Aerodynamics'} metricKey="aerodynamics" />
+                        <ScoreRow label={dict?.scores?.riding_position || 'Riding Position'} metricKey="ridingPosition" />
+                        <ScoreRow label={dict?.scores?.handling || 'Handling'} metricKey="handling" />
+                        <ScoreRow label={dict?.scores?.build_quality || 'Build Quality'} metricKey="buildQuality" />
+                        <ScoreRow label={dict?.scores?.value_for_money || 'Value for Money'} metricKey="valueForMoney" />
 
                         {/* Specs Section */}
                         <tr className="bg-gray-50">
                             <td colSpan={bikes.length + 1} className="py-2 px-4 text-xs font-bold text-gray-500 uppercase tracking-wider">
-                                Key Specs
+                                {dict?.common?.specifications || 'Key Specs'}
                             </td>
                         </tr>
-                        <SpecRow label="Year" field="year" />
-                        <SpecRow label="Frame Material" field="frame" />
+                        <SpecRow label={dict?.filters?.year || "Year"} field="year" />
+                        <SpecRow label={dict?.filters?.frame_material || "Frame Material"} field="frame" />
                         <SpecRow label="Groupset" field="groupset" />
                         <SpecRow label="Weight" field="weight" />
                         <SpecRow label="Wheels" field="wheels" />

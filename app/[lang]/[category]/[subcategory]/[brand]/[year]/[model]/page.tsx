@@ -1,7 +1,7 @@
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { supabaseServer, Bike } from '@/lib/supabase'
-import { calculateBikeMetrics, parseGeometryData, generateUrlSlug, formatCategoryForUrl } from '@/lib/utils'
+import { calculateBikeMetrics, parseGeometryData, generateUrlSlug, formatCategoryForUrl, formatPrice } from '@/lib/utils'
 import ScoreCard from '@/components/ScoreCard'
 import ScoreSection from '@/components/ScoreSection'
 import ScoreSectionWithToggle from '@/components/ScoreSectionWithToggle'
@@ -128,16 +128,25 @@ export default async function BikePage({ params }: PageProps) {
             "@context": "https://schema.org",
             "@type": "Product",
             "@id": `${bikeUrl}#product`,
-            "name": `${bike.brand} ${bike.model}`,
-            "brand": { "@type": "Brand", "name": bike.brand },
-            "image": bike.images?.[0] || [],
-            "description": bike.bike_desc || bike.meta_desc || `${bike.brand} ${bike.model} Details.`,
-            ...(bike.price && {
-              "offers": { "@type": "AggregateOffer", "priceCurrency": "EUR", "lowPrice": bike.price.toString(), "highPrice": (bike.price * 1.05).toFixed(0), "offerCount": 5 }
-            })
+            "name": `${bike.brand} ${bike.model} ${bike.year || ''}`.trim(),
+            "brand": {
+              "@type": "Brand",
+              "name": bike.brand
+            },
+            "category": bike.sub_category || bike.category,
+            "image": bike.images?.map(img => img.startsWith('http') ? img : `${baseUrl}${img.startsWith('/') ? '' : '/'}${img}`) || [],
+            "description": bike.bike_desc || bike.meta_desc || `Detailed review and specs for ${bike.brand} ${bike.model}.`,
+            "additionalProperty": [
+              {
+                "@type": "PropertyValue",
+                "name": "Manufacturer Suggested Retail Price",
+                "value": bike.price ? `EUR ${bike.price.toLocaleString('en-US')}` : "N/A"
+              }
+            ]
           })
         }}
       />
+
 
       <div className="container mx-auto px-4 py-8 max-w-7xl">
         <div className="bg-gradient-to-br from-gray-50 to-white rounded-2xl shadow-lg p-6 lg:p-10 mb-8 border border-gray-100">
@@ -193,7 +202,7 @@ export default async function BikePage({ params }: PageProps) {
           </ScoreSection>
 
           {metrics.battery && (
-            <div className="mt-8">
+            <div className="mt-8 max-w-3xl">
               <h3 className="text-xl font-bold text-gray-900 mb-5">Battery</h3>
               <ScoreCard label={metrics.battery.label} score={metrics.battery.score} maxScore={10} description={metrics.battery.description} variant="inline" explanation={bike.battery_reason} />
             </div>
@@ -231,12 +240,12 @@ export default async function BikePage({ params }: PageProps) {
         )}
 
         <div className="mt-12 space-y-12">
-          <BikeCarousel title={`Other bikes from ${bike.brand}`} bikes={sameBrandBikes} />
-          <BikeCarousel title="2025 Models" bikes={bikes2025} />
-          <BikeCarousel title="2024 Models" bikes={bikes2024} />
-          <BikeCarousel title="2023 Models" bikes={bikes2023} />
-          <BikeCarousel title="2022 Models" bikes={bikes2022} />
-          <BikeCarousel title="More Value for Money Options" bikes={betterValueBikes} />
+          <BikeCarousel title={`Other bikes from ${bike.brand}`} bikes={sameBrandBikes} lang={params.lang} />
+          <BikeCarousel title="2025 Models" bikes={bikes2025} lang={params.lang} />
+          <BikeCarousel title="2024 Models" bikes={bikes2024} lang={params.lang} />
+          <BikeCarousel title="2023 Models" bikes={bikes2023} lang={params.lang} />
+          <BikeCarousel title="2022 Models" bikes={bikes2022} lang={params.lang} />
+          <BikeCarousel title="More Value for Money Options" bikes={betterValueBikes} lang={params.lang} />
         </div>
       </div>
     </main>

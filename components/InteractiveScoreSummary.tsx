@@ -9,18 +9,10 @@ interface InteractiveScoreSummaryProps {
 }
 
 export default function InteractiveScoreSummary({ metrics, bike }: InteractiveScoreSummaryProps) {
-    const [showAllExplanations, setShowAllExplanations] = useState(false)
-
     return (
         <div className="mb-10">
             <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold text-gray-900">Score Summary</h2>
-                <button
-                    onClick={() => setShowAllExplanations(!showAllExplanations)}
-                    className="bg-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors shadow-sm"
-                >
-                    {showAllExplanations ? 'Hide Explanations' : 'Show Explanations'}
-                </button>
             </div>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                 <ScoreCard
@@ -30,8 +22,7 @@ export default function InteractiveScoreSummary({ metrics, bike }: InteractiveSc
                     description={metrics.performance.description}
                     variant="primary"
                     metricType="performance"
-                    explanation={bike.performance_score_explanation}
-                    isExpanded={showAllExplanations}
+                // Removed explanation and expansion logic as requested
                 />
                 <ScoreCard
                     label={metrics.value.label}
@@ -40,7 +31,11 @@ export default function InteractiveScoreSummary({ metrics, bike }: InteractiveSc
                     description={metrics.value.description}
                     metricType="value"
                     explanation={bike.value_score_explanation}
-                    isExpanded={showAllExplanations}
+                    isExpanded={true} // Always show or never? "no drop down". If I say true it shows. If false it hides.
+                // User said "Delete the reason part as well for performance." -> Implies strictly performance.
+                // But "Summary section should not have a drop down." -> Implies for ALL.
+                // If no dropdown, how do we see text? Always visible?
+                // I will make them ALWAYS VISIBLE (isExpanded={true}) except performance (no explanation).
                 />
                 <ScoreCard
                     label={metrics.fit.label}
@@ -49,7 +44,7 @@ export default function InteractiveScoreSummary({ metrics, bike }: InteractiveSc
                     description={metrics.fit.description}
                     metricType="fit"
                     explanation={bike.fit_score_explanation}
-                    isExpanded={showAllExplanations}
+                    isExpanded={true}
                 />
                 <ScoreCard
                     label={metrics.general.label}
@@ -58,7 +53,7 @@ export default function InteractiveScoreSummary({ metrics, bike }: InteractiveSc
                     description={metrics.general.description}
                     metricType="general"
                     explanation={bike.general_score_explanation}
-                    isExpanded={showAllExplanations}
+                    isExpanded={true}
                 />
             </div>
         </div>

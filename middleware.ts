@@ -7,7 +7,7 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
-const locales = ['en', 'de']
+const locales = ['en', 'de', 'fr', 'es', 'it', 'nl']
 const defaultLocale = 'en'
 
 export async function middleware(request: NextRequest) {

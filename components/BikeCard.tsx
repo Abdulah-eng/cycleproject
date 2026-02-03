@@ -21,24 +21,25 @@ interface Bike {
 interface BikeCardProps {
   bike: Bike
   categorySlug: string
+  lang: string
 }
 
-export default function BikeCard({ bike, categorySlug }: BikeCardProps) {
+export default function BikeCard({ bike, categorySlug, lang }: BikeCardProps) {
   const imageUrl = bike.images && bike.images.length > 0 ? bike.images[0] : null
   const overallScore = ((bike.vfm_score_1_to_10 || 5) + (bike.build_1_10 || 5)) / 2
 
   const formatPrice = (price: number | null) => {
     if (!price) return 'Price not available'
-    return new Intl.NumberFormat('en-US', {
+    return new Intl.NumberFormat(lang === 'en' ? 'en-US' : lang === 'de' ? 'de-DE' : 'en-IE', {
       style: 'currency',
-      currency: 'USD',
+      currency: lang === 'en' ? 'USD' : 'EUR', // Simple currency switch logic, can be improved
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(price)
   }
 
   // Generate new SEO-friendly URL
-  const bikeUrl = generateBikeUrl(bike)
+  const bikeUrl = generateBikeUrl(bike, lang)
 
   const comparisonBike = {
     id: bike.id,
