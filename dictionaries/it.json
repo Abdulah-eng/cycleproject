@@ -99,5 +99,109 @@
         "sort_price_low": "Prezzo: Basso - Alto",
         "sort_price_high": "Prezzo: Alto - Basso",
         "sort_score": "Punteggio Complessivo"
+    },
+    "buckets": {
+        "speed": {
+            "relaxed_pace": "Ritmo Rilassato",
+            "moderate_speed": "Velocità Moderata",
+            "fast": "Veloce",
+            "very_fast": "Molto Veloce",
+            "extremely_fast": "Estremamente Veloce"
+        },
+        "climbing": {
+            "city_climber": "Scalatore Urbano",
+            "moderate_climber": "Scalatore Moderato",
+            "good_climber": "Buon Scalatore",
+            "excellent_climber": "Scalatore Eccellente"
+        },
+        "aero": {
+            "non_aero": "Non Aero",
+            "moderate_aero": "Aero Moderato",
+            "aero": "Aero",
+            "very_aero": "Molto Aero"
+        },
+        "posture": {
+            "relaxed": "Rilassata",
+            "balanced": "Bilanciata",
+            "sporty": "Sportiva",
+            "aggressive": "Aggressiva"
+        },
+        "handling": {
+            "stable": "Stabile",
+            "balanced_handling": "Maneggevolezza Bilanciata",
+            "precise_control": "Controllo Preciso",
+            "highly_responsive": "Altamente Reattiva"
+        },
+        "fit_flexibility": {
+            "race_specific_fit": "Vestibilità Specifica da Gara",
+            "versatile": "Versatile",
+            "highly_adaptable": "Altamente Adattabile",
+            "optimal_fit": "Vestibilità Ottimale"
+        },
+        "ride_comfort": {
+            "race_aggressive": "Gara Aggressiva",
+            "everyday_comfort": "Comfort Quotidiano",
+            "high_comfort": "Alto Comfort",
+            "endurance_focused": "Focalizzata sulla Resistenza"
+        },
+        "build_quality": {
+            "basic_build": "Costruzione Base",
+            "solid_build": "Costruzione Solida",
+            "strong_build": "Costruzione Robusta",
+            "premium_build": "Costruzione Premium"
+        },
+        "value": {
+            "premium_pricing": "Prezzo Premium",
+            "good_value": "Buon Valore",
+            "strong_value": "Valore Forte",
+            "extreme_value": "Valore Estremo"
+        },
+        "battery": {
+            "limited_range": "Autonomia Limitata",
+            "moderate_range": "Autonomia Moderata",
+            "good_range": "Buona Autonomia",
+            "excellent_range": "Autonomia Eccellente"
+        }
+    },
+    "specs": {
+        "general": "Generale",
+        "brand": "Marca",
+        "model": "Modello",
+        "year": "Anno",
+        "price": "Prezzo",
+        "weight": "Peso",
+        "category": "Categoria",
+        "sub_category": "Sottocategoria",
+        "groupset": "Gruppo",
+        "wheels": "Ruote",
+        "frame": "Telaio",
+        "suspension_fork": "Forcella Ammortizzata",
+        "rear_shock": "Ammortizzatore Posteriore",
+        "drivetrain": "Trasmissione",
+        "shift_levers": "Leve del Cambio",
+        "rear_derailleur": "Deragliatore Posteriore",
+        "front_derailleur": "Deragliatore Anteriore",
+        "cassette": "Cassetta",
+        "crank": "Guarnitura",
+        "bottom_bracket": "Movimento Centrale",
+        "chain": "Catena",
+        "front_hub": "Mozzo Anteriore",
+        "rear_hub": "Mozzo Posteriore",
+        "rims": "Cerchi",
+        "spokes": "Raggi",
+        "tires": "Pneumatici",
+        "brakes": "Freni",
+        "brake_levers": "Leve Freno",
+        "cockpit": "Cockpit",
+        "stem": "Attacco Manubrio",
+        "handlebar": "Manubrio",
+        "grips": "Manopole",
+        "seat": "Seduta",
+        "saddle": "Sella",
+        "seatpost": "Reggisella",
+        "electric_components": "Componenti Elettrici",
+        "motor": "Motore",
+        "charger": "Caricabatterie",
+        "battery_range": "Autonomia Batteria"
     }
 }

@@ -7,9 +7,10 @@ import Link from 'next/link'
 interface BikeDetailViewProps {
     bike: Bike
     lang: string
+    dict: any
 }
 
-export default function BikeDetailView({ bike, lang }: BikeDetailViewProps) {
+export default function BikeDetailView({ bike, lang, dict }: BikeDetailViewProps) {
     // Construct metrics object for InteractiveScoreSummary
     // Using the new score columns as requested
     const metrics: any = {
@@ -136,8 +137,8 @@ export default function BikeDetailView({ bike, lang }: BikeDetailViewProps) {
 
                 {/* Specs Table */}
                 <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 md:p-12">
-                    <h2 className="text-3xl font-bold text-gray-900 mb-8">Technical Specifications</h2>
-                    <SpecsTable bike={bike} />
+                    <h2 className="text-3xl font-bold text-gray-900 mb-8">{dict?.common?.specifications || "Technical Specifications"}</h2>
+                    <SpecsTable bike={bike} dict={dict} />
                 </div>
             </div>
         </div>

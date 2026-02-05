@@ -99,5 +99,109 @@
         "sort_price_low": "Prijs: Laag naar Hoog",
         "sort_price_high": "Prijs: Hoog naar Laag",
         "sort_score": "Totaalscore"
+    },
+    "buckets": {
+        "speed": {
+            "relaxed_pace": "Ontspannen Tempo",
+            "moderate_speed": "Gemiddelde Snelheid",
+            "fast": "Snel",
+            "very_fast": "Zeer Snel",
+            "extremely_fast": "Extreem Snel"
+        },
+        "climbing": {
+            "city_climber": "Stadsklimmer",
+            "moderate_climber": "Gemiddelde Klimmer",
+            "good_climber": "Goede Klimmer",
+            "excellent_climber": "Uitstekende Klimmer"
+        },
+        "aero": {
+            "non_aero": "Niet-Aero",
+            "moderate_aero": "Enigszins Aero",
+            "aero": "Aero",
+            "very_aero": "Zeer Aero"
+        },
+        "posture": {
+            "relaxed": "Ontspannen",
+            "balanced": "Gebalanceerd",
+            "sporty": "Sportief",
+            "aggressive": "Agressief"
+        },
+        "handling": {
+            "stable": "Stabiel",
+            "balanced_handling": "Gebalanceerde Besturing",
+            "precise_control": "Precieze Controle",
+            "highly_responsive": "Zeer Responsief"
+        },
+        "fit_flexibility": {
+            "race_specific_fit": "Race Specifieke Pasvorm",
+            "versatile": "Veelzijdig",
+            "highly_adaptable": "Zeer Aanpasbaar",
+            "optimal_fit": "Optimale Pasvorm"
+        },
+        "ride_comfort": {
+            "race_aggressive": "Race Agressief",
+            "everyday_comfort": "Dagelijks Comfort",
+            "high_comfort": "Hoog Comfort",
+            "endurance_focused": "Duurgericht"
+        },
+        "build_quality": {
+            "basic_build": "Basis Bouw",
+            "solid_build": "Degelijke Bouw",
+            "strong_build": "Sterke Bouw",
+            "premium_build": "Premium Bouw"
+        },
+        "value": {
+            "premium_pricing": "Premium Prijsstelling",
+            "good_value": "Goede Waarde",
+            "strong_value": "Sterke Waarde",
+            "extreme_value": "Extreme Waarde"
+        },
+        "battery": {
+            "limited_range": "Beperkt Bereik",
+            "moderate_range": "Gemiddeld Bereik",
+            "good_range": "Goed Bereik",
+            "excellent_range": "Uitstekend Bereik"
+        }
+    },
+    "specs": {
+        "general": "Algemeen",
+        "brand": "Merk",
+        "model": "Model",
+        "year": "Jaar",
+        "price": "Prijs",
+        "weight": "Gewicht",
+        "category": "Categorie",
+        "sub_category": "Subcategorie",
+        "groupset": "Groepset",
+        "wheels": "Wielen",
+        "frame": "Frame",
+        "suspension_fork": "Voorvork",
+        "rear_shock": "Achterdemper",
+        "drivetrain": "Aandrijving",
+        "shift_levers": "Shifters",
+        "rear_derailleur": "Achterderailleur",
+        "front_derailleur": "Voorderailleur",
+        "cassette": "Cassette",
+        "crank": "Crankstel",
+        "bottom_bracket": "Trapas",
+        "chain": "Ketting",
+        "front_hub": "Voornaaf",
+        "rear_hub": "Achternaaf",
+        "rims": "Velgen",
+        "spokes": "Spaken",
+        "tires": "Banden",
+        "brakes": "Remmen",
+        "brake_levers": "Remhendels",
+        "cockpit": "Cockpit",
+        "stem": "Stuurpen",
+        "handlebar": "Stuur",
+        "grips": "Handvatten",
+        "seat": "Zadel",
+        "saddle": "Zadel",
+        "seatpost": "Zadelpen",
+        "electric_components": "Elektrische Componenten",
+        "motor": "Motor",
+        "charger": "Oplader",
+        "battery_range": "Accu Bereik"
     }
 }

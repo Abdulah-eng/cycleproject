@@ -200,6 +200,8 @@ export interface Bike {
   build_quality_explanation: string | null
   value_for_money_explanation: string | null
   surface_range_explanation: string | null
+  // Allow dynamic access for localized fields (e.g. bike_desc_fr)
+  [key: string]: any
 }
 
 export interface BikeScore {

@@ -99,5 +99,109 @@
         "sort_price_low": "Precio: Bajo a Alto",
         "sort_price_high": "Precio: Alto a Bajo",
         "sort_score": "Puntuación general"
+    },
+    "buckets": {
+        "speed": {
+            "relaxed_pace": "Ritmo Relajado",
+            "moderate_speed": "Velocidad Moderada",
+            "fast": "Rápido",
+            "very_fast": "Muy Rápido",
+            "extremely_fast": "Extremadamente Rápido"
+        },
+        "climbing": {
+            "city_climber": "Escalador Urbano",
+            "moderate_climber": "Escalador Moderado",
+            "good_climber": "Buen Escalador",
+            "excellent_climber": "Escalador Excelente"
+        },
+        "aero": {
+            "non_aero": "No Aero",
+            "moderate_aero": "Aero Moderado",
+            "aero": "Aero",
+            "very_aero": "Muy Aero"
+        },
+        "posture": {
+            "relaxed": "Relajada",
+            "balanced": "Equilibrada",
+            "sporty": "Deportiva",
+            "aggressive": "Agresiva"
+        },
+        "handling": {
+            "stable": "Estable",
+            "balanced_handling": "Manejo Equilibrado",
+            "precise_control": "Control Preciso",
+            "highly_responsive": "Altamente Reactivo"
+        },
+        "fit_flexibility": {
+            "race_specific_fit": "Ajuste Específico de Carrera",
+            "versatile": "Versátil",
+            "highly_adaptable": "Altamente Adaptable",
+            "optimal_fit": "Ajuste Óptimo"
+        },
+        "ride_comfort": {
+            "race_aggressive": "Carrera Agresiva",
+            "everyday_comfort": "Confort Diario",
+            "high_comfort": "Alto Confort",
+            "endurance_focused": "Enfocado en Resistencia"
+        },
+        "build_quality": {
+            "basic_build": "Construcción Básica",
+            "solid_build": "Construcción Sólida",
+            "strong_build": "Construcción Fuerte",
+            "premium_build": "Construcción Premium"
+        },
+        "value": {
+            "premium_pricing": "Precio Premium",
+            "good_value": "Buen Valor",
+            "strong_value": "Gran Valor",
+            "extreme_value": "Valor Extremo"
+        },
+        "battery": {
+            "limited_range": "Rango Limitado",
+            "moderate_range": "Rango Moderado",
+            "good_range": "Buen Rango",
+            "excellent_range": "Rango Excelente"
+        }
+    },
+    "specs": {
+        "general": "General",
+        "brand": "Marca",
+        "model": "Modelo",
+        "year": "Año",
+        "price": "Precio",
+        "weight": "Peso",
+        "category": "Categoría",
+        "sub_category": "Subcategoría",
+        "groupset": "Grupo",
+        "wheels": "Ruedas",
+        "frame": "Cuadro",
+        "suspension_fork": "Horquilla de Suspensión",
+        "rear_shock": "Amortiguador Trasero",
+        "drivetrain": "Transmisión",
+        "shift_levers": "Palancas de Cambio",
+        "rear_derailleur": "Desviador Trasero",
+        "front_derailleur": "Desviador Delantero",
+        "cassette": "Cassette",
+        "crank": "Biela",
+        "bottom_bracket": "Eje de Pedalier",
+        "chain": "Cadena",
+        "front_hub": "Buje Delantero",
+        "rear_hub": "Buje Trasero",
+        "rims": "Llantas",
+        "spokes": "Radios",
+        "tires": "Neumáticos",
+        "brakes": "Frenos",
+        "brake_levers": "Palancas de Freno",
+        "cockpit": "Cockpit",
+        "stem": "Potencia",
+        "handlebar": "Manillar",
+        "grips": "Puños",
+        "seat": "Asiento",
+        "saddle": "Sillín",
+        "seatpost": "Tija de Sillín",
+        "electric_components": "Componentes Eléctricos",
+        "motor": "Motor",
+        "charger": "Cargador",
+        "battery_range": "Rango de Batería"
     }
 }

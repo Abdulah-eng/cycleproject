@@ -99,5 +99,109 @@
         "sort_price_low": "Price: Low to High",
         "sort_price_high": "Price: High to Low",
         "sort_score": "Overall Score"
+    },
+    "buckets": {
+        "speed": {
+            "relaxed_pace": "Relaxed Pace",
+            "moderate_speed": "Moderate Speed",
+            "fast": "Fast",
+            "very_fast": "Very Fast",
+            "extremely_fast": "Extremely Fast"
+        },
+        "climbing": {
+            "city_climber": "City Climber",
+            "moderate_climber": "Moderate Climber",
+            "good_climber": "Good Climber",
+            "excellent_climber": "Excellent Climber"
+        },
+        "aero": {
+            "non_aero": "Non-Aero",
+            "moderate_aero": "Moderate Aero",
+            "aero": "Aero",
+            "very_aero": "Very Aero"
+        },
+        "posture": {
+            "relaxed": "Relaxed",
+            "balanced": "Balanced",
+            "sporty": "Sporty",
+            "aggressive": "Aggressive"
+        },
+        "handling": {
+            "stable": "Stable",
+            "balanced_handling": "Balanced Handling",
+            "precise_control": "Precise Control",
+            "highly_responsive": "Highly Responsive"
+        },
+        "fit_flexibility": {
+            "race_specific_fit": "Race Specific Fit",
+            "versatile": "Versatile",
+            "highly_adaptable": "Highly Adaptable",
+            "optimal_fit": "Optimal Fit"
+        },
+        "ride_comfort": {
+            "race_aggressive": "Race Aggressive",
+            "everyday_comfort": "Everyday Comfort",
+            "high_comfort": "High Comfort",
+            "endurance_focused": "Endurance Focused"
+        },
+        "build_quality": {
+            "basic_build": "Basic Build",
+            "solid_build": "Solid Build",
+            "strong_build": "Strong Build",
+            "premium_build": "Premium Build"
+        },
+        "value": {
+            "premium_pricing": "Premium Pricing",
+            "good_value": "Good Value",
+            "strong_value": "Strong Value",
+            "extreme_value": "Extreme Value"
+        },
+        "battery": {
+            "limited_range": "Limited Range",
+            "moderate_range": "Moderate Range",
+            "good_range": "Good Range",
+            "excellent_range": "Excellent Range"
+        }
+    },
+    "specs": {
+        "general": "General",
+        "brand": "Brand",
+        "model": "Model",
+        "year": "Year",
+        "price": "Price",
+        "weight": "Weight",
+        "category": "Category",
+        "sub_category": "Sub Category",
+        "groupset": "Groupset",
+        "wheels": "Wheels",
+        "frame": "Frame",
+        "suspension_fork": "Suspension Fork",
+        "rear_shock": "Rear Shock",
+        "drivetrain": "Drivetrain",
+        "shift_levers": "Shift Levers",
+        "rear_derailleur": "Rear Derailleur",
+        "front_derailleur": "Front Derailleur",
+        "cassette": "Cassette",
+        "crank": "Crank",
+        "bottom_bracket": "Bottom Bracket",
+        "chain": "Chain",
+        "front_hub": "Front Hub",
+        "rear_hub": "Rear Hub",
+        "rims": "Rims",
+        "spokes": "Spokes",
+        "tires": "Tires",
+        "brakes": "Brakes",
+        "brake_levers": "Brake Levers",
+        "cockpit": "Cockpit",
+        "stem": "Stem",
+        "handlebar": "Handlebar",
+        "grips": "Grips",
+        "seat": "Seat",
+        "saddle": "Saddle",
+        "seatpost": "Seatpost",
+        "electric_components": "Electric Components",
+        "motor": "Motor",
+        "charger": "Charger",
+        "battery_range": "Battery Range"
     }
 }

@@ -99,5 +99,109 @@
         "sort_price_low": "Preis: Niedrig bis Hoch",
         "sort_price_high": "Preis: Hoch bis Niedrig",
         "sort_score": "Gesamtbewertung"
+    },
+    "buckets": {
+        "speed": {
+            "relaxed_pace": "Entspanntes Tempo",
+            "moderate_speed": "Mäßige Geschwindigkeit",
+            "fast": "Schnell",
+            "very_fast": "Sehr Schnell",
+            "extremely_fast": "Extrem Schnell"
+        },
+        "climbing": {
+            "city_climber": "Stadtkletterer",
+            "moderate_climber": "Mäßiger Kletterer",
+            "good_climber": "Guter Kletterer",
+            "excellent_climber": "Exzellenter Kletterer"
+        },
+        "aero": {
+            "non_aero": "Nicht Aero",
+            "moderate_aero": "Mäßig Aero",
+            "aero": "Aero",
+            "very_aero": "Sehr Aero"
+        },
+        "posture": {
+            "relaxed": "Entspannt",
+            "balanced": "Ausgewogen",
+            "sporty": "Sportlich",
+            "aggressive": "Aggressiv"
+        },
+        "handling": {
+            "stable": "Stabil",
+            "balanced_handling": "Ausgewogenes Handling",
+            "precise_control": "Präzise Kontrolle",
+            "highly_responsive": "Sehr Reaktionsfreudig"
+        },
+        "fit_flexibility": {
+            "race_specific_fit": "Rennspezifische Passform",
+            "versatile": "Vielseitig",
+            "highly_adaptable": "Sehr Anpassungsfähig",
+            "optimal_fit": "Optimale Passform"
+        },
+        "ride_comfort": {
+            "race_aggressive": "Renn-Aggressiv",
+            "everyday_comfort": "Alltagskomfort",
+            "high_comfort": "Hoher Komfort",
+            "endurance_focused": "Ausdauerorientiert"
+        },
+        "build_quality": {
+            "basic_build": "Basis Bauweise",
+            "solid_build": "Solide Bauweise",
+            "strong_build": "Starke Bauweise",
+            "premium_build": "Premium Bauweise"
+        },
+        "value": {
+            "premium_pricing": "Premium Preisgestaltung",
+            "good_value": "Guter Wert",
+            "strong_value": "Starker Wert",
+            "extreme_value": "Extremer Wert"
+        },
+        "battery": {
+            "limited_range": "Begrenzte Reichweite",
+            "moderate_range": "Mäßige Reichweite",
+            "good_range": "Gute Reichweite",
+            "excellent_range": "Exzellente Reichweite"
+        }
+    },
+    "specs": {
+        "general": "Allgemein",
+        "brand": "Marke",
+        "model": "Modell",
+        "year": "Jahr",
+        "price": "Preis",
+        "weight": "Gewicht",
+        "category": "Kategorie",
+        "sub_category": "Unterkategorie",
+        "groupset": "Schaltgruppe",
+        "wheels": "Räder",
+        "frame": "Rahmen",
+        "suspension_fork": "Federgabel",
+        "rear_shock": "Dämpfer",
+        "drivetrain": "Antrieb",
+        "shift_levers": "Schalthebel",
+        "rear_derailleur": "Schaltwerk",
+        "front_derailleur": "Umwerfer",
+        "cassette": "Kassette",
+        "crank": "Kurbel",
+        "bottom_bracket": "Innenlager",
+        "chain": "Kette",
+        "front_hub": "Vorderradnabe",
+        "rear_hub": "Hinterradnabe",
+        "rims": "Felgen",
+        "spokes": "Speichen",
+        "tires": "Reifen",
+        "brakes": "Bremsen",
+        "brake_levers": "Bremshebel",
+        "cockpit": "Cockpit",
+        "stem": "Vorbau",
+        "handlebar": "Lenker",
+        "grips": "Griffe",
+        "seat": "Sitz",
+        "saddle": "Sattel",
+        "seatpost": "Sattelstütze",
+        "electric_components": "Elektrische Komponenten",
+        "motor": "Motor",
+        "charger": "Ladegerät",
+        "battery_range": "Batteriereichweite"
     }
 }

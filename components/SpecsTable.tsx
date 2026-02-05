@@ -3,6 +3,7 @@ import { formatPrice } from '@/lib/utils'
 
 interface SpecsTableProps {
   bike: Bike
+  dict: any
 }
 
 interface SpecSection {
@@ -10,72 +11,74 @@ interface SpecSection {
   specs: { label: string; value: string | null }[]
 }
 
-export default function SpecsTable({ bike }: SpecsTableProps) {
+export default function SpecsTable({ bike, dict }: SpecsTableProps) {
+  const t = (key: string) => dict?.specs?.[key] || key
+
   const sections: SpecSection[] = [
     {
-      title: 'General',
+      title: t('general'),
       specs: [
-        { label: 'Brand', value: bike.brand },
-        { label: 'Model', value: bike.model },
-        { label: 'Year', value: bike.year?.toString() || null },
-        { label: 'Price', value: bike.price ? formatPrice(bike.price) : null },
-        { label: 'Weight', value: bike.weight },
-        { label: 'Category', value: bike.category },
-        { label: 'Sub Category', value: bike.sub_category },
-        { label: 'Groupset', value: bike.groupset },
-        { label: 'Wheels', value: bike.wheels },
+        { label: t('brand'), value: bike.brand },
+        { label: t('model'), value: bike.model },
+        { label: t('year'), value: bike.year?.toString() || null },
+        { label: t('price'), value: bike.price ? formatPrice(bike.price) : null },
+        { label: t('weight'), value: bike.weight },
+        { label: t('category'), value: bike.category },
+        { label: t('sub_category'), value: bike.sub_category },
+        { label: t('groupset'), value: bike.groupset },
+        { label: t('wheels'), value: bike.wheels },
       ],
     },
     {
-      title: 'Frame',
+      title: t('frame'),
       specs: [
-        { label: 'Frame', value: bike.frame_description || bike.frame },
-        { label: 'Suspension Fork', value: bike.suspension_fork_description || bike.fork },
-        { label: 'Rear Shock', value: bike.rear_shock_description },
+        { label: t('frame'), value: bike.frame_description || bike.frame },
+        { label: t('suspension_fork'), value: bike.suspension_fork_description || bike.fork },
+        { label: t('rear_shock'), value: bike.rear_shock_description },
       ],
     },
     {
-      title: 'Drivetrain',
+      title: t('drivetrain'),
       specs: [
-        { label: 'Shift Levers', value: bike.shift_levers },
-        { label: 'Rear Derailleur', value: bike.rear_derailleur },
-        { label: 'Front Derailleur', value: bike.front_derailleur },
-        { label: 'Cassette', value: bike.cassette },
-        { label: 'Crank', value: bike.crank },
-        { label: 'Bottom Bracket', value: bike.bottom_bracket },
-        { label: 'Chain', value: bike.chain },
+        { label: t('shift_levers'), value: bike.shift_levers },
+        { label: t('rear_derailleur'), value: bike.rear_derailleur },
+        { label: t('front_derailleur'), value: bike.front_derailleur },
+        { label: t('cassette'), value: bike.cassette },
+        { label: t('crank'), value: bike.crank },
+        { label: t('bottom_bracket'), value: bike.bottom_bracket },
+        { label: t('chain'), value: bike.chain },
       ],
     },
     {
-      title: 'Wheels',
+      title: t('wheels'),
       specs: [
-        { label: 'Front Hub', value: bike.front_hub },
-        { label: 'Rear Hub', value: bike.rear_hub },
-        { label: 'Rims', value: bike.rims },
-        { label: 'Spokes', value: bike.spokes },
-        { label: 'Tires', value: bike.tires },
+        { label: t('front_hub'), value: bike.front_hub },
+        { label: t('rear_hub'), value: bike.rear_hub },
+        { label: t('rims'), value: bike.rims },
+        { label: t('spokes'), value: bike.spokes },
+        { label: t('tires'), value: bike.tires },
       ],
     },
     {
-      title: 'Brakes',
+      title: t('brakes'),
       specs: [
-        { label: 'Brakes', value: bike.brakes },
-        { label: 'Brake Levers', value: bike.brake_levers },
+        { label: t('brakes'), value: bike.brakes },
+        { label: t('brake_levers'), value: bike.brake_levers },
       ],
     },
     {
-      title: 'Cockpit',
+      title: t('cockpit'),
       specs: [
-        { label: 'Stem', value: bike.stem },
-        { label: 'Handlebar', value: bike.handlebar },
-        { label: 'Grips', value: bike.grips },
+        { label: t('stem'), value: bike.stem },
+        { label: t('handlebar'), value: bike.handlebar },
+        { label: t('grips'), value: bike.grips },
       ],
     },
     {
-      title: 'Seat',
+      title: t('seat'),
       specs: [
-        { label: 'Saddle', value: bike.saddle },
-        { label: 'Seatpost', value: bike.seatpost },
+        { label: t('saddle'), value: bike.saddle },
+        { label: t('seatpost'), value: bike.seatpost },
       ],
     },
   ]
@@ -83,12 +86,12 @@ export default function SpecsTable({ bike }: SpecsTableProps) {
   // Add e-bike section if applicable
   if (bike.motor || bike.battery) {
     sections.push({
-      title: 'Electric Components',
+      title: t('electric_components'),
       specs: [
-        { label: 'Motor', value: bike.motor || bike.motor3 },
-        { label: 'Battery', value: bike.battery || bike.battery4 },
-        { label: 'Charger', value: bike.charger },
-        { label: 'Battery Range', value: bike.battery_range },
+        { label: t('motor'), value: bike.motor || bike.motor3 },
+        { label: t('battery'), value: bike.battery || bike.battery4 },
+        { label: t('charger'), value: bike.charger },
+        { label: t('battery_range'), value: bike.battery_range },
       ],
     })
   }

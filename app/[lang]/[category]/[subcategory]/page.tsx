@@ -1,3 +1,4 @@
+import { getDictionary } from '@/lib/dictionaries'
 import { Metadata } from 'next'
 import { supabaseServer } from '@/lib/supabase'
 import CategoryPageContent from '@/components/CategoryPageContent'
@@ -49,7 +50,8 @@ export default async function SubCategoryPage({ params }: PageProps) {
     const bike = await getBikeBySlug(params.subcategory)
 
     if (bike) {
-        return <BikeDetailView bike={bike} lang={params.lang} />
+        const dict = await getDictionary(params.lang)
+        return <BikeDetailView bike={bike} lang={params.lang} dict={dict} />
     }
 
     // 2. If not a bike, proceed with Sub-Category / Brand logic

@@ -98,15 +98,74 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return { title, description }
 }
 
+import { getDictionary } from '@/lib/dictionaries'
+
 export default async function BikePage({ params }: PageProps) {
   const bike = await getBikeFromParams(params)
   if (!bike) notFound()
 
-  const metrics = calculateBikeMetrics(bike)
-  const geometryData = parseGeometryData(bike.geometry_data)
-  const comparisonBike = { ...bike, image: bike.images?.[0] || null }
+  const dict = await getDictionary(params.lang)
 
-  const subCategoryName = bike.sub_category
+  // Helper to resolve nested keys
+  const t = (key: string) => {
+    return key.split('.').reduce((o: any, i) => (o ? o[i] : key), dict) || key
+  }
+
+  const rawMetrics = calculateBikeMetrics(bike)
+
+  // Translate metrics
+  const metrics = Object.entries(rawMetrics).reduce((acc: any, [key, metric]: [string, any]) => {
+    if (key === 'overallScore') {
+      acc[key] = metric
+      return acc
+    }
+    // Handle optional battery
+    if (!metric) return acc
+
+    acc[key] = {
+      ...metric,
+      label: t(metric.label),
+      description: t(metric.description)
+    }
+    return acc
+  }, {}) as typeof rawMetrics
+
+  // Localize bike fields (Type 4)
+  const langSuffix = `_${params.lang}`
+  const localizedBike = { ...bike } as any
+
+  // List of fields to attempt localization
+  const textFields = [
+    'bike_desc', 'meta_desc', 'title_seo',
+    'fit_reason', 'vfm_reason', 'build_reason', 'aero_reason',
+    'climb_reason', 'suspension_reason', 'posture_reason',
+    'responsiveness_reason', 'speed_reason', 'comfort_reason',
+    'surface_reason', 'battery_reason'
+  ]
+
+  textFields.forEach(field => {
+    // Check if localized field exists (e.g. bike_desc_fr)
+    const localizedVal = (bike as any)[`${field}${langSuffix}`]
+    if (localizedVal && localizedVal.trim() !== '') {
+      localizedBike[field] = localizedVal
+    }
+  })
+
+  // Override specific explanations that might have different names in calculateBikeMetrics usage
+  // The UI components access specific reasons. InteractiveScoreSummary uses e.g. bike.fit_score_explanation
+  // But wait, the original code used things like `bike.posture_reason || bike.riding_position_explanation`
+  // My localizedBike handles `posture_reason`. I should make sure I didn't miss legacy mappings if they are important.
+  // The CSV has `fit_reason`, `posture_reason` etc. So limiting to the lists above should cover the new CSV data.
+
+  // Map localized reasons to legacy explanation fields for InteractiveScoreSummary compatibility
+  localizedBike.value_score_explanation = localizedBike.vfm_reason || localizedBike.value_score_explanation
+  localizedBike.fit_score_explanation = localizedBike.fit_reason || localizedBike.fit_score_explanation
+  localizedBike.general_score_explanation = localizedBike.build_reason || localizedBike.general_score_explanation
+
+  const geometryData = parseGeometryData(bike.geometry_data)
+  const comparisonBike = { ...localizedBike, image: bike.images?.[0] || null }
+
+  const subCategoryName = localizedBike.sub_category
   const [sameBrandBikes, bikes2025, bikes2024, bikes2023, bikes2022, betterValueBikes] = await Promise.all([
     getSameBrandBikes(bike),
     getBikesByYear(2025, bike.category, subCategoryName),
@@ -119,6 +178,10 @@ export default async function BikePage({ params }: PageProps) {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://cycleproject.vercel.app'
   const bikeUrl = `${baseUrl}/${params.lang}/${params.category}/${params.subcategory}/${params.brand}/${params.year}/${params.model}`
 
+  // Ensure title/desc are from localizedBike for page metadata/h1
+  // But metadata generation is separate. I need to fix generateMetadata too if I want it localized there.
+  // For now, let's focus on the Page component rendering.
+
   return (
     <main className="min-h-screen bg-gray-50">
       <script
@@ -128,19 +191,19 @@ export default async function BikePage({ params }: PageProps) {
             "@context": "https://schema.org",
             "@type": "Product",
             "@id": `${bikeUrl}#product`,
-            "name": `${bike.brand} ${bike.model} ${bike.year || ''}`.trim(),
+            "name": `${localizedBike.brand} ${localizedBike.model} ${localizedBike.year || ''}`.trim(),
             "brand": {
               "@type": "Brand",
-              "name": bike.brand
+              "name": localizedBike.brand
             },
-            "category": bike.sub_category || bike.category,
-            "image": bike.images?.map(img => img.startsWith('http') ? img : `${baseUrl}${img.startsWith('/') ? '' : '/'}${img}`) || [],
-            "description": bike.bike_desc || bike.meta_desc || `Detailed review and specs for ${bike.brand} ${bike.model}.`,
+            "category": localizedBike.sub_category || localizedBike.category,
+            "image": localizedBike.images?.map((img: string) => img.startsWith('http') ? img : `${baseUrl}${img.startsWith('/') ? '' : '/'}${img}`) || [],
+            "description": localizedBike.bike_desc || localizedBike.meta_desc || `Detailed review and specs for ${localizedBike.brand} ${localizedBike.model}.`,
             "additionalProperty": [
               {
                 "@type": "PropertyValue",
                 "name": "Manufacturer Suggested Retail Price",
-                "value": bike.price ? `EUR ${bike.price.toLocaleString('en-US')}` : "N/A"
+                "value": localizedBike.price ? `EUR ${localizedBike.price.toLocaleString('en-US')}` : "N/A"
               }
             ]
           })
@@ -152,11 +215,11 @@ export default async function BikePage({ params }: PageProps) {
         <div className="bg-gradient-to-br from-gray-50 to-white rounded-2xl shadow-lg p-6 lg:p-10 mb-8 border border-gray-100">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
             <div>
-              <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-2">{bike.model}</h1>
-              <p className="text-xl lg:text-2xl text-gray-600 mb-4 font-semibold">{bike.brand}</p>
-              {bike.sub_category && <p className="text-lg text-gray-500 mb-6 font-medium">{bike.sub_category}</p>}
+              <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-2">{localizedBike.model}</h1>
+              <p className="text-xl lg:text-2xl text-gray-600 mb-4 font-semibold">{localizedBike.brand}</p>
+              {localizedBike.sub_category && <p className="text-lg text-gray-500 mb-6 font-medium">{localizedBike.sub_category}</p>}
               <p className="text-gray-700 mb-6 leading-relaxed text-lg">
-                {bike.bike_desc}
+                {localizedBike.bike_desc}
               </p>
               <div className="mb-8"><AddToCompareButton bike={comparisonBike} variant="full" className="max-w-xs" /></div>
               <div className="flex items-center gap-6">
@@ -171,57 +234,57 @@ export default async function BikePage({ params }: PageProps) {
                 </div>
               </div>
             </div>
-            <div className="flex items-center justify-center"><ImageGallery images={bike.images || []} alt={`${bike.brand} ${bike.model}`} /></div>
+            <div className="flex items-center justify-center"><ImageGallery images={localizedBike.images || []} alt={`${localizedBike.brand} ${localizedBike.model}`} /></div>
           </div>
 
-          <InteractiveScoreSummary metrics={metrics} bike={bike} />
+          <InteractiveScoreSummary metrics={metrics} bike={localizedBike} />
 
           <ScoreSection>
-            <ScoreSectionWithToggle title="Performance" subtitle="Built for speed and efficiency" gridCols="grid-cols-1 lg:grid-cols-3">
-              <ScoreCard label={metrics.speed.label} score={metrics.speed.score} maxScore={10} description={metrics.speed.description} variant="inline" explanation={bike.speed_reason} />
-              <ScoreCard label={metrics.climingEfficiency.label} score={metrics.climingEfficiency.score} maxScore={10} description={metrics.climingEfficiency.description} variant="inline" explanation={bike.climb_reason || bike.climbing_efficiency_explanation} />
-              <ScoreCard label={metrics.aerodynamics.label} score={metrics.aerodynamics.score} maxScore={10} description={metrics.aerodynamics.description} variant="inline" explanation={bike.aero_reason || bike.aerodynamics_explanation} />
+            <ScoreSectionWithToggle title={t('scores.performance') || "Performance"} subtitle="Built for speed and efficiency" gridCols="grid-cols-1 lg:grid-cols-3">
+              <ScoreCard label={metrics.speed.label} score={metrics.speed.score} maxScore={10} description={metrics.speed.description} variant="inline" explanation={localizedBike.speed_reason} />
+              <ScoreCard label={metrics.climingEfficiency.label} score={metrics.climingEfficiency.score} maxScore={10} description={metrics.climingEfficiency.description} variant="inline" explanation={localizedBike.climb_reason || localizedBike.climbing_efficiency_explanation} />
+              <ScoreCard label={metrics.aerodynamics.label} score={metrics.aerodynamics.score} maxScore={10} description={metrics.aerodynamics.description} variant="inline" explanation={localizedBike.aero_reason || localizedBike.aerodynamics_explanation} />
             </ScoreSectionWithToggle>
           </ScoreSection>
 
           <ScoreSection>
-            <ScoreSectionWithToggle title="Fit Score" subtitle="Dialed-in Fit & Comfort" gridCols="grid-cols-1 lg:grid-cols-4">
-              <ScoreCard label={metrics.ridingPosition.label} score={metrics.ridingPosition.score} maxScore={10} description={metrics.ridingPosition.description} variant="inline" explanation={bike.posture_reason || bike.riding_position_explanation} />
-              <ScoreCard label={metrics.handling.label} score={metrics.handling.score} maxScore={10} description={metrics.handling.description} variant="inline" explanation={bike.responsiveness_reason || bike.handling_explanation} />
-              <ScoreCard label={metrics.fitFlexibility.label} score={metrics.fitFlexibility.score} maxScore={10} description={metrics.fitFlexibility.description} variant="inline" explanation={bike.fit_reason || bike.fit_flexibility_explanation} />
-              <ScoreCard label={metrics.rideComfort.label} score={metrics.rideComfort.score} maxScore={10} description={metrics.rideComfort.description} variant="inline" explanation={bike.comfort_reason || bike.ride_comfort_explanation} />
+            <ScoreSectionWithToggle title={t('scores.fit') || "Fit Score"} subtitle="Dialed-in Fit & Comfort" gridCols="grid-cols-1 lg:grid-cols-4">
+              <ScoreCard label={metrics.ridingPosition.label} score={metrics.ridingPosition.score} maxScore={10} description={metrics.ridingPosition.description} variant="inline" explanation={localizedBike.posture_reason || localizedBike.riding_position_explanation} />
+              <ScoreCard label={metrics.handling.label} score={metrics.handling.score} maxScore={10} description={metrics.handling.description} variant="inline" explanation={localizedBike.responsiveness_reason || localizedBike.handling_explanation} />
+              <ScoreCard label={metrics.fitFlexibility.label} score={metrics.fitFlexibility.score} maxScore={10} description={metrics.fitFlexibility.description} variant="inline" explanation={localizedBike.fit_reason || localizedBike.fit_flexibility_explanation} />
+              <ScoreCard label={metrics.rideComfort.label} score={metrics.rideComfort.score} maxScore={10} description={metrics.rideComfort.description} variant="inline" explanation={localizedBike.comfort_reason || localizedBike.ride_comfort_explanation} />
             </ScoreSectionWithToggle>
           </ScoreSection>
 
           <ScoreSection>
-            <ScoreSectionWithToggle title="Value" gridCols="grid-cols-1 lg:grid-cols-3">
-              <ScoreCard label={metrics.buildQuality.label} score={metrics.buildQuality.score} maxScore={10} description={metrics.buildQuality.description} variant="inline" metricType="value" explanation={bike.build_reason || bike.build_quality_explanation} />
-              <ScoreCard label={metrics.valueForMoney.label} score={metrics.valueForMoney.score} maxScore={10} description={metrics.valueForMoney.description} variant="inline" metricType="value" explanation={bike.vfm_reason || bike.value_for_money_explanation} />
-              <ScoreCard label={metrics.surfaceRange.label} score={metrics.surfaceRange.score} maxScore={10} description={metrics.surfaceRange.description} variant="inline" explanation={bike.surface_reason || bike.surface_range_explanation} />
+            <ScoreSectionWithToggle title={t('scores.value') || "Value"} gridCols="grid-cols-1 lg:grid-cols-3">
+              <ScoreCard label={metrics.buildQuality.label} score={metrics.buildQuality.score} maxScore={10} description={metrics.buildQuality.description} variant="inline" metricType="value" explanation={localizedBike.build_reason || localizedBike.build_quality_explanation} />
+              <ScoreCard label={metrics.valueForMoney.label} score={metrics.valueForMoney.score} maxScore={10} description={metrics.valueForMoney.description} variant="inline" metricType="value" explanation={localizedBike.vfm_reason || localizedBike.value_for_money_explanation} />
+              <ScoreCard label={metrics.surfaceRange.label} score={metrics.surfaceRange.score} maxScore={10} description={metrics.surfaceRange.description} variant="inline" explanation={localizedBike.surface_reason || localizedBike.surface_range_explanation} />
             </ScoreSectionWithToggle>
           </ScoreSection>
 
           {metrics.battery && (
             <div className="mt-8 max-w-3xl">
-              <h3 className="text-xl font-bold text-gray-900 mb-5">Battery</h3>
-              <ScoreCard label={metrics.battery.label} score={metrics.battery.score} maxScore={10} description={metrics.battery.description} variant="inline" explanation={bike.battery_reason} />
+              <h3 className="text-xl font-bold text-gray-900 mb-5">{metrics.battery.label}</h3>
+              <ScoreCard label={metrics.battery.label} score={metrics.battery.score} maxScore={10} description={metrics.battery.description} variant="inline" explanation={localizedBike.battery_reason} />
             </div>
           )}
         </div>
 
         <div className="bg-white rounded-xl shadow-md p-6 lg:p-8 mb-8 border border-gray-100">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Specifications</h2>
-          <SpecsTable bike={bike} />
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">{dict.common?.specifications || "Specifications"}</h2>
+          <SpecsTable bike={localizedBike} dict={dict} />
         </div>
 
         {bike.geometry_data && (
           <div className="bg-white rounded-xl shadow-md p-6 lg:p-8 border border-gray-100">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Geometry</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">{dict.common?.geometry || "Geometry"}</h2>
             <div className="overflow-x-auto">
               <table className="w-full text-sm text-center">
                 <thead>
                   <tr className="border-b border-gray-200">
-                    <th className="text-left py-3 px-4 font-semibold text-gray-700 italic">Measurement</th>
+                    <th className="text-left py-3 px-4 font-semibold text-gray-700 italic">{dict.common?.measurement || "Measurement"}</th>
                     {geometryData['Size']?.map((size, idx) => (<th key={idx} className="py-3 px-4 font-semibold text-gray-700">{size}</th>))}
                   </tr>
                 </thead>
@@ -240,12 +303,12 @@ export default async function BikePage({ params }: PageProps) {
         )}
 
         <div className="mt-12 space-y-12">
-          <BikeCarousel title={`Other bikes from ${bike.brand}`} bikes={sameBrandBikes} lang={params.lang} />
-          <BikeCarousel title="2025 Models" bikes={bikes2025} lang={params.lang} />
-          <BikeCarousel title="2024 Models" bikes={bikes2024} lang={params.lang} />
-          <BikeCarousel title="2023 Models" bikes={bikes2023} lang={params.lang} />
-          <BikeCarousel title="2022 Models" bikes={bikes2022} lang={params.lang} />
-          <BikeCarousel title="More Value for Money Options" bikes={betterValueBikes} lang={params.lang} />
+          <BikeCarousel title={(dict.recommendations?.same_brand || "Other bikes from {brand}").replace('{brand}', localizedBike.brand)} bikes={sameBrandBikes} lang={params.lang} />
+          <BikeCarousel title={(dict.recommendations?.year_models || "{year} Models").replace('{year}', '2025')} bikes={bikes2025} lang={params.lang} />
+          <BikeCarousel title={(dict.recommendations?.year_models || "{year} Models").replace('{year}', '2024')} bikes={bikes2024} lang={params.lang} />
+          <BikeCarousel title={(dict.recommendations?.year_models || "{year} Models").replace('{year}', '2023')} bikes={bikes2023} lang={params.lang} />
+          <BikeCarousel title={(dict.recommendations?.year_models || "{year} Models").replace('{year}', '2022')} bikes={bikes2022} lang={params.lang} />
+          <BikeCarousel title={dict.recommendations?.better_value || "More Value for Money Options"} bikes={betterValueBikes} lang={params.lang} />
         </div>
       </div>
     </main>

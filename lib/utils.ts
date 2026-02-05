@@ -41,76 +41,76 @@ export function calculateBikeMetrics(bike: Bike): BikeMetrics {
 
   // Get descriptive labels
   const getPerformanceLabel = (score: number): string => {
-    if (score >= 8.5) return 'Excellent Climber'
-    if (score >= 7) return 'Good Climber'
-    if (score >= 5.5) return 'Moderate Climber'
-    return 'City Climber'
+    if (score >= 8.5) return 'buckets.climbing.excellent_climber'
+    if (score >= 7) return 'buckets.climbing.good_climber'
+    if (score >= 5.5) return 'buckets.climbing.moderate_climber'
+    return 'buckets.climbing.city_climber'
   }
 
   const getValueLabel = (score: number): string => {
-    if (score >= 8) return 'Extreme Value'
-    if (score >= 6.5) return 'Strong Value'
-    if (score >= 5) return 'Good Value'
-    return 'Premium Pricing'
+    if (score >= 8) return 'buckets.value.extreme_value'
+    if (score >= 6.5) return 'buckets.value.strong_value'
+    if (score >= 5) return 'buckets.value.good_value'
+    return 'buckets.value.premium_pricing'
   }
 
   const getFitLabel = (score: number): string => {
-    if (score >= 8) return 'Optimal Fit'
-    if (score >= 6) return 'Highly Adaptable'
-    if (score >= 4) return 'Versatile'
-    return 'Race Specific Fit'
+    if (score >= 8) return 'buckets.fit_flexibility.optimal_fit'
+    if (score >= 6) return 'buckets.fit_flexibility.highly_adaptable'
+    if (score >= 4) return 'buckets.fit_flexibility.versatile'
+    return 'buckets.fit_flexibility.race_specific_fit'
   }
 
   const getBuildLabel = (score: number): string => {
-    if (score >= 8) return 'Premium Build'
-    if (score >= 6) return 'Strong Build'
-    if (score >= 4) return 'Solid Build'
-    return 'Basic Build'
+    if (score >= 8) return 'buckets.build_quality.premium_build'
+    if (score >= 6) return 'buckets.build_quality.strong_build'
+    if (score >= 4) return 'buckets.build_quality.solid_build'
+    return 'buckets.build_quality.basic_build'
   }
 
   const getPostureLabel = (score: number): string => {
-    if (score <= 3) return 'Aggressive'
-    if (score <= 5) return 'Sporty'
-    if (score <= 7) return 'Balanced'
-    return 'Relaxed'
+    if (score <= 3) return 'buckets.posture.aggressive'
+    if (score <= 5) return 'buckets.posture.sporty'
+    if (score <= 7) return 'buckets.posture.balanced'
+    return 'buckets.posture.relaxed'
   }
 
   const getAeroLabel = (score: number): string => {
-    if (score >= 8) return 'Very Aero'
-    if (score >= 6) return 'Aero'
-    if (score >= 4) return 'Moderate Aero'
-    return 'Non-Aero'
+    if (score >= 8) return 'buckets.aero.very_aero'
+    if (score >= 6) return 'buckets.aero.aero'
+    if (score >= 4) return 'buckets.aero.moderate_aero'
+    return 'buckets.aero.non_aero'
   }
 
   const getComfortLabel = (score: number): string => {
-    if (score >= 8.5) return 'Endurance Focused'
-    if (score >= 7) return 'High Comfort'
-    if (score >= 5) return 'Everyday Comfort'
-    return 'Race Aggressive'
+    if (score >= 8.5) return 'buckets.ride_comfort.endurance_focused'
+    if (score >= 7) return 'buckets.ride_comfort.high_comfort'
+    if (score >= 5) return 'buckets.ride_comfort.everyday_comfort'
+    return 'buckets.ride_comfort.race_aggressive'
   }
 
   const getResponsivenessLabel = (score: number): string => {
-    if (score >= 8) return 'Highly Responsive'
-    if (score >= 6) return 'Precise Control'
-    if (score >= 4) return 'Balanced Handling'
-    return 'Stable'
+    if (score >= 8) return 'buckets.handling.highly_responsive'
+    if (score >= 6) return 'buckets.handling.precise_control'
+    if (score >= 4) return 'buckets.handling.balanced_handling'
+    return 'buckets.handling.stable'
   }
 
   const getSpeedLabel = (score: number): string => {
-    if (score >= 8.5) return 'Extremely Fast'
-    if (score >= 7) return 'Very Fast'
-    if (score >= 5.5) return 'Fast'
-    if (score >= 4) return 'Moderate Speed'
-    return 'Relaxed Pace'
+    if (score >= 8.5) return 'buckets.speed.extremely_fast'
+    if (score >= 7) return 'buckets.speed.very_fast'
+    if (score >= 5.5) return 'buckets.speed.fast'
+    if (score >= 4) return 'buckets.speed.moderate_speed'
+    return 'buckets.speed.relaxed_pace'
   }
 
   const speedScore = bike.speed_index || 5
 
   const getBatteryLabel = (score: number): string => {
-    if (score >= 8) return 'Excellent Range'
-    if (score >= 6) return 'Good Range'
-    if (score >= 4) return 'Moderate Range'
-    return 'Limited Range'
+    if (score >= 8) return 'buckets.battery.excellent_range'
+    if (score >= 6) return 'buckets.battery.good_range'
+    if (score >= 4) return 'buckets.battery.moderate_range'
+    return 'buckets.battery.limited_range'
   }
 
   // Battery should only show for E-bikeRoad and E-bikeMountain categories
@@ -120,94 +120,94 @@ export function calculateBikeMetrics(bike: Bike): BikeMetrics {
   return {
     overallScore,
     performance: {
-      label: 'Performance',
+      label: 'scores.performance',
       score: performanceScore,
       maxScore: 10,
       description: getPerformanceLabel(performanceScore),
     },
     value: {
-      label: 'Value',
+      label: 'scores.value',
       score: valueScore,
       maxScore: 10,
       description: getValueLabel(valueScore),
     },
     fit: {
-      label: 'Fit',
+      label: 'scores.fit',
       score: fitScore,
       maxScore: 10,
       description: getFitLabel(fitScore),
     },
     general: {
-      label: 'General',
+      label: 'scores.general',
       score: generalScore,
       maxScore: 10,
       description: getBuildLabel(generalScore),
     },
     speed: {
-      label: 'Speed',
+      label: 'scores.speed',
       score: speedScore,
       maxScore: 10,
-      description: bike.speed_bucket || getSpeedLabel(speedScore),
+      description: getSpeedLabel(speedScore),
     },
     climingEfficiency: {
-      label: 'Climbing Efficiency',
+      label: 'scores.climbing',
       score: climbScore,
       maxScore: 10,
-      description: bike.climb_bucket || getPerformanceLabel(climbScore),
+      description: getPerformanceLabel(climbScore),
     },
     aerodynamics: {
-      label: 'Aerodynamics',
+      label: 'scores.aerodynamics',
       score: aeroScore,
       maxScore: 10,
-      description: bike.aero_bucket || getAeroLabel(aeroScore),
+      description: getAeroLabel(aeroScore),
     },
     ridingPosition: {
-      label: 'Riding Position',
+      label: 'scores.riding_position',
       score: postureScore,
       maxScore: 10,
-      description: bike.posture_bucket || getPostureLabel(postureScore),
+      description: getPostureLabel(postureScore),
     },
     handling: {
-      label: 'Handling',
+      label: 'scores.handling',
       score: bike.responsiveness_1_10 || 5,
       maxScore: 10,
-      description: bike.responsiveness_bucket || getResponsivenessLabel(bike.responsiveness_1_10 || 5),
+      description: getResponsivenessLabel(bike.responsiveness_1_10 || 5),
     },
     fitFlexibility: {
-      label: 'Fit Flexibility',
+      label: 'scores.fit_flexibility',
       score: fitFlexScore,
       maxScore: 10,
-      description: bike.fit_flexibility_bucket || getFitLabel(fitFlexScore),
+      description: getFitLabel(fitFlexScore),
     },
     rideComfort: {
-      label: 'Ride Comfort',
+      label: 'scores.ride_comfort',
       score: comfortScore,
       maxScore: 10,
-      description: bike.ride_comfort_bucket || getComfortLabel(comfortScore),
+      description: getComfortLabel(comfortScore),
     },
     buildQuality: {
-      label: 'Build Quality',
+      label: 'scores.build_quality',
       score: buildScore,
       maxScore: 10,
-      description: bike.build_bucket || getBuildLabel(buildScore),
+      description: getBuildLabel(buildScore),
     },
     valueForMoney: {
-      label: 'Value for Money',
+      label: 'scores.value_for_money',
       score: valueScore,
       maxScore: 10,
-      description: bike.vfm_score_bucket || getValueLabel(valueScore),
+      description: getValueLabel(valueScore),
     },
     surfaceRange: {
-      label: 'Surface Range',
+      label: 'scores.surface_range',
       score: 8.4, // Default, can be calculated based on surface_range field
       maxScore: 10,
-      description: bike.surface_range || 'All-Road Capable',
+      description: bike.surface_range || 'buckets.surface_range.all_road_capable', // Fallback key
     },
     battery: isEBikeWithBattery ? {
-      label: 'Battery',
+      label: 'scores.battery',
       score: 7, // Default, can be calculated based on battery fields
       maxScore: 10,
-      description: bike.battery_bucket || getBatteryLabel(7),
+      description: getBatteryLabel(7),
     } : undefined,
   }
 }

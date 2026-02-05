@@ -99,5 +99,109 @@
         "sort_price_low": "Prix : Croissant",
         "sort_price_high": "Prix : Décroissant",
         "sort_score": "Score global"
+    },
+    "buckets": {
+        "speed": {
+            "relaxed_pace": "Rythme Détendu",
+            "moderate_speed": "Vitesse Modérée",
+            "fast": "Rapide",
+            "very_fast": "Très Rapide",
+            "extremely_fast": "Extrêmement Rapide"
+        },
+        "climbing": {
+            "city_climber": "Grimpeur Urbain",
+            "moderate_climber": "Grimpeur Modéré",
+            "good_climber": "Bon Grimpeur",
+            "excellent_climber": "Excellent Grimpeur"
+        },
+        "aero": {
+            "non_aero": "Non Aéro",
+            "moderate_aero": "Aéro Modéré",
+            "aero": "Aéro",
+            "very_aero": "Très Aéro"
+        },
+        "posture": {
+            "relaxed": "Détendue",
+            "balanced": "Équilibrée",
+            "sporty": "Sportive",
+            "aggressive": "Agressive"
+        },
+        "handling": {
+            "stable": "Stable",
+            "balanced_handling": "Maniabilité Équilibrée",
+            "precise_control": "Contrôle Précis",
+            "highly_responsive": "Très Réactif"
+        },
+        "fit_flexibility": {
+            "race_specific_fit": "Ajustement Course Spécifique",
+            "versatile": "Polyvalent",
+            "highly_adaptable": "Très Adaptable",
+            "optimal_fit": "Ajustement Optimal"
+        },
+        "ride_comfort": {
+            "race_aggressive": "Course Agressive",
+            "everyday_comfort": "Confort Quotidien",
+            "high_comfort": "Grand Confort",
+            "endurance_focused": "Axé sur l'Endurance"
+        },
+        "build_quality": {
+            "basic_build": "Construction Basique",
+            "solid_build": "Construction Solide",
+            "strong_build": "Construction Robuste",
+            "premium_build": "Construction Premium"
+        },
+        "value": {
+            "premium_pricing": "Prix Premium",
+            "good_value": "Bonne Valeur",
+            "strong_value": "Forte Valeur",
+            "extreme_value": "Valeur Extrême"
+        },
+        "battery": {
+            "limited_range": "Autonomie Limitée",
+            "moderate_range": "Autonomie Modérée",
+            "good_range": "Bonne Autonomie",
+            "excellent_range": "Excellente Autonomie"
+        }
+    },
+    "specs": {
+        "general": "Général",
+        "brand": "Marque",
+        "model": "Modèle",
+        "year": "Année",
+        "price": "Prix",
+        "weight": "Poids",
+        "category": "Catégorie",
+        "sub_category": "Sous-catégorie",
+        "groupset": "Groupe",
+        "wheels": "Roues",
+        "frame": "Cadre",
+        "suspension_fork": "Fourche Suspendue",
+        "rear_shock": "Amortisseur Arrière",
+        "drivetrain": "Transmission",
+        "shift_levers": "Manettes de Changement",
+        "rear_derailleur": "Dérailleur Arrière",
+        "front_derailleur": "Dérailleur Avant",
+        "cassette": "Cassette",
+        "crank": "Pédalier",
+        "bottom_bracket": "Boîtier de Pédalier",
+        "chain": "Chaîne",
+        "front_hub": "Moyeu Avant",
+        "rear_hub": "Moyeu Arrière",
+        "rims": "Jantes",
+        "spokes": "Rayons",
+        "tires": "Pneus",
+        "brakes": "Freins",
+        "brake_levers": "Leviers de Frein",
+        "cockpit": "Cockpit",
+        "stem": "Potence",
+        "handlebar": "Cintre",
+        "grips": "Poignées",
+        "seat": "Assise",
+        "saddle": "Selle",
+        "seatpost": "Tige de Selle",
+        "electric_components": "Composants Électriques",
+        "motor": "Moteur",
+        "charger": "Chargeur",
+        "battery_range": "Autonomie Batterie"
     }
 }
