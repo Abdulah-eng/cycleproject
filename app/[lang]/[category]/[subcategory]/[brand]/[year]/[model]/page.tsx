@@ -93,8 +93,14 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const bike = await getBikeFromParams(params)
   if (!bike) return { title: 'Bike Not Found' }
-  const title = bike.title_seo || bike.title || `${bike.brand} ${bike.model} ${bike.year || ''}`
-  const description = bike.meta_desc || ''
+
+  // Localize SEO fields
+  const langSuffix = `_${params.lang}`
+  const localizedTitle = (bike as any)[`title_seo${langSuffix}`] || bike.title_seo
+  const localizedDesc = (bike as any)[`meta_desc${langSuffix}`] || bike.meta_desc
+
+  const title = localizedTitle || bike.title || `${bike.brand} ${bike.model} ${bike.year || ''}`
+  const description = localizedDesc || ''
   return { title, description }
 }
 
@@ -145,7 +151,15 @@ export default async function BikePage({ params }: PageProps) {
 
   textFields.forEach(field => {
     // Check if localized field exists (e.g. bike_desc_fr)
-    const localizedVal = (bike as any)[`${field}${langSuffix}`]
+    const localizedKey = `${field}${langSuffix}`
+    const localizedVal = (bike as any)[localizedKey]
+
+    // Debug logging for localization
+    if (field === 'speed_reason' || field === 'bike_desc') {
+      console.log(`[Localization Debug] Field: ${field}, Lang: ${params.lang}, Key: ${localizedKey}, Value: ${localizedVal?.substring(0, 20)}...`)
+      console.log(`[Localization Debug] Original ${field}: ${(bike as any)[field]?.substring(0, 20)}...`)
+    }
+
     if (localizedVal && localizedVal.trim() !== '') {
       localizedBike[field] = localizedVal
     }
@@ -210,6 +224,38 @@ export default async function BikePage({ params }: PageProps) {
         }}
       />
 
+      {/* Breadcrumb Navigation */}
+      <div className="bg-white border-b border-gray-200">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex items-center text-sm text-gray-500 overflow-x-auto whitespace-nowrap">
+            <a href={`/${params.lang}`} className="hover:text-blue-600">Home</a>
+            <span className="mx-2">/</span>
+            <a href={`/${params.lang}/${params.category}`} className="hover:text-blue-600 capitalize">
+              {localizedBike.category}
+            </a>
+            {localizedBike.sub_category && (
+              <>
+                <span className="mx-2">/</span>
+                <a href={`/${params.lang}/${params.category}/${generateUrlSlug(localizedBike.sub_category)}`} className="hover:text-blue-600 capitalize">
+                  {localizedBike.sub_category}
+                </a>
+              </>
+            )}
+            <span className="mx-2">/</span>
+            <a href={`/${params.lang}/${params.category}/${localizedBike.sub_category ? generateUrlSlug(localizedBike.sub_category) : 'general'}/${generateUrlSlug(localizedBike.brand)}`} className="hover:text-blue-600 capitalize">
+              {localizedBike.brand}
+            </a>
+            {localizedBike.year && (
+              <>
+                <span className="mx-2">/</span>
+                <span className="text-gray-500">{localizedBike.year}</span>
+              </>
+            )}
+            <span className="mx-2">/</span>
+            <span className="text-gray-900 font-medium">{localizedBike.model}</span>
+          </div>
+        </div>
+      </div>
 
       <div className="container mx-auto px-4 py-8 max-w-7xl">
         <div className="bg-gradient-to-br from-gray-50 to-white rounded-2xl shadow-lg p-6 lg:p-10 mb-8 border border-gray-100">
@@ -241,8 +287,8 @@ export default async function BikePage({ params }: PageProps) {
 
           <ScoreSection>
             <ScoreSectionWithToggle title={t('scores.performance') || "Performance"} subtitle="Built for speed and efficiency" gridCols="grid-cols-1 lg:grid-cols-3">
-              <ScoreCard label={metrics.speed.label} score={metrics.speed.score} maxScore={10} description={metrics.speed.description} variant="inline" explanation={localizedBike.speed_reason} />
-              <ScoreCard label={metrics.climingEfficiency.label} score={metrics.climingEfficiency.score} maxScore={10} description={metrics.climingEfficiency.description} variant="inline" explanation={localizedBike.climb_reason || localizedBike.climbing_efficiency_explanation} />
+              <ScoreCard label={metrics.speed.label} score={metrics.speed.score} maxScore={10} description={metrics.speed.description} variant="inline" explanation={localizedBike.speed_reason || localizedBike.performance_score_explanation} />
+              <ScoreCard label={metrics.climbingEfficiency.label} score={metrics.climbingEfficiency.score} maxScore={10} description={metrics.climbingEfficiency.description} variant="inline" explanation={localizedBike.climb_reason || localizedBike.climbing_efficiency_explanation} />
               <ScoreCard label={metrics.aerodynamics.label} score={metrics.aerodynamics.score} maxScore={10} description={metrics.aerodynamics.description} variant="inline" explanation={localizedBike.aero_reason || localizedBike.aerodynamics_explanation} />
             </ScoreSectionWithToggle>
           </ScoreSection>
@@ -311,6 +357,9 @@ export default async function BikePage({ params }: PageProps) {
           <BikeCarousel title={dict.recommendations?.better_value || "More Value for Money Options"} bikes={betterValueBikes} lang={params.lang} />
         </div>
       </div>
+
+
+
     </main>
   )
 }

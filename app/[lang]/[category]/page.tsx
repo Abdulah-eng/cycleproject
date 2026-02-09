@@ -42,7 +42,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 }
 
-const INITIAL_LOAD = 15
+const INITIAL_LOAD = 50
 
 async function getInitialBikes(slug: string) {
   // 1. Try matching as a category first

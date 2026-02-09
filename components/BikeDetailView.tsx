@@ -72,22 +72,40 @@ export default function BikeDetailView({ bike, lang, dict }: BikeDetailViewProps
             {/* Header / Breadcrumb */}
             <div className="bg-white border-b border-gray-200">
                 <div className="container mx-auto px-4 py-4">
-                    <div className="flex items-center text-sm text-gray-500">
+                    <div className="flex items-center text-sm text-gray-500 overflow-x-auto whitespace-nowrap">
                         <Link href={`/${lang}`} className="hover:text-blue-600">Home</Link>
+
                         <span className="mx-2">/</span>
                         <Link href={`/${lang}/${bike.category.toLowerCase().replace(/\s+/g, '')}bikes`} className="hover:text-blue-600 capitalize">
                             {bike.category}
                         </Link>
+
                         {bike.sub_category && (
                             <>
                                 <span className="mx-2">/</span>
-                                <Link href={`/${lang}/${bike.category.toLowerCase().replace(/\s+/g, '')}/${bike.sub_category.toLowerCase().replace(/\s+/g, '-')}`} className="hover:text-blue-600 capitalize">
+                                <Link href={`/${lang}/${bike.category.toLowerCase().replace(/\s+/g, '')}bikes/${bike.sub_category.toLowerCase().replace(/\s+/g, '-')}`} className="hover:text-blue-600 capitalize">
                                     {bike.sub_category}
                                 </Link>
                             </>
                         )}
+
                         <span className="mx-2">/</span>
-                        <span className="text-gray-900 font-medium truncate">{bike.brand} {bike.model}</span>
+                        <Link
+                            href={`/${lang}/${bike.category.toLowerCase().replace(/\s+/g, '')}bikes/${bike.sub_category ? bike.sub_category.toLowerCase().replace(/\s+/g, '-') + '/' : ''}${bike.brand.toLowerCase().replace(/\s+/g, '-')}`}
+                            className="hover:text-blue-600 capitalize"
+                        >
+                            {bike.brand}
+                        </Link>
+
+                        {bike.year && (
+                            <>
+                                <span className="mx-2">/</span>
+                                <span className="text-gray-500">{bike.year}</span>
+                            </>
+                        )}
+
+                        <span className="mx-2">/</span>
+                        <span className="text-gray-900 font-medium">{bike.model}</span>
                     </div>
                 </div>
             </div>

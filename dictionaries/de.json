@@ -199,9 +199,13 @@
         "seat": "Sitz",
         "saddle": "Sattel",
         "seatpost": "Sattelstütze",
-        "electric_components": "Elektrische Komponenten",
+        "suspension_type": "Federungstyp",
+        "brake_type": "Bremsentyp",
+        "brake_description": "Bremsenbeschreibung",
+        "electric_components": "E-Bike Komponenten",
         "motor": "Motor",
+        "battery": "Akku",
         "charger": "Ladegerät",
-        "battery_range": "Batteriereichweite"
+        "battery_range": "Reichweite"
     }
 }

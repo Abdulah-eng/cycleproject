@@ -88,6 +88,12 @@ export default function ComparisonTable({ dict, lang = 'en' }: ComparisonTablePr
         )
     }
 
+    // Helper to translate keys
+    const t = (key: string) => {
+        if (!key) return ''
+        return key.split('.').reduce((o: any, i) => (o ? o[i] : null), dict) || key
+    }
+
     // Helper to render score row
     const ScoreRow = ({ label, metricKey, isBold = false }: { label: string, metricKey: keyof BikeMetrics, isBold?: boolean }) => (
         <tr className="border-b border-gray-100 last:border-0 hover:bg-gray-50">
@@ -97,7 +103,8 @@ export default function ComparisonTable({ dict, lang = 'en' }: ComparisonTablePr
                 const metric = bike.metrics[metricKey]
                 // Handle nested score object or direct value if any
                 const score = typeof metric === 'object' && metric?.score ? metric.score : metric
-                const desc = typeof metric === 'object' && metric?.description ? metric.description : ''
+                const descKey = typeof metric === 'object' && metric?.description ? metric.description : ''
+                const desc = t(descKey)
 
                 return (
                     <td key={bike.id} className="py-4 px-4 text-center">
@@ -212,7 +219,7 @@ export default function ComparisonTable({ dict, lang = 'en' }: ComparisonTablePr
                         <ScoreRow label="Value" metricKey="value" />
                         <ScoreRow label="Fit" metricKey="fit" />
                         <ScoreRow label="Speed" metricKey="speed" />
-                        <ScoreRow label={dict?.scores?.climbing || 'Climbing Efficiency'} metricKey="climingEfficiency" />
+                        <ScoreRow label={dict?.scores?.climbing || 'Climbing Efficiency'} metricKey="climbingEfficiency" />
                         <ScoreRow label={dict?.scores?.ride_comfort || 'Ride Comfort'} metricKey="rideComfort" />
                         <ScoreRow label={dict?.scores?.aerodynamics || 'Aerodynamics'} metricKey="aerodynamics" />
                         <ScoreRow label={dict?.scores?.riding_position || 'Riding Position'} metricKey="ridingPosition" />

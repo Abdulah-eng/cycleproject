@@ -199,9 +199,13 @@
         "seat": "Seduta",
         "saddle": "Sella",
         "seatpost": "Reggisella",
+        "suspension_type": "Tipo di sospensione",
+        "brake_type": "Tipo di freno",
+        "brake_description": "Descrizione del freno",
         "electric_components": "Componenti Elettrici",
         "motor": "Motore",
+        "battery": "Batteria",
         "charger": "Caricabatterie",
-        "battery_range": "Autonomia Batteria"
+        "battery_range": "Autonomia"
     }
 }

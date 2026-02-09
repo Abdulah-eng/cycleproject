@@ -35,6 +35,7 @@ export default function SpecsTable({ bike, dict }: SpecsTableProps) {
         { label: t('frame'), value: bike.frame_description || bike.frame },
         { label: t('suspension_fork'), value: bike.suspension_fork_description || bike.fork },
         { label: t('rear_shock'), value: bike.rear_shock_description },
+        { label: t('suspension_type'), value: bike.suspension }, // Added as requested
       ],
     },
     {
@@ -55,14 +56,15 @@ export default function SpecsTable({ bike, dict }: SpecsTableProps) {
         { label: t('front_hub'), value: bike.front_hub },
         { label: t('rear_hub'), value: bike.rear_hub },
         { label: t('rims'), value: bike.rims },
-        { label: t('spokes'), value: bike.spokes },
+        { label: t('spokes'), value: bike.spokes }, // Added spokes
         { label: t('tires'), value: bike.tires },
       ],
     },
     {
       title: t('brakes'),
       specs: [
-        { label: t('brakes'), value: bike.brakes },
+        { label: t('brake_type'), value: bike.brakes }, // mapped to 'Brake Type' in en.json
+        { label: t('brake_description'), value: bike.brakes2 }, // mapped to 'Brake Description' in en.json
         { label: t('brake_levers'), value: bike.brake_levers },
       ],
     },
@@ -84,12 +86,12 @@ export default function SpecsTable({ bike, dict }: SpecsTableProps) {
   ]
 
   // Add e-bike section if applicable
-  if (bike.motor || bike.battery) {
+  if (bike.motor || bike.battery || bike.motor3 || bike.battery4) {
     sections.push({
       title: t('electric_components'),
       specs: [
-        { label: t('motor'), value: bike.motor || bike.motor3 },
-        { label: t('battery'), value: bike.battery || bike.battery4 },
+        { label: t('motor'), value: bike.motor3 || bike.motor }, // Prefer motor3 if available
+        { label: t('battery'), value: bike.battery4 || bike.battery }, // Prefer battery4 if available
         { label: t('charger'), value: bike.charger },
         { label: t('battery_range'), value: bike.battery_range },
       ],

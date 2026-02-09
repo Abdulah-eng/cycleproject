@@ -12,7 +12,7 @@ interface ScoreCardProps {
   explanation?: string | null
   isExpanded?: boolean
   onToggle?: () => void
-  metricType?: 'value' | 'performance' | 'fit' | 'general' | 'default'
+  metricType?: 'value' | 'performance' | 'fit' | 'general' | 'speed' | 'default'
 }
 
 export default function ScoreCard({ label, score, maxScore, description, variant = 'default', explanation, isExpanded: externalIsExpanded, onToggle, metricType = 'default' }: ScoreCardProps) {

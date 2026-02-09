@@ -2,6 +2,7 @@
 
 import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
+import Papa from 'papaparse'
 
 interface UploadProgress {
   total: number
@@ -54,40 +55,129 @@ export default function CSVUpload() {
     }
   }
 
-  const handleUpload = async () => {
+  const handleUpload = () => {
     if (!file) return
 
     setUploading(true)
     setError('')
-    setProgress(null)
 
-    try {
-      const formData = new FormData()
-      formData.append('file', file)
-
-      const response = await fetch('/api/admin/bikes/upload', {
-        method: 'POST',
-        body: formData,
-      })
-
-      if (!response.ok) {
-        const error = await response.json()
-        throw new Error(error.error || 'Upload failed')
-      }
-
-      const result = await response.json()
-      setProgress(result)
-
-      if (result.successful > 0) {
-        setTimeout(() => {
-          router.push('/admin/dashboard')
-        }, 3000)
-      }
-    } catch (err: any) {
-      setError(err.message)
-    } finally {
-      setUploading(false)
+    // Initialize progress
+    const currentProgress: UploadProgress = {
+      total: 0, // Will be updated as we parse
+      processed: 0,
+      successful: 0,
+      failed: 0,
+      errors: []
     }
+    setProgress(currentProgress)
+
+    const BATCH_SIZE = 10
+    let batch: any[] = []
+    let totalRows = 0
+
+    Papa.parse(file, {
+      header: true,
+      skipEmptyLines: true,
+      worker: false, // Disable worker to ensure pause/resume works correctly
+      step: async (results: Papa.ParseStepResult<any>, parser: Papa.Parser) => {
+        // results.data is a single row object because of step
+        if (results.errors.length > 0) {
+          console.error("Row error:", results.errors)
+          return
+        }
+
+        batch.push(results.data)
+        totalRows++
+
+        // Update total estimate (rough) or just use processed count
+        // Since we don't know total upfront easily with step, we update processed
+
+        if (batch.length >= BATCH_SIZE) {
+          parser.pause() // Pause parsing to upload
+
+          try {
+            await uploadBatch(batch)
+
+            // Update progress
+            currentProgress.processed += batch.length
+            currentProgress.total = totalRows // tracking rows seen so far
+            // successful/failed updated in uploadBatch or here?
+            // We'll update state relative to previous
+            setProgress(prev => {
+              if (!prev) return currentProgress
+              return {
+                ...prev,
+                total: totalRows, // dynamic total
+                processed: prev.processed + batch.length
+              }
+            })
+
+            batch = [] // Clear batch
+            parser.resume()
+          } catch (err: any) {
+            console.error("Batch upload failed", err)
+            setError(`Upload failed: ${err.message}`)
+            parser.abort()
+            setUploading(false)
+          }
+        }
+      },
+      complete: async () => {
+        // Upload remaining rows
+        if (batch.length > 0) {
+          try {
+            await uploadBatch(batch)
+            currentProgress.processed += batch.length
+            setProgress(prev => ({
+              ...prev!,
+              total: totalRows,
+              processed: (prev?.processed || 0) + batch.length
+            }))
+          } catch (err: any) {
+            setError(`Final batch failed: ${err.message}`)
+          }
+        }
+
+        setUploading(false)
+        if (currentProgress.successful > 0) {
+          setTimeout(() => {
+            router.push('/admin/dashboard')
+          }, 3000)
+        }
+      },
+      error: (err: Error) => {
+        setError(`CSV Parse Error: ${err.message}`)
+        setUploading(false)
+      }
+    })
+  }
+
+  const uploadBatch = async (rows: any[]) => {
+    const response = await fetch('/api/admin/bikes/upload', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ rows }),
+    })
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}))
+      throw new Error(errorData.error || `Server error: ${response.status}`)
+    }
+
+    const result = await response.json()
+
+    // Update progress with server results
+    setProgress(prev => {
+      if (!prev) return null
+      return {
+        ...prev,
+        successful: prev.successful + result.successful,
+        failed: prev.failed + result.failed,
+        errors: [...prev.errors, ...result.errors] // Append new errors
+      }
+    })
   }
 
   const resetUpload = () => {
@@ -103,7 +193,7 @@ export default function CSVUpload() {
     <div className="max-w-4xl mx-auto">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">Upload CSV</h1>
-        <p className="text-gray-600">Bulk upload bikes from a CSV file</p>
+        <p className="text-gray-600">Bulk upload bikes from a CSV file. <span className="text-green-600 font-medium">Large files supported (processed in batches).</span></p>
       </div>
 
       {error && (
@@ -118,13 +208,10 @@ export default function CSVUpload() {
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
             <div className="text-center p-4 bg-gray-50 rounded-lg">
-              <div className="text-3xl font-bold text-gray-900">{progress.total}</div>
-              <div className="text-sm text-gray-600">Total Rows</div>
+              <div className="text-3xl font-bold text-gray-900">{progress.processed}</div>
+              <div className="text-sm text-gray-600">Rows Scanned</div>
             </div>
-            <div className="text-center p-4 bg-blue-50 rounded-lg">
-              <div className="text-3xl font-bold text-blue-600">{progress.processed}</div>
-              <div className="text-sm text-gray-600">Processed</div>
-            </div>
+            {/* Removed 'Total' because it's dynamic now */}
             <div className="text-center p-4 bg-green-50 rounded-lg">
               <div className="text-3xl font-bold text-green-600">{progress.successful}</div>
               <div className="text-sm text-gray-600">Successful</div>
@@ -132,6 +219,10 @@ export default function CSVUpload() {
             <div className="text-center p-4 bg-red-50 rounded-lg">
               <div className="text-3xl font-bold text-red-600">{progress.failed}</div>
               <div className="text-sm text-gray-600">Failed</div>
+            </div>
+            <div className="text-center p-4 bg-blue-50 rounded-lg">
+              <div className="text-3xl font-bold text-blue-600">{uploading ? '...' : (progress.failed === 0 && progress.successful > 0 ? '100%' : 'Done')}</div>
+              <div className="text-sm text-gray-600">Status</div>
             </div>
           </div>
 
@@ -148,7 +239,7 @@ export default function CSVUpload() {
             </div>
           )}
 
-          {progress.successful > 0 && (
+          {!uploading && progress.successful > 0 && (
             <div className="mt-4 text-center text-green-600 font-semibold">
               ✓ Upload completed! Redirecting to dashboard...
             </div>
@@ -162,9 +253,8 @@ export default function CSVUpload() {
           <h3 className="text-lg font-bold text-blue-900 mb-3">📋 CSV Format Requirements</h3>
           <div className="text-sm text-blue-800 space-y-2">
             <p><strong>Required columns:</strong> brand, model, year, category</p>
-            <p><strong>Optional columns:</strong> sub_category, price, weight, frame, groupset, wheels, tires, brakes, fork, suspension, motor, battery, and many more component fields</p>
-            <p><strong>Categories:</strong> Road, Mountain, Gravel, Electric, Hybrid</p>
-            <p><strong>Note:</strong> The CSV format should match your existing data format (sample_for_website.csv)</p>
+            <p><strong>Localization:</strong> <code>speed_reason</code>, <code>bike_desc_fr</code>, <code>speed_reason_de</code>, etc.</p>
+            <p><strong>Note:</strong> The CSV format should match your existing data format.</p>
             <p className="mt-4">
               <a href="/sample-bikes.csv" download className="text-blue-600 hover:text-blue-700 font-semibold underline">
                 📥 Download simplified sample CSV template
@@ -179,11 +269,10 @@ export default function CSVUpload() {
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
-            className={`border-2 border-dashed rounded-xl p-12 text-center transition-all ${
-              isDragging
-                ? 'border-blue-500 bg-blue-50'
-                : 'border-gray-300 bg-gray-50 hover:border-gray-400'
-            }`}
+            className={`border-2 border-dashed rounded-xl p-12 text-center transition-all ${isDragging
+              ? 'border-blue-500 bg-blue-50'
+              : 'border-gray-300 bg-gray-50 hover:border-gray-400'
+              }`}
           >
             <div className="text-6xl mb-4">📤</div>
             <h3 className="text-xl font-bold text-gray-900 mb-2">
@@ -216,7 +305,7 @@ export default function CSVUpload() {
                   <div>
                     <h3 className="font-bold text-gray-900">{file.name}</h3>
                     <p className="text-sm text-gray-600">
-                      {(file.size / 1024).toFixed(2)} KB
+                      {(file.size / 1024 / 1024).toFixed(2)} MB
                     </p>
                   </div>
                 </div>
@@ -261,20 +350,6 @@ export default function CSVUpload() {
         )}
       </div>
 
-      {/* Tips */}
-      <div className="mt-8 bg-yellow-50 border border-yellow-200 rounded-lg p-6">
-        <h3 className="text-lg font-bold text-yellow-900 mb-3">💡 Tips for Success</h3>
-        <ul className="text-sm text-yellow-800 space-y-2 list-disc list-inside">
-          <li>Ensure all required fields (brand, model, year, category) are filled</li>
-          <li>Use consistent category names: Road, Mountain, Gravel, Electric, or Hybrid</li>
-          <li>Price should be numeric (currency symbols are OK, they will be stripped)</li>
-          <li>Weight can include units (e.g., "8.5 kg" or "18.7 lbs")</li>
-          <li>Images column should contain comma-separated URLs</li>
-          <li>The system will automatically generate slugs for each bike</li>
-          <li>Large files may take a few minutes to process</li>
-          <li>You can use the same format as sample_for_website.csv with all columns</li>
-        </ul>
-      </div>
     </div>
   )
 }

@@ -218,7 +218,7 @@ export interface BikeMetrics {
   fit: BikeScore
   general: BikeScore
   speed: BikeScore
-  climingEfficiency: BikeScore
+  climbingEfficiency: BikeScore
   aerodynamics: BikeScore
   ridingPosition: BikeScore
   handling: BikeScore

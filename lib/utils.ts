@@ -149,7 +149,7 @@ export function calculateBikeMetrics(bike: Bike): BikeMetrics {
       maxScore: 10,
       description: getSpeedLabel(speedScore),
     },
-    climingEfficiency: {
+    climbingEfficiency: {
       label: 'scores.climbing',
       score: climbScore,
       maxScore: 10,
@@ -253,9 +253,9 @@ export function parseGeometryData(geometryData: string | null): Record<string, s
  * Get rating color based on score
  * For value/VFM scores, high scores (>= 7) are shown in green instead of blue
  */
-export function getRatingColor(score: number, metricType?: 'value' | 'performance' | 'fit' | 'general' | 'default'): string {
+export function getRatingColor(score: number, metricType?: 'value' | 'performance' | 'fit' | 'general' | 'speed' | 'default'): string {
   // High value scores should be green and not blue
-  if (score >= 7) return '#10b981' // green (Success/High)
+  if (score >= 7 && (metricType === 'value' || metricType === 'speed')) return '#10b981' // green
 
   if (score >= 5.5) return '#f59e0b' // orange (Warning/Medium)
   return '#ef4444' // red (Danger/Low)
