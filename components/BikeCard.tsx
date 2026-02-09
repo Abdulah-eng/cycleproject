@@ -16,6 +16,7 @@ interface Bike {
   vfm_score_1_to_10: number | null
   build_1_10: number | null
   speed_index: number | null
+  performance_score: number | null
 }
 
 interface BikeCardProps {
@@ -26,7 +27,11 @@ interface BikeCardProps {
 
 export default function BikeCard({ bike, categorySlug, lang }: BikeCardProps) {
   const imageUrl = bike.images && bike.images.length > 0 ? bike.images[0] : null
-  const overallScore = ((bike.vfm_score_1_to_10 || 5) + (bike.build_1_10 || 5)) / 2
+  // Calculate Overall Score: (Value + Performance) / 2
+  // Prefer performance_score, fallback to build_1_10 (legacy)
+  const performance = bike.performance_score || bike.build_1_10 || 5
+  const value = bike.vfm_score_1_to_10 || 5
+  const overallScore = (value + performance) / 2
 
   const formatPrice = (price: number | null) => {
     if (!price) return 'Price not available'
@@ -104,10 +109,10 @@ export default function BikeCard({ bike, categorySlug, lang }: BikeCardProps) {
                 <span className="font-semibold text-gray-900">{bike.vfm_score_1_to_10.toFixed(1)}</span>
               </div>
             )}
-            {bike.build_1_10 && (
+            {bike.performance_score && (
               <div className="flex items-center gap-1">
-                <span className="text-gray-500">Build:</span>
-                <span className="font-semibold text-gray-900">{bike.build_1_10.toFixed(1)}</span>
+                <span className="text-gray-500">Performance:</span>
+                <span className="font-semibold text-gray-900">{bike.performance_score.toFixed(1)}</span>
               </div>
             )}
           </div>

@@ -76,6 +76,18 @@ function parseInt(value) {
 }
 
 /**
+ * Helper to get value from row using multiple possible keys (case-insensitive safety)
+ */
+function getValue(row, keys) {
+  for (const key of keys) {
+    if (row[key] !== undefined && row[key] !== null && row[key] !== '') {
+      return row[key];
+    }
+  }
+  return null;
+}
+
+/**
  * Transform CSV row to database format
  */
 function transformRow(row) {
@@ -85,50 +97,50 @@ function transformRow(row) {
   const sizeGuide = parseSizeGuide(row);
 
   return {
-    brand: row.brand || null,
-    model: row.model || null,
-    year: parseInt(row.year),
-    price: parseNumber(row.price),
-    weight: row.weight || null,
-    category: row.category || 'Other',
-    sub_category: row.sub_category || null,
-    frame: row.frame || null,
-    travel_front: row.travel_front || null,
-    travel_rear: row.travel_rear || null,
-    wheels: row.wheels || null,
-    groupset: row.groupset || null,
-    fork: row.fork || null,
-    suspension: row.suspension || null,
-    motor: row.motor || null,
-    battery: row.battery || null,
-    drivetrain: row.Drivetrain || null,
-    brakes: row.brakes || null,
-    brakes2: row.Brakes2 || null,
-    spokes: row.Spokes || null,
-    brake_levers: row.Brake_Levers || null,
-    stem: row.Stem || null,
-    handlebar: row.Handlebar || null,
-    frame_description: row.frame_description || null,
-    suspension_fork_description: row.suspension_fork_description || null,
-    rear_shock_description: row.rear_shock_description || null,
-    rear_derailleur: row.Rear_Derailleur || null,
-    front_derailleur: row.Front_Derailleur || null,
-    shift_levers: row.Shift_Levers || null,
-    cassette: row.Cassette || null,
-    crank: row.Crank || null,
-    bottom_bracket: row.Bottom_Bracket || null,
-    chain: row.Chain || null,
-    pedals: row.Pedals || null,
-    front_hub: row.Front_Hub || null,
-    rear_hub: row.Rear_Hub || null,
-    grips: row.Grips || null,
-    saddle: row.Saddle || null,
-    seatpost: row.Seatpost || null,
-    motor3: row.Motor3 || null,
-    battery4: row.Battery4 || null,
-    charger: row.Charger || null,
-    rims: row.Rims || null,
-    tires: row.Tires || null,
+    brand: getValue(row, ['brand', 'Brand']),
+    model: getValue(row, ['model', 'Model']),
+    year: parseInt(getValue(row, ['year', 'Year'])),
+    price: parseNumber(getValue(row, ['price', 'Price'])),
+    weight: getValue(row, ['weight', 'Weight']),
+    category: getValue(row, ['category', 'Category']) || 'Other',
+    sub_category: getValue(row, ['sub_category', 'Sub_Category', 'Sub Category']),
+    frame: getValue(row, ['frame', 'Frame']),
+    travel_front: getValue(row, ['travel_front', 'Travel_Front']),
+    travel_rear: getValue(row, ['travel_rear', 'Travel_Rear']),
+    wheels: getValue(row, ['wheels', 'Wheels']),
+    groupset: getValue(row, ['groupset', 'Groupset']),
+    fork: getValue(row, ['fork', 'Fork']),
+    suspension: getValue(row, ['suspension', 'Suspension']),
+    motor: getValue(row, ['motor', 'Motor']),
+    battery: getValue(row, ['battery', 'Battery']),
+    drivetrain: getValue(row, ['drivetrain', 'Drivetrain']),
+    brakes: getValue(row, ['brakes', 'Brakes']),
+    brakes2: getValue(row, ['brakes2', 'Brakes2', 'BRAKES2']),
+    spokes: getValue(row, ['spokes', 'Spokes']),
+    brake_levers: getValue(row, ['brake_levers', 'Brake_Levers']),
+    stem: getValue(row, ['stem', 'Stem']),
+    handlebar: getValue(row, ['handlebar', 'Handlebar']),
+    frame_description: getValue(row, ['frame_description', 'Frame_Description']),
+    suspension_fork_description: getValue(row, ['suspension_fork_description', 'Suspension_Fork_Description']),
+    rear_shock_description: getValue(row, ['rear_shock_description', 'Rear_Shock_Description']),
+    rear_derailleur: getValue(row, ['rear_derailleur', 'Rear_Derailleur']),
+    front_derailleur: getValue(row, ['front_derailleur', 'Front_Derailleur']),
+    shift_levers: getValue(row, ['shift_levers', 'Shift_Levers']),
+    cassette: getValue(row, ['cassette', 'Cassette']),
+    crank: getValue(row, ['crank', 'Crank']),
+    bottom_bracket: getValue(row, ['bottom_bracket', 'Bottom_Bracket']),
+    chain: getValue(row, ['chain', 'Chain']),
+    pedals: getValue(row, ['pedals', 'Pedals']),
+    front_hub: getValue(row, ['front_hub', 'Front_Hub']),
+    rear_hub: getValue(row, ['rear_hub', 'Rear_Hub']),
+    grips: getValue(row, ['grips', 'Grips']),
+    saddle: getValue(row, ['saddle', 'Saddle']),
+    seatpost: getValue(row, ['seatpost', 'Seatpost']),
+    motor3: getValue(row, ['motor3', 'Motor3', 'MOTOR3']),
+    battery4: getValue(row, ['battery4', 'Battery4', 'BATTERY4']),
+    charger: getValue(row, ['charger', 'Charger']),
+    rims: getValue(row, ['rims', 'Rims']),
+    tires: getValue(row, ['tires', 'Tires']),
     images: images,
     geometry_data: row.geometry_data || null,
     size_guide: sizeGuide,

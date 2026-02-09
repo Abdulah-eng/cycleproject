@@ -9,6 +9,12 @@ interface InteractiveScoreSummaryProps {
 }
 
 export default function InteractiveScoreSummary({ metrics, bike }: InteractiveScoreSummaryProps) {
+    const [expandedMetric, setExpandedMetric] = useState<string | null>(null)
+
+    const handleToggle = (metric: string) => {
+        setExpandedMetric(prev => prev === metric ? null : metric)
+    }
+
     return (
         <div className="mb-10">
             <div className="flex justify-between items-center mb-6">
@@ -22,7 +28,7 @@ export default function InteractiveScoreSummary({ metrics, bike }: InteractiveSc
                     description={metrics.performance.description}
                     variant="primary"
                     metricType="performance"
-                // Removed explanation and expansion logic as requested
+                // Performance usually doesn't have an explanation in this design, keeping it purely metric
                 />
                 <ScoreCard
                     label={metrics.value.label}
@@ -31,11 +37,8 @@ export default function InteractiveScoreSummary({ metrics, bike }: InteractiveSc
                     description={metrics.value.description}
                     metricType="value"
                     explanation={bike.value_score_explanation}
-                    isExpanded={true} // Always show or never? "no drop down". If I say true it shows. If false it hides.
-                // User said "Delete the reason part as well for performance." -> Implies strictly performance.
-                // But "Summary section should not have a drop down." -> Implies for ALL.
-                // If no dropdown, how do we see text? Always visible?
-                // I will make them ALWAYS VISIBLE (isExpanded={true}) except performance (no explanation).
+                    isExpanded={expandedMetric === 'value'}
+                    onToggle={() => handleToggle('value')}
                 />
                 <ScoreCard
                     label={metrics.fit.label}
@@ -44,7 +47,8 @@ export default function InteractiveScoreSummary({ metrics, bike }: InteractiveSc
                     description={metrics.fit.description}
                     metricType="fit"
                     explanation={bike.fit_score_explanation}
-                    isExpanded={true}
+                    isExpanded={expandedMetric === 'fit'}
+                    onToggle={() => handleToggle('fit')}
                 />
                 <ScoreCard
                     label={metrics.general.label}
@@ -53,7 +57,18 @@ export default function InteractiveScoreSummary({ metrics, bike }: InteractiveSc
                     description={metrics.general.description}
                     metricType="general"
                     explanation={bike.general_score_explanation}
-                    isExpanded={true}
+                    isExpanded={expandedMetric === 'general'}
+                    onToggle={() => handleToggle('general')}
+                />
+                <ScoreCard
+                    label={metrics.speed.label}
+                    score={metrics.speed.score}
+                    maxScore={metrics.speed.maxScore}
+                    description={metrics.speed.description}
+                    metricType="speed"
+                    explanation={bike.speed_reason || bike.performance_score_explanation}
+                    isExpanded={expandedMetric === 'speed'}
+                    onToggle={() => handleToggle('speed')}
                 />
             </div>
         </div>

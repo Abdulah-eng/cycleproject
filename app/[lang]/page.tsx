@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { supabaseServer } from '@/lib/supabase'
-import { generateUrlSlug, formatCategoryForUrl } from '@/lib/utils'
+import { generateUrlSlug, formatCategoryForUrl, generateBikeUrl } from '@/lib/utils'
 import SubCategoryCarousel from '@/components/SubCategoryCarousel'
 
 export const dynamic = 'force-dynamic'
@@ -329,7 +329,7 @@ export default async function Home({ params }: { params: { lang: string } }) {
                             {latestBikes.map(bike => (
                                 <Link
                                     key={bike.id}
-                                    href={`/${params.lang}/${formatCategoryForUrl(bike.category)}/${bike.slug}`}
+                                    href={generateBikeUrl(bike, params.lang)}
                                     className="group block"
                                 >
                                     <div className="bg-gray-100 rounded-2xl aspect-[4/3] relative overflow-hidden mb-4">
@@ -401,7 +401,7 @@ export default async function Home({ params }: { params: { lang: string } }) {
                             {topRatedBikes.map(bike => (
                                 <Link
                                     key={bike.id}
-                                    href={`/${params.lang}/${formatCategoryForUrl(bike.category)}/${bike.slug}`}
+                                    href={generateBikeUrl(bike, params.lang)}
                                     className="group block"
                                 >
                                     <div className="bg-gray-100 rounded-2xl aspect-[4/3] relative overflow-hidden mb-4">

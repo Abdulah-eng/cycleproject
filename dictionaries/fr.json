@@ -199,9 +199,13 @@
         "seat": "Assise",
         "saddle": "Selle",
         "seatpost": "Tige de Selle",
+        "suspension_type": "Type de suspension",
+        "brake_type": "Type de frein",
+        "brake_description": "Description des freins",
         "electric_components": "Composants Électriques",
         "motor": "Moteur",
+        "battery": "Batterie",
         "charger": "Chargeur",
-        "battery_range": "Autonomie Batterie"
+        "battery_range": "Autonomie"
     }
 }

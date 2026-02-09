@@ -161,6 +161,12 @@
             "moderate_range": "Moderate Range",
             "good_range": "Good Range",
             "excellent_range": "Excellent Range"
+        },
+        "surface_range": {
+            "all_road_capable": "All-Road Capable",
+            "paved_road_focused": "Paved Road Focused",
+            "mixed_surface": "Mixed Surface",
+            "off_road_ready": "Off-Road Ready"
         }
     },
     "specs": {
@@ -199,9 +205,13 @@
         "seat": "Seat",
         "saddle": "Saddle",
         "seatpost": "Seatpost",
-        "electric_components": "Electric Components",
+        "suspension_type": "Suspension Type",
+        "brake_type": "Brake Type",
+        "brake_description": "Brake Description",
+        "electric_components": "E-Bike Components",
         "motor": "Motor",
+        "battery": "Battery",
         "charger": "Charger",
-        "battery_range": "Battery Range"
+        "battery_range": "Range"
     }
 }

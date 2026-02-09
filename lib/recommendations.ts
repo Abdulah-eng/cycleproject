@@ -14,15 +14,13 @@ export async function getSameBrandBikes(currentBike: Bike, limit = 10): Promise<
 }
 
 export async function getBikesByYear(year: number, category: string, subCategory?: string | null, limit = 10): Promise<Bike[]> {
+    // Relaxed filter: Only match year and main category to ensure we get enough results
+    // We ignore subCategory to show a broader range of bikes from the same year
     let query = supabaseServer
         .from('bikes')
         .select('*')
         .eq('year', year)
         .ilike('category', `%${category}%`)
-
-    if (subCategory) {
-        query = query.ilike('sub_category', `%${subCategory}%`)
-    }
 
     const { data } = await query
         .limit(limit)

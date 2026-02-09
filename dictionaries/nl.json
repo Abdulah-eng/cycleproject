@@ -199,9 +199,13 @@
         "seat": "Zadel",
         "saddle": "Zadel",
         "seatpost": "Zadelpen",
+        "suspension_type": "Veringtype",
+        "brake_type": "Remtype",
+        "brake_description": "Rembeschrijving",
         "electric_components": "Elektrische Componenten",
         "motor": "Motor",
+        "battery": "Accu",
         "charger": "Oplader",
-        "battery_range": "Accu Bereik"
+        "battery_range": "Actieradius"
     }
 }

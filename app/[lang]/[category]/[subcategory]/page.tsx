@@ -59,13 +59,17 @@ export default async function SubCategoryPage({ params }: PageProps) {
     const categorySlug = params.category.replace(/bikes$/i, '')
 
     // Try matching as a sub_category first
+    // improved logic: handle hyphens by trying both space replacement and wildcard
     const subCategoryName = slug.replace(/-/g, ' ')
+    const subCategoryWildcard = slug.replace(/-/g, '%')
+
     const { data: subCatBikes, count: subCatCount } = await supabaseServer
         .from('bikes')
         .select('id, brand, model, year, price, slug, category, sub_category, images, vfm_score_1_to_10, build_1_10, speed_index, frame, performance_score, value_score, ride_comfort_1_10, posture_1_10', { count: 'exact' })
-        .ilike('sub_category', `%${subCategoryName}%`)
+        .or(`sub_category.ilike.%${subCategoryName}%,sub_category.ilike.%${subCategoryWildcard}%`)
         .ilike('category', `%${categorySlug}%`)
         .order('year', { ascending: false })
+        .limit(50) // Explicit limit to ensure we get enough bikes
 
     let bikes = subCatBikes
     let totalCount = subCatCount || 0

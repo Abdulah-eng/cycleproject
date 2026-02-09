@@ -199,9 +199,13 @@
         "seat": "Asiento",
         "saddle": "Sillín",
         "seatpost": "Tija de Sillín",
+        "suspension_type": "Tipo de suspensión",
+        "brake_type": "Tipo de freno",
+        "brake_description": "Descripción del freno",
         "electric_components": "Componentes Eléctricos",
         "motor": "Motor",
+        "battery": "Batería",
         "charger": "Cargador",
-        "battery_range": "Rango de Batería"
+        "battery_range": "Autonomía"
     }
 }
