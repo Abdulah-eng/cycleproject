@@ -228,4 +228,5 @@ export interface BikeMetrics {
   valueForMoney: BikeScore
   surfaceRange: BikeScore
   battery?: BikeScore
+  suspension?: BikeScore
 }

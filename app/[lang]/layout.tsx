@@ -10,7 +10,10 @@ import { formatCategoryForUrl } from '@/lib/utils'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-    title: 'BikeMax - Premium Bicycle Catalog',
+    title: {
+        template: '%s | MatchBikes',
+        default: 'MatchBikes - Premium Bicycle Catalog'
+    },
     description: 'Discover the perfect bike from our extensive catalog of road bikes, mountain bikes, and more.',
     metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
 }

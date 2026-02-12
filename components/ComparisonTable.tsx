@@ -17,6 +17,29 @@ interface ComparisonTableProps {
     lang?: string
 }
 
+// Helper to determine if we should show a specific row based on bike categories
+function shouldShowRow(bikes: BikeWithMetrics[], type: 'battery' | 'suspension' | 'aero') {
+    if (type === 'battery') {
+        return bikes.some(b => {
+            const cat = b.category?.toLowerCase() || ''
+            return cat.includes('ebike') || cat.includes('electric') || cat.includes('e-bike')
+        })
+    }
+    if (type === 'suspension') {
+        return bikes.some(b => {
+            const cat = b.category?.toLowerCase() || ''
+            return cat.includes('mountain') || cat.includes('mtb')
+        })
+    }
+    if (type === 'aero') {
+        return bikes.some(b => {
+            const cat = b.category?.toLowerCase() || ''
+            return !cat.includes('mountain') && !cat.includes('mtb') // Show aero for non-MTB (Road, Gravel, etc)
+        })
+    }
+    return true
+}
+
 export default function ComparisonTable({ dict, lang = 'en' }: ComparisonTableProps) {
     const { selectedBikes, removeFromCompare, clearCompare } = useComparison()
     const [bikes, setBikes] = useState<BikeWithMetrics[]>([])
@@ -95,7 +118,7 @@ export default function ComparisonTable({ dict, lang = 'en' }: ComparisonTablePr
     }
 
     // Helper to render score row
-    const ScoreRow = ({ label, metricKey, isBold = false }: { label: string, metricKey: keyof BikeMetrics, isBold?: boolean }) => (
+    const ScoreRow = ({ label, metricKey, isBold = false, hideDescription = false, customValueFn }: { label: string, metricKey: keyof BikeMetrics, isBold?: boolean, hideDescription?: boolean, customValueFn?: (bike: BikeWithMetrics) => string | undefined }) => (
         <tr className="border-b border-gray-100 last:border-0 hover:bg-gray-50">
             <td className={`py-4 px-4 text-sm text-gray-600 ${isBold ? 'font-bold' : ''}`}>{label}</td>
             {bikes.map(bike => {
@@ -103,20 +126,39 @@ export default function ComparisonTable({ dict, lang = 'en' }: ComparisonTablePr
                 const metric = bike.metrics[metricKey]
                 // Handle nested score object or direct value if any
                 const score = typeof metric === 'object' && metric?.score ? metric.score : metric
+
+                // For battery, we might want to show custom value (range)
+                const customVal = customValueFn ? customValueFn(bike) : undefined
+
                 const descKey = typeof metric === 'object' && metric?.description ? metric.description : ''
-                const desc = t(descKey)
+                const desc = hideDescription ? null : t(descKey) // Don't show description if hidden (for Performance/Value/Fit main scores)
+
+                if (!metric && metricKey === 'battery') return <td key={bike.id} className="py-4 px-4 text-center">-</td>
+                if (!metric && metricKey === 'suspension') return <td key={bike.id} className="py-4 px-4 text-center">-</td>
+                if (!metric && metricKey === 'aerodynamics') return <td key={bike.id} className="py-4 px-4 text-center">-</td>
+
+
+                // Calculate display values and styles
+                const isScoreNumber = typeof score === 'number'
+                const displayValue = customVal || (isScoreNumber ? score.toFixed(1) : '-')
+
+                let colorClass = 'text-red-600'
+                if (customVal) {
+                    colorClass = 'text-gray-900'
+                } else if (isScoreNumber) {
+                    if (score >= 8.5) colorClass = 'text-green-600'
+                    else if (score >= 7) colorClass = 'text-blue-600'
+                    else if (score >= 5.5) colorClass = 'text-yellow-600'
+                }
 
                 return (
                     <td key={bike.id} className="py-4 px-4 text-center">
-                        {typeof score === 'number' ? (
+                        {(isScoreNumber || customVal) ? (
                             <div className="flex flex-col items-center">
-                                <span className={`text-lg font-bold ${score >= 8.5 ? 'text-green-600' :
-                                    score >= 7 ? 'text-blue-600' :
-                                        score >= 5.5 ? 'text-yellow-600' : 'text-red-600'
-                                    }`}>
-                                    {score.toFixed(1)}
+                                <span className={`text-lg font-bold ${colorClass}`}>
+                                    {displayValue}
                                 </span>
-                                <span className="text-xs text-gray-500 mt-1">{desc}</span>
+                                {desc && <span className="text-xs text-gray-500 mt-1">{desc}</span>}
                             </div>
                         ) : '-'}
                     </td>
@@ -215,17 +257,40 @@ export default function ComparisonTable({ dict, lang = 'en' }: ComparisonTablePr
                                 </td>
                             ))}
                         </tr>
-                        <ScoreRow label="Performance" metricKey="performance" />
-                        <ScoreRow label="Value" metricKey="value" />
-                        <ScoreRow label="Fit" metricKey="fit" />
+                        <ScoreRow label="Performance" metricKey="performance" hideDescription={true} />
+                        <ScoreRow label="Value" metricKey="value" hideDescription={true} />
+                        <ScoreRow label="Fit" metricKey="fit" hideDescription={true} />
+
+                        {/* Breakdown */}
+                        <tr className="bg-gray-50">
+                            <td colSpan={bikes.length + 1} className="py-2 px-4 text-xs font-bold text-gray-500 uppercase tracking-wider">
+                                Performance Details
+                            </td>
+                        </tr>
                         <ScoreRow label="Speed" metricKey="speed" />
                         <ScoreRow label={dict?.scores?.climbing || 'Climbing Efficiency'} metricKey="climbingEfficiency" />
-                        <ScoreRow label={dict?.scores?.ride_comfort || 'Ride Comfort'} metricKey="rideComfort" />
-                        <ScoreRow label={dict?.scores?.aerodynamics || 'Aerodynamics'} metricKey="aerodynamics" />
-                        <ScoreRow label={dict?.scores?.riding_position || 'Riding Position'} metricKey="ridingPosition" />
-                        <ScoreRow label={dict?.scores?.handling || 'Handling'} metricKey="handling" />
+                        {shouldShowRow(bikes, 'aero') && <ScoreRow label={dict?.scores?.aerodynamics || 'Aerodynamics'} metricKey="aerodynamics" />}
+                        {shouldShowRow(bikes, 'suspension') && <ScoreRow label={dict?.scores?.suspension || 'Suspension'} metricKey="suspension" />}
+
+                        <tr className="bg-gray-50">
+                            <td colSpan={bikes.length + 1} className="py-2 px-4 text-xs font-bold text-gray-500 uppercase tracking-wider">
+                                Value & Build
+                            </td>
+                        </tr>
                         <ScoreRow label={dict?.scores?.build_quality || 'Build Quality'} metricKey="buildQuality" />
                         <ScoreRow label={dict?.scores?.value_for_money || 'Value for Money'} metricKey="valueForMoney" />
+                        <ScoreRow label={dict?.scores?.surface_range || 'Surface Range'} metricKey="surfaceRange" hideDescription={true} customValueFn={(bike) => bike.surface_range || undefined} />
+                        {shouldShowRow(bikes, 'battery') && <ScoreRow label={dict?.scores?.battery || 'Battery'} metricKey="battery" customValueFn={(bike) => bike.battery_range || undefined} />}
+
+                        <tr className="bg-gray-50">
+                            <td colSpan={bikes.length + 1} className="py-2 px-4 text-xs font-bold text-gray-500 uppercase tracking-wider">
+                                Fit & Comfort
+                            </td>
+                        </tr>
+                        <ScoreRow label={dict?.scores?.riding_position || 'Riding Position'} metricKey="ridingPosition" />
+                        <ScoreRow label={dict?.scores?.handling || 'Handling'} metricKey="handling" />
+                        <ScoreRow label={dict?.scores?.fit_flexibility || 'Fit Flexibility'} metricKey="fitFlexibility" />
+                        <ScoreRow label={dict?.scores?.ride_comfort || 'Ride Comfort'} metricKey="rideComfort" />
 
                         {/* Specs Section */}
                         <tr className="bg-gray-50">

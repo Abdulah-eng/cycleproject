@@ -9,11 +9,7 @@ interface InteractiveScoreSummaryProps {
 }
 
 export default function InteractiveScoreSummary({ metrics, bike }: InteractiveScoreSummaryProps) {
-    const [expandedMetric, setExpandedMetric] = useState<string | null>(null)
 
-    const handleToggle = (metric: string) => {
-        setExpandedMetric(prev => prev === metric ? null : metric)
-    }
 
     return (
         <div className="mb-10">
@@ -36,9 +32,6 @@ export default function InteractiveScoreSummary({ metrics, bike }: InteractiveSc
                     maxScore={metrics.value.maxScore}
                     description={metrics.value.description}
                     metricType="value"
-                    explanation={bike.value_score_explanation}
-                    isExpanded={expandedMetric === 'value'}
-                    onToggle={() => handleToggle('value')}
                 />
                 <ScoreCard
                     label={metrics.fit.label}
@@ -46,9 +39,6 @@ export default function InteractiveScoreSummary({ metrics, bike }: InteractiveSc
                     maxScore={metrics.fit.maxScore}
                     description={metrics.fit.description}
                     metricType="fit"
-                    explanation={bike.fit_score_explanation}
-                    isExpanded={expandedMetric === 'fit'}
-                    onToggle={() => handleToggle('fit')}
                 />
                 <ScoreCard
                     label={metrics.general.label}
@@ -56,19 +46,6 @@ export default function InteractiveScoreSummary({ metrics, bike }: InteractiveSc
                     maxScore={metrics.general.maxScore}
                     description={metrics.general.description}
                     metricType="general"
-                    explanation={bike.general_score_explanation}
-                    isExpanded={expandedMetric === 'general'}
-                    onToggle={() => handleToggle('general')}
-                />
-                <ScoreCard
-                    label={metrics.speed.label}
-                    score={metrics.speed.score}
-                    maxScore={metrics.speed.maxScore}
-                    description={metrics.speed.description}
-                    metricType="speed"
-                    explanation={bike.speed_reason || bike.performance_score_explanation}
-                    isExpanded={expandedMetric === 'speed'}
-                    onToggle={() => handleToggle('speed')}
                 />
             </div>
         </div>

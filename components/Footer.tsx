@@ -20,7 +20,7 @@ export default function Footer({ categories, lang }: FooterProps) {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
           {/* Brand */}
           <div>
-            <h3 className="text-2xl font-bold text-white mb-4">BikeMax</h3>
+            <h3 className="text-2xl font-bold text-white mb-4">MatchBikes</h3>
             <p className="text-gray-400 mb-6 leading-relaxed">
               Your trusted destination for finding the perfect bicycle. Quality bikes from leading brands worldwide.
             </p>
@@ -122,7 +122,7 @@ export default function Footer({ categories, lang }: FooterProps) {
         <div className="border-t border-gray-800 mt-12 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-gray-500 text-sm">
-              © {currentYear} BikeMax. All rights reserved.
+              © {currentYear} MatchBikes. All rights reserved.
             </p>
             <div className="flex gap-6 text-sm">
               <Link href={`/${lang}/privacy`} className="text-gray-500 hover:text-white transition-colors">

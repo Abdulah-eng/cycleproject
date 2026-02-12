@@ -189,7 +189,7 @@ export default function Header() {
             {/* Logo */}
             <Link href={`/${lang}`} className="flex items-center gap-2">
               <div className="text-2xl font-bold text-blue-600">
-                BikeMax
+                MatchBikes
               </div>
             </Link>
           </div>
