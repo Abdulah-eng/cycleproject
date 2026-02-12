@@ -71,7 +71,7 @@ export default async function AdminDashboard() {
       {/* Quick Actions */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
         <h2 className="text-xl font-bold text-gray-900 mb-4">Quick Actions</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <ActionCard
             href="/admin/products/new"
             title="Add Single Product"
@@ -92,6 +92,13 @@ export default async function AdminDashboard() {
             description="Browse and manage your inventory"
             icon="📦"
             color="purple"
+          />
+          <ActionCard
+            href="/admin/subscribers"
+            title="View Subscribers"
+            description="Manage newsletter subscriptions"
+            icon="📧"
+            color="blue"
           />
         </div>
       </div>
