@@ -25,6 +25,7 @@ export default function AdminNav({ userEmail }: AdminNavProps) {
     { href: '/admin/products/new', label: 'Add Product', icon: '➕' },
     { href: '/admin/products/upload', label: 'CSV Upload', icon: '📤' },
     { href: '/admin/products', label: 'All Products', icon: '📦' },
+    { href: '/admin/subscribers', label: 'Subscribers', icon: '📧' },
   ]
 
   return (
@@ -33,7 +34,7 @@ export default function AdminNav({ userEmail }: AdminNavProps) {
         <div className="flex items-center justify-between h-16">
           {/* Brand */}
           <Link href="/admin/dashboard" className="flex items-center gap-2">
-            <span className="text-2xl font-bold text-blue-600">BikeMax</span>
+            <span className="text-2xl font-bold text-blue-600">MatchBikes</span>
             <span className="text-sm bg-blue-100 text-blue-700 px-2 py-1 rounded-full font-semibold">
               Admin
             </span>
@@ -45,11 +46,10 @@ export default function AdminNav({ userEmail }: AdminNavProps) {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${
-                  pathname === item.href
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${pathname === item.href
                     ? 'bg-blue-50 text-blue-600'
                     : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                }`}
+                  }`}
               >
                 <span>{item.icon}</span>
                 {item.label}
@@ -80,11 +80,10 @@ export default function AdminNav({ userEmail }: AdminNavProps) {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex items-center gap-2 px-3 py-2 rounded-lg font-medium whitespace-nowrap text-sm transition-colors ${
-                  pathname === item.href
+                className={`flex items-center gap-2 px-3 py-2 rounded-lg font-medium whitespace-nowrap text-sm transition-colors ${pathname === item.href
                     ? 'bg-blue-50 text-blue-600'
                     : 'text-gray-600 hover:bg-gray-50'
-                }`}
+                  }`}
               >
                 <span>{item.icon}</span>
                 {item.label}

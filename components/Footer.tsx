@@ -1,4 +1,7 @@
+'use client'
+
 import Link from 'next/link'
+import { useState } from 'react'
 
 interface Category {
   name: string
@@ -102,19 +105,7 @@ export default function Footer({ categories, lang }: FooterProps) {
             <p className="text-gray-400 mb-4">
               Subscribe to get updates on new bikes and exclusive offers.
             </p>
-            <form className="flex flex-col gap-2">
-              <input
-                type="email"
-                placeholder="Enter your email"
-                className="bg-gray-800 text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              <button
-                type="submit"
-                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-semibold transition-colors"
-              >
-                Subscribe
-              </button>
-            </form>
+            <NewsletterForm />
           </div>
         </div>
 
@@ -139,5 +130,60 @@ export default function Footer({ categories, lang }: FooterProps) {
         </div>
       </div>
     </footer>
+  )
+}
+
+function NewsletterForm() {
+  const [email, setEmail] = useState('')
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
+  const [message, setMessage] = useState('')
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!email) return
+
+    setStatus('loading')
+    try {
+      const res = await fetch('/api/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      })
+      const data = await res.json()
+
+      if (!res.ok) throw new Error(data.error || 'Something went wrong')
+
+      setStatus('success')
+      setMessage(data.message)
+      setEmail('')
+    } catch (error: any) {
+      setStatus('error')
+      setMessage(error.message)
+    }
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="flex flex-col gap-2">
+      <input
+        type="email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        placeholder="Enter your email"
+        className="bg-gray-800 text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
+        disabled={status === 'loading' || status === 'success'}
+      />
+      <button
+        type="submit"
+        disabled={status === 'loading' || status === 'success'}
+        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-semibold transition-colors disabled:opacity-50"
+      >
+        {status === 'loading' ? 'Subscribing...' : status === 'success' ? 'Subscribed!' : 'Subscribe'}
+      </button>
+      {message && (
+        <p className={`text-sm ${status === 'success' ? 'text-green-400' : 'text-red-400'}`}>
+          {message}
+        </p>
+      )}
+    </form>
   )
 }

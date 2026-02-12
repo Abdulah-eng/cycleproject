@@ -351,13 +351,7 @@ export default function Header() {
                 )}
               </Link>
 
-              {/* Admin Link */}
-              <Link
-                href="/admin/login"
-                className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
-              >
-                Admin
-              </Link>
+
             </div>
           </div>
         </div>
