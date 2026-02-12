@@ -3,7 +3,7 @@ import { Metadata } from 'next'
 import { getDictionary } from '@/lib/dictionaries'
 
 export const metadata: Metadata = {
-    title: 'Compare Bikes - BikeMax',
+    title: 'Compare Bikes - MatchBikes',
     description: 'Compare full specifications and scores of your selected bikes.'
 }
 

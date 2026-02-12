@@ -13,9 +13,11 @@ interface ScoreCardProps {
   isExpanded?: boolean
   onToggle?: () => void
   metricType?: 'value' | 'performance' | 'fit' | 'general' | 'speed' | 'default'
+  hideValue?: boolean
+  customValue?: string
 }
 
-export default function ScoreCard({ label, score, maxScore, description, variant = 'default', explanation, isExpanded: externalIsExpanded, onToggle, metricType = 'default' }: ScoreCardProps) {
+export default function ScoreCard({ label, score, maxScore, description, variant = 'default', explanation, isExpanded: externalIsExpanded, onToggle, metricType = 'default', hideValue, customValue }: ScoreCardProps) {
   const [internalIsExpanded, setInternalIsExpanded] = useState(false)
 
   // Use external state if provided, otherwise use internal state
@@ -39,7 +41,9 @@ export default function ScoreCard({ label, score, maxScore, description, variant
         <div className="flex flex-wrap justify-between items-baseline mb-3 gap-y-1">
           <span className="text-xs sm:text-sm font-semibold uppercase tracking-wide text-gray-700 mr-2">{label}</span>
           <div className="flex items-center gap-2">
-            <span className="text-2xl sm:text-3xl font-bold text-gray-900">{score.toFixed(1)}</span>
+            {!hideValue && (
+              <span className="text-2xl sm:text-3xl font-bold text-gray-900">{customValue || score.toFixed(1)}</span>
+            )}
             {explanation && (
               <svg
                 className={`w-5 h-5 text-gray-600 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
@@ -52,12 +56,14 @@ export default function ScoreCard({ label, score, maxScore, description, variant
             )}
           </div>
         </div>
-        <div className="h-2 bg-gray-200 rounded-full overflow-hidden mb-3">
-          <div
-            className="h-full rounded-full transition-all"
-            style={{ width: `${percentage}%`, backgroundColor: color }}
-          />
-        </div>
+        {!hideValue && (
+          <div className="h-2 bg-gray-200 rounded-full overflow-hidden mb-3">
+            <div
+              className="h-full rounded-full transition-all"
+              style={{ width: `${percentage}%`, backgroundColor: color }}
+            />
+          </div>
+        )}
         <span className="text-xs text-gray-600">{description}</span>
 
         {explanation && (
@@ -78,7 +84,9 @@ export default function ScoreCard({ label, score, maxScore, description, variant
         <div className="flex justify-between items-center mb-3">
           <span className="text-sm font-semibold text-gray-800">{label}</span>
           <div className="flex items-center gap-2">
-            <span className="text-2xl font-bold text-gray-900">{score.toFixed(1)}</span>
+            {!hideValue && (
+              <span className="text-2xl font-bold text-gray-900">{customValue || score.toFixed(1)}</span>
+            )}
             {explanation && (
               <svg
                 className={`w-4 h-4 text-gray-600 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
@@ -91,12 +99,14 @@ export default function ScoreCard({ label, score, maxScore, description, variant
             )}
           </div>
         </div>
-        <div className="h-2 bg-gray-200 rounded-full overflow-hidden mb-3">
-          <div
-            className="h-full rounded-full transition-all"
-            style={{ width: `${percentage}%`, backgroundColor: color }}
-          />
-        </div>
+        {!hideValue && (
+          <div className="h-2 bg-gray-200 rounded-full overflow-hidden mb-3">
+            <div
+              className="h-full rounded-full transition-all"
+              style={{ width: `${percentage}%`, backgroundColor: color }}
+            />
+          </div>
+        )}
         <span className="text-xs text-gray-600">{description}</span>
 
         {explanation && (
@@ -116,7 +126,9 @@ export default function ScoreCard({ label, score, maxScore, description, variant
       <div className="flex flex-wrap justify-between items-baseline mb-3 gap-y-1">
         <span className="text-xs sm:text-sm font-semibold text-gray-800 uppercase tracking-wide mr-2">{label}</span>
         <div className="flex items-center gap-2">
-          <span className="text-2xl sm:text-3xl font-bold text-gray-900">{score.toFixed(1)}</span>
+          {!hideValue && (
+            <span className="text-2xl sm:text-3xl font-bold text-gray-900">{customValue || score.toFixed(1)}</span>
+          )}
           {explanation && (
             <svg
               className={`w-5 h-5 text-gray-600 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
@@ -129,12 +141,14 @@ export default function ScoreCard({ label, score, maxScore, description, variant
           )}
         </div>
       </div>
-      <div className="h-2 bg-gray-200 rounded-full overflow-hidden mb-3">
-        <div
-          className="h-full rounded-full transition-all"
-          style={{ width: `${percentage}%`, backgroundColor: color }}
-        />
-      </div>
+      {!hideValue && (
+        <div className="h-2 bg-gray-200 rounded-full overflow-hidden mb-3">
+          <div
+            className="h-full rounded-full transition-all"
+            style={{ width: `${percentage}%`, backgroundColor: color }}
+          />
+        </div>
+      )}
       <span className="text-xs text-gray-600">{description}</span>
 
       {explanation && (

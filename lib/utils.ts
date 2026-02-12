@@ -1,8 +1,5 @@
 import { Bike, BikeMetrics, BikeScore } from './supabase'
 
-/**
- * Generate a URL-friendly slug from brand and model
- */
 export function generateSlug(brand: string, model: string, year?: number | null): string {
   const text = `${brand}-${model}${year ? `-${year}` : ''}`
   return text
@@ -11,6 +8,37 @@ export function generateSlug(brand: string, model: string, year?: number | null)
     .replace(/\s+/g, '-') // Replace spaces with hyphens
     .replace(/-+/g, '-') // Replace multiple hyphens with single hyphen
     .trim()
+}
+
+/**
+ * Generate Hreflang tags for a bike page
+ */
+export function generateHreflangTags(bike: {
+  category: string
+  sub_category?: string | null
+  brand: string
+  year?: number | null
+  model: string
+}, currentLang: string): string {
+  const languages = ['en', 'de', 'fr', 'es', 'it', 'nl']
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://cycleproject.vercel.app'
+
+  // Self-referencing canonical
+  let html = `<!-- Canonical: self-referencing for the ${currentLang} version -->\n`
+  html += `<link rel="canonical" href="${baseUrl}${generateBikeUrl(bike, currentLang)}" />\n`
+
+  // Hreflang cluster
+  html += `<!-- Hreflang cluster: all language versions, including itself -->\n`
+
+  languages.forEach(lang => {
+    html += `<link rel="alternate" hreflang="${lang}" href="${baseUrl}${generateBikeUrl(bike, lang)}" />\n`
+  })
+
+  // Fallback (x-default -> en)
+  html += `<!-- Fallback -->\n`
+  html += `<link rel="alternate" hreflang="x-default" href="${baseUrl}${generateBikeUrl(bike, 'en')}" />\n`
+
+  return html
 }
 
 /**
@@ -106,6 +134,13 @@ export function calculateBikeMetrics(bike: Bike): BikeMetrics {
 
   const speedScore = bike.speed_index || 5
 
+  const getSuspensionLabel = (score: number): string => {
+    if (score >= 8) return 'buckets.suspension.plush'
+    if (score >= 6) return 'buckets.suspension.balanced'
+    if (score >= 4) return 'buckets.suspension.firm'
+    return 'buckets.suspension.rigid'
+  }
+
   const getBatteryLabel = (score: number): string => {
     if (score >= 8) return 'buckets.battery.excellent_range'
     if (score >= 6) return 'buckets.battery.good_range'
@@ -115,7 +150,11 @@ export function calculateBikeMetrics(bike: Bike): BikeMetrics {
 
   // Battery should only show for E-bikeRoad and E-bikeMountain categories
   const categoryLower = bike.category?.toLowerCase() || ''
-  const isEBikeWithBattery = categoryLower === 'e-bikeroad' || categoryLower === 'e-bikemountain'
+  const isEBikeWithBattery = categoryLower.includes('ebike') || categoryLower.includes('electric') || categoryLower.includes('e-bike')
+
+  // Suspension logic
+  const suspensionScore = bike.suspension_1_10 || 5
+  // Determine if we should show suspension (mainly for MTB) - handled in UI, but we calculate it here.
 
   return {
     overallScore,
@@ -205,10 +244,16 @@ export function calculateBikeMetrics(bike: Bike): BikeMetrics {
     },
     battery: isEBikeWithBattery ? {
       label: 'scores.battery',
-      score: 7, // Default, can be calculated based on battery fields
+      score: 7, // Placeholder score, UI will use custom text
       maxScore: 10,
-      description: getBatteryLabel(7),
+      description: bike.battery_range || getBatteryLabel(7),
     } : undefined,
+    suspension: {
+      label: 'scores.suspension',
+      score: suspensionScore,
+      maxScore: 10,
+      description: getSuspensionLabel(suspensionScore),
+    }
   }
 }
 
@@ -256,6 +301,16 @@ export function parseGeometryData(geometryData: string | null): Record<string, s
 export function getRatingColor(score: number, metricType?: 'value' | 'performance' | 'fit' | 'general' | 'speed' | 'default'): string {
   // High value scores should be green and not blue
   if (score >= 7 && (metricType === 'value' || metricType === 'speed')) return '#10b981' // green
+
+  // Handling (Responsiveness) 10 should be green
+  // "Handling and speed are 10 here but still in yellow colour. They should be green"
+  // Speed is already covered above.
+  if (score >= 8.5) return '#10b981' // green (Default high score)
+
+  // Special case for Handling if it's 10 (or very high) but falling into blue/yellow?
+  // Existing logic: >= 8.5 is green. If Handling 10 is yellow, maybe it was falling into wrong bucket or metricType?
+  // Let's ensure top range is green.
+  if (score >= 8.5) return '#10b981' // green
 
   if (score >= 5.5) return '#f59e0b' // orange (Warning/Medium)
   return '#ef4444' // red (Danger/Low)
