@@ -141,7 +141,14 @@ export function calculateBikeMetrics(bike: Bike): BikeMetrics {
 
   // Battery should only show for E-bikeRoad and E-bikeMountain categories
   const categoryLower = bike.category?.toLowerCase() || ''
-  const isEBikeWithBattery = categoryLower.includes('ebike') || categoryLower.includes('electric') || categoryLower.includes('e-bike')
+  const isEBikeWithBattery = categoryLower.includes('ebike') ||
+    categoryLower.includes('electric') ||
+    categoryLower.includes('e-bike') ||
+    categoryLower.includes('e-road') ||
+    categoryLower.includes('e-mountain') ||
+    categoryLower.includes('e-gravel') ||
+    (bike.motor && bike.motor.length > 0) ||
+    (bike.battery && bike.battery.length > 0)
 
   // Suspension logic
   const suspensionScore = bike.suspension_1_10 || 5

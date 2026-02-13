@@ -36,7 +36,8 @@
         "ride_comfort": "Ride Comfort",
         "build_quality": "Build Quality",
         "value_for_money": "Value for Money",
-        "surface_range": "Surface Range"
+        "surface_range": "Surface Range",
+        "suspension": "Suspension"
     },
     "compare_page": {
         "title": "Compare Bikes",
@@ -167,6 +168,12 @@
             "paved_road_focused": "Paved Road Focused",
             "mixed_surface": "Mixed Surface",
             "off_road_ready": "Off-Road Ready"
+        },
+        "suspension": {
+            "rigid": "Rigid",
+            "firm": "Firm",
+            "balanced": "Balanced",
+            "plush": "Plush"
         }
     },
     "specs": {
