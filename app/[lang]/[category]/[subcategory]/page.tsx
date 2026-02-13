@@ -4,7 +4,7 @@ import { supabaseServer } from '@/lib/supabase'
 import CategoryPageContent from '@/components/CategoryPageContent'
 import BikeDetailView from '@/components/BikeDetailView'
 import Link from 'next/link'
-import { generateUrlSlug, formatCategoryForUrl } from '@/lib/utils'
+import { generateUrlSlug, formatCategoryForUrl, getMetadataAlternates } from '@/lib/utils'
 
 export const dynamic = 'force-dynamic'
 
@@ -29,9 +29,18 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     // 1. Check if it's a bike
     const bike = await getBikeBySlug(params.subcategory)
     if (bike) {
+        // If it's a bike details page accessed via this route (not typical if using deep route, but handled here)
+        // We probably should redirect or handle canonical to the deep URL ideally, but let's stick to current URL for now
+        // OR use the bike's deep URL as canonical? The prompting implied "each URL should have its own version".
+        // The user said: "For all language variants of a bike, the Hreflang section would remain exactly the same but the canonical line will change to itself."
+        // So for THIS URL, canonical is THIS URL.
+
+        const alternates = getMetadataAlternates(`/${params.category}/${params.subcategory}`, params.lang)
+
         return {
             title: bike.title_seo || `${bike.brand} ${bike.model} ${bike.year || ''} - Specs & Review`,
             description: bike.meta_desc || '',
+            alternates
         }
     }
 
@@ -39,9 +48,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const displayName = params.subcategory.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
     const categoryName = params.category.replace(/bikes$/i, ' Bikes').replace(/([A-Z])/g, ' $1').trim()
 
+    const alternates = getMetadataAlternates(`/${params.category}/${params.subcategory}`, params.lang)
+
     return {
         title: `${displayName} - ${categoryName} | BikeMax`,
         description: `Explore our collection of ${displayName} ${categoryName}. Compare specs, prices, and reviews.`,
+        alternates
     }
 }
 

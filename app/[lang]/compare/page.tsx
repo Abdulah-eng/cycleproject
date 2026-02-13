@@ -2,9 +2,15 @@ import ComparisonTable from '@/components/ComparisonTable'
 import { Metadata } from 'next'
 import { getDictionary } from '@/lib/dictionaries'
 
-export const metadata: Metadata = {
-    title: 'Compare Bikes - MatchBikes',
-    description: 'Compare full specifications and scores of your selected bikes.'
+import { getMetadataAlternates } from '@/lib/utils'
+
+export async function generateMetadata({ params }: { params: { lang: string } }): Promise<Metadata> {
+    const alternates = getMetadataAlternates('/compare', params.lang)
+    return {
+        title: 'Compare Bikes - MatchBikes',
+        description: 'Compare full specifications and scores of your selected bikes.',
+        alternates
+    }
 }
 
 export default async function ComparePage({ params }: { params: { lang: string } }) {

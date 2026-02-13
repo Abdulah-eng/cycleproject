@@ -150,6 +150,16 @@ import { getDictionary } from '@/lib/dictionaries'
 
 // ... existing imports
 
+import { Metadata } from 'next'
+import { getMetadataAlternates } from '@/lib/utils'
+
+export async function generateMetadata({ params }: { params: { lang: string } }): Promise<Metadata> {
+    const alternates = getMetadataAlternates('', params.lang)
+    return {
+        alternates
+    }
+}
+
 export default async function Home({ params }: { params: { lang: string } }) {
     const categories = await getAllCategories()
     const subCategories = await getAllSubCategories()

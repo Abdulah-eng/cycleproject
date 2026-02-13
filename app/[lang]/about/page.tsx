@@ -1,3 +1,15 @@
+import { Metadata } from 'next'
+import { getMetadataAlternates } from '@/lib/utils'
+
+export async function generateMetadata({ params }: { params: { lang: string } }): Promise<Metadata> {
+    const alternates = getMetadataAlternates('/about', params.lang)
+    return {
+        title: 'About BikeMax',
+        description: 'Learn more about BikeMax, your premier destination for high-quality bicycles.',
+        alternates
+    }
+}
+
 export default function AboutPage() {
     return (
         <div className="container mx-auto px-4 py-12 max-w-4xl">

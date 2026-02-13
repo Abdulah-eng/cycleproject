@@ -1,7 +1,7 @@
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { supabaseServer, Bike } from '@/lib/supabase'
-import { calculateBikeMetrics, parseGeometryData, generateUrlSlug, formatCategoryForUrl, formatPrice, generateHreflangTags } from '@/lib/utils'
+import { calculateBikeMetrics, parseGeometryData, generateUrlSlug, formatCategoryForUrl, formatPrice, getMetadataAlternates } from '@/lib/utils'
 import ScoreCard from '@/components/ScoreCard'
 import ScoreSection from '@/components/ScoreSection'
 import ScoreSectionWithToggle from '@/components/ScoreSectionWithToggle'
@@ -101,7 +101,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   const title = localizedTitle || bike.title || `${bike.brand} ${bike.model} ${bike.year || ''}`
   const description = localizedDesc || ''
-  return { title, description }
+
+  // Generate alternates
+  // We need to construct the path without the lang prefix
+  const pathSuffix = `/${params.category}/${params.subcategory}/${params.brand}/${params.year}/${params.model}`
+  const alternates = getMetadataAlternates(pathSuffix, params.lang)
+
+  return { title, description, alternates }
 }
 
 import { getDictionary } from '@/lib/dictionaries'
@@ -198,7 +204,6 @@ export default async function BikePage({ params }: PageProps) {
 
   return (
     <main className="min-h-screen bg-gray-50">
-      <div dangerouslySetInnerHTML={{ __html: generateHreflangTags(localizedBike, params.lang) }} />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{

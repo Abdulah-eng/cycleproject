@@ -10,35 +10,26 @@ export function generateSlug(brand: string, model: string, year?: number | null)
     .trim()
 }
 
+export const SUPPORTED_LANGUAGES = ['en', 'de', 'fr', 'es', 'it', 'nl']
+
 /**
- * Generate Hreflang tags for a bike page
+ * Generate Metadata alternates for SEO
  */
-export function generateHreflangTags(bike: {
-  category: string
-  sub_category?: string | null
-  brand: string
-  year?: number | null
-  model: string
-}, currentLang: string): string {
-  const languages = ['en', 'de', 'fr', 'es', 'it', 'nl']
+export function getMetadataAlternates(pathSuffix: string, currentLang: string) {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://cycleproject.vercel.app'
+  const languages: Record<string, string> = {}
 
-  // Self-referencing canonical
-  let html = `<!-- Canonical: self-referencing for the ${currentLang} version -->\n`
-  html += `<link rel="canonical" href="${baseUrl}${generateBikeUrl(bike, currentLang)}" />\n`
-
-  // Hreflang cluster
-  html += `<!-- Hreflang cluster: all language versions, including itself -->\n`
-
-  languages.forEach(lang => {
-    html += `<link rel="alternate" hreflang="${lang}" href="${baseUrl}${generateBikeUrl(bike, lang)}" />\n`
+  SUPPORTED_LANGUAGES.forEach(lang => {
+    languages[lang] = `${baseUrl}/${lang}${pathSuffix}`
   })
 
-  // Fallback (x-default -> en)
-  html += `<!-- Fallback -->\n`
-  html += `<link rel="alternate" hreflang="x-default" href="${baseUrl}${generateBikeUrl(bike, 'en')}" />\n`
-
-  return html
+  return {
+    canonical: `${baseUrl}/${currentLang}${pathSuffix}`,
+    languages: {
+      ...languages,
+      'x-default': `${baseUrl}/en${pathSuffix}`
+    }
+  }
 }
 
 /**

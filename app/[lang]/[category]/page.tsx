@@ -1,6 +1,7 @@
 import { Metadata } from 'next'
 import Link from 'next/link'
 import { supabaseServer } from '@/lib/supabase'
+import { getMetadataAlternates } from '@/lib/utils'
 import CategoryPageContent from '@/components/CategoryPageContent'
 
 // Force dynamic rendering - always fetch fresh data
@@ -36,9 +37,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     .replace(/([A-Z])/g, ' $1')
     .trim()
 
+  const alternates = getMetadataAlternates(`/${params.category}`, params.lang)
+
   return {
     title: `${categoryName} - BikeMax Catalog`,
     description: `Browse our extensive collection of ${categoryName.toLowerCase()}. Find detailed specs, performance metrics, and reviews.`,
+    alternates
   }
 }
 

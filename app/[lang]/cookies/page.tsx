@@ -1,3 +1,15 @@
+import { Metadata } from 'next'
+import { getMetadataAlternates } from '@/lib/utils'
+
+export async function generateMetadata({ params }: { params: { lang: string } }): Promise<Metadata> {
+    const alternates = getMetadataAlternates('/cookies', params.lang)
+    return {
+        title: 'Cookie Policy - BikeMax',
+        description: 'Read our Cookie Policy to understand how we use cookies and similar technologies.',
+        alternates
+    }
+}
+
 export default function CookiesPage() {
     return (
         <div className="container mx-auto px-4 py-12 max-w-4xl">

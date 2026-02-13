@@ -1,3 +1,15 @@
+import { Metadata } from 'next'
+import { getMetadataAlternates } from '@/lib/utils'
+
+export async function generateMetadata({ params }: { params: { lang: string } }): Promise<Metadata> {
+    const alternates = getMetadataAlternates('/privacy', params.lang)
+    return {
+        title: 'Privacy Policy - BikeMax',
+        description: 'Our Privacy Policy explains how we collect, use, and safeguard your personal information.',
+        alternates
+    }
+}
+
 export default function PrivacyPage() {
     return (
         <div className="container mx-auto px-4 py-12 max-w-4xl">

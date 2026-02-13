@@ -1,3 +1,15 @@
+import { Metadata } from 'next'
+import { getMetadataAlternates } from '@/lib/utils'
+
+export async function generateMetadata({ params }: { params: { lang: string } }): Promise<Metadata> {
+    const alternates = getMetadataAlternates('/terms', params.lang)
+    return {
+        title: 'Terms of Service - BikeMax',
+        description: 'Read our Terms of Service to understand the rules and regulations for using our website.',
+        alternates
+    }
+}
+
 export default function TermsPage() {
     return (
         <div className="container mx-auto px-4 py-12 max-w-4xl">
