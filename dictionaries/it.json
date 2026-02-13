@@ -36,7 +36,8 @@
         "ride_comfort": "Comfort di Guida",
         "build_quality": "Qualità Costruttiva",
         "value_for_money": "Rapporto Qualità-Prezzo",
-        "surface_range": "Gamma Superfici"
+        "surface_range": "Gamma Superfici",
+        "suspension": "Sospensione"
     },
     "compare_page": {
         "title": "Confronta Biciclette",
@@ -161,6 +162,12 @@
             "moderate_range": "Autonomia Moderata",
             "good_range": "Buona Autonomia",
             "excellent_range": "Autonomia Eccellente"
+        },
+        "suspension": {
+            "rigid": "Rigida",
+            "firm": "Ferma",
+            "balanced": "Bilanciata",
+            "plush": "Morbida"
         }
     },
     "specs": {

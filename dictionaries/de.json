@@ -36,7 +36,8 @@
         "ride_comfort": "Fahrkomfort",
         "build_quality": "Verarbeitungsqualität",
         "value_for_money": "Preis-Leistungs-Verhältnis",
-        "surface_range": "Oberflächenbereich"
+        "surface_range": "Oberflächenbereich",
+        "suspension": "Federung"
     },
     "compare_page": {
         "title": "Fahrräder vergleichen",
@@ -161,6 +162,12 @@
             "moderate_range": "Mäßige Reichweite",
             "good_range": "Gute Reichweite",
             "excellent_range": "Exzellente Reichweite"
+        },
+        "suspension": {
+            "rigid": "Starr",
+            "firm": "Straff",
+            "balanced": "Ausgewogen",
+            "plush": "Weich"
         }
     },
     "specs": {

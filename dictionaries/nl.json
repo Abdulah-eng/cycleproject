@@ -36,7 +36,8 @@
         "ride_comfort": "Rijcomfort",
         "build_quality": "Bouwkwaliteit",
         "value_for_money": "Prijs-kwaliteitverhouding",
-        "surface_range": "Ondergrond Bereik"
+        "surface_range": "Ondergrond Bereik",
+        "suspension": "Vering"
     },
     "compare_page": {
         "title": "Fietsen Vergelijken",
@@ -161,6 +162,12 @@
             "moderate_range": "Gemiddeld Bereik",
             "good_range": "Goed Bereik",
             "excellent_range": "Uitstekend Bereik"
+        },
+        "suspension": {
+            "rigid": "Stijf",
+            "firm": "Stevig",
+            "balanced": "Gebalanceerd",
+            "plush": "Zacht"
         }
     },
     "specs": {

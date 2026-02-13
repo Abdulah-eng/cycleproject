@@ -244,13 +244,13 @@ export function calculateBikeMetrics(bike: Bike): BikeMetrics {
       label: 'scores.battery',
       score: 7, // Placeholder score, UI will use custom text
       maxScore: 10,
-      description: bike.battery_range || getBatteryLabel(7),
+      description: bike.battery_bucket || getBatteryLabel(7),
     } : undefined,
     suspension: {
       label: 'scores.suspension',
       score: suspensionScore,
       maxScore: 10,
-      description: getSuspensionLabel(suspensionScore),
+      description: bike.suspension_bucket || getSuspensionLabel(suspensionScore),
     }
   }
 }

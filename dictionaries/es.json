@@ -36,7 +36,8 @@
         "ride_comfort": "Comodidad",
         "build_quality": "Calidad de construcción",
         "value_for_money": "Relación calidad-precio",
-        "surface_range": "Rango de superficie"
+        "surface_range": "Rango de superficie",
+        "suspension": "Suspensión"
     },
     "compare_page": {
         "title": "Comparar bicicletas",
@@ -161,6 +162,12 @@
             "moderate_range": "Rango Moderado",
             "good_range": "Buen Rango",
             "excellent_range": "Rango Excelente"
+        },
+        "suspension": {
+            "rigid": "Rígida",
+            "firm": "Firme",
+            "balanced": "Equilibrada",
+            "plush": "Suave"
         }
     },
     "specs": {

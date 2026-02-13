@@ -324,7 +324,7 @@ export default async function BikePage({ params }: PageProps) {
           {metrics.battery && (
             <div className="mt-8 max-w-3xl">
               <h3 className="text-xl font-bold text-gray-900 mb-5">{metrics.battery.label}</h3>
-              <ScoreCard label={metrics.battery.label} score={metrics.battery.score} maxScore={10} description={localizedBike.battery_range || metrics.battery.description} variant="inline" explanation={localizedBike.battery_reason} customValue={localizedBike.battery_range || undefined} />
+              <ScoreCard label={metrics.battery.label} score={metrics.battery.score} maxScore={10} description={metrics.battery.description} variant="inline" explanation={localizedBike.battery_reason} customValue={localizedBike.battery_range || undefined} />
             </div>
           )}
         </div>

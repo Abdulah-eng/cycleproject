@@ -36,7 +36,8 @@
         "ride_comfort": "Confort de conduite",
         "build_quality": "Qualité de fabrication",
         "value_for_money": "Rapport qualité-prix",
-        "surface_range": "Variété de surfaces"
+        "surface_range": "Variété de surfaces",
+        "suspension": "Suspension"
     },
     "compare_page": {
         "title": "Comparer les vélos",
@@ -161,6 +162,12 @@
             "moderate_range": "Autonomie Modérée",
             "good_range": "Bonne Autonomie",
             "excellent_range": "Excellente Autonomie"
+        },
+        "suspension": {
+            "rigid": "Rigide",
+            "firm": "Ferme",
+            "balanced": "Équilibrée",
+            "plush": "Souple"
         }
     },
     "specs": {
