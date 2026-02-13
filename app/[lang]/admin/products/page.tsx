@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { supabaseServer, fetchAllBikes } from '@/lib/supabase'
-import ProductRow from '@/components/admin/ProductRow'
+import ProductsTable from '@/components/admin/ProductsTable'
 
 // Force dynamic rendering - always fetch fresh data
 export const dynamic = 'force-dynamic'
@@ -84,65 +84,8 @@ export default async function ProductsPage() {
         </div>
       </div>
 
-      {/* Products Table */}
-      {bikesList.length > 0 ? (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-50 border-b border-gray-200">
-                <tr>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    Image
-                  </th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    Brand & Model
-                  </th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    Category
-                  </th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    Year
-                  </th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    Price
-                  </th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    Added
-                  </th>
-                  <th className="px-6 py-4 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200">
-                {bikesList.map((bike) => (
-                  <ProductRow key={bike.id} bike={bike} />
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      ) : (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
-          <div className="text-6xl mb-4">📦</div>
-          <h3 className="text-xl font-bold text-gray-900 mb-2">No products yet</h3>
-          <p className="text-gray-600 mb-6">Start by adding your first bike or uploading a CSV file</p>
-          <div className="flex gap-4 justify-center">
-            <Link
-              href="/admin/products/new"
-              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
-            >
-              Add First Product
-            </Link>
-            <Link
-              href="/admin/products/upload"
-              className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
-            >
-              Upload CSV
-            </Link>
-          </div>
-        </div>
-      )}
+      {/* Products Table (Client Component) */}
+      <ProductsTable initialBikes={bikesList} />
     </div>
   )
 }

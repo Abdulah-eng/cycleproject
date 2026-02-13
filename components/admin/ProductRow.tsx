@@ -1,24 +1,30 @@
 'use client'
 
+import React from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { formatPrice } from '@/lib/utils'
 
-interface ProductRowProps {
-  bike: {
-    id: number
-    brand: string
-    model: string
-    slug: string
-    category: string
-    price: number | null
-    images: string[] | null
-    year: number
-    created_at: string
-  }
+interface ProductBike {
+  id: number
+  brand: string
+  model: string
+  slug: string
+  category: string
+  price: number | null
+  images: string[] | null
+  year: number
+  created_at: string
 }
 
-export default function ProductRow({ bike }: ProductRowProps) {
+interface ProductRowProps {
+  bike: ProductBike
+  selected?: boolean
+  onSelect?: (id: number) => void
+  onDeleteSuccess?: () => void
+}
+
+export default function ProductRow({ bike, selected, onSelect, onDeleteSuccess }: ProductRowProps) {
   const categorySlug = bike.category.toLowerCase().replace(/\s+/g, '') + 'bikes'
 
   const handleDelete = async () => {
@@ -44,11 +50,15 @@ export default function ProductRow({ bike }: ProductRowProps) {
       const result = await response.json()
       console.log('✅ Delete successful:', result)
 
-      // Show success message briefly before reload
+      // Show success message briefly
       alert(`Successfully deleted ${bike.brand} ${bike.model}`)
 
-      // Reload the page to show updated list
-      window.location.reload()
+      // Call success callback to refresh list
+      if (onDeleteSuccess) {
+        onDeleteSuccess()
+      } else {
+        window.location.reload()
+      }
     } catch (error: any) {
       console.error('❌ Delete error:', error)
       alert(`Error deleting bike: ${error.message}\n\nThis might be due to database permissions. Check the browser console for details.`)
@@ -56,7 +66,15 @@ export default function ProductRow({ bike }: ProductRowProps) {
   }
 
   return (
-    <tr className="hover:bg-gray-50 transition-colors">
+    <tr className={`hover:bg-gray-50 transition-colors ${selected ? 'bg-blue-50' : ''}`}>
+      <td className="px-6 py-4">
+        <input
+          type="checkbox"
+          checked={selected || false}
+          onChange={() => onSelect && onSelect(bike.id)}
+          className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+        />
+      </td>
       <td className="px-6 py-4">
         <div className="w-16 h-16 bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center">
           {bike.images && bike.images.length > 0 ? (
