@@ -123,7 +123,7 @@ export default async function BikePage({ params }: PageProps) {
     return key.split('.').reduce((o: any, i) => (o ? o[i] : key), dict) || key
   }
 
-  const rawMetrics = calculateBikeMetrics(bike)
+  const rawMetrics = calculateBikeMetrics(bike, params.lang)
 
   // Translate metrics
   const metrics = Object.entries(rawMetrics).reduce((acc: any, [key, metric]: [string, any]) => {
@@ -273,7 +273,7 @@ export default async function BikePage({ params }: PageProps) {
               <p className="text-gray-700 mb-6 leading-relaxed text-lg">
                 {localizedBike.bike_desc}
               </p>
-              <div className="mb-8"><AddToCompareButton bike={comparisonBike} variant="full" className="max-w-xs" /></div>
+              <div className="mb-8"><AddToCompareButton bike={comparisonBike} variant="full" className="max-w-xs" dict={dict} /></div>
               <div className="flex items-center gap-6">
                 <div className="text-center">
                   <span className="text-7xl font-bold text-gray-900">{metrics.overallScore.toFixed(1)}</span>
@@ -282,17 +282,17 @@ export default async function BikePage({ params }: PageProps) {
                       <svg key={i} className={`w-6 h-6 ${i < Math.floor(metrics.overallScore / 2) ? 'text-yellow-400' : 'text-gray-300'}`} fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
                     ))}
                   </div>
-                  <p className="text-gray-600 font-medium text-sm">Rating</p>
+                  <p className="text-gray-600 font-medium text-sm">{dict.common?.rating || "Rating"}</p>
                 </div>
               </div>
             </div>
             <div className="flex items-center justify-center"><ImageGallery images={localizedBike.images || []} alt={`${localizedBike.brand} ${localizedBike.model}`} /></div>
           </div>
 
-          <InteractiveScoreSummary metrics={metrics} bike={localizedBike} />
+          <InteractiveScoreSummary metrics={metrics} bike={localizedBike} dict={dict} />
 
           <ScoreSection>
-            <ScoreSectionWithToggle title={t('scores.performance') || "Performance"} subtitle="Built for speed and efficiency" gridCols="grid-cols-1 lg:grid-cols-3">
+            <ScoreSectionWithToggle title={t('scores.performance') || "Performance"} subtitle="Built for speed and efficiency" gridCols="grid-cols-1 lg:grid-cols-3" dict={dict}>
               <ScoreCard label={metrics.speed.label} score={metrics.speed.score} maxScore={10} description={metrics.speed.description} variant="inline" explanation={localizedBike.speed_reason || localizedBike.performance_score_explanation} />
               <ScoreCard label={metrics.climbingEfficiency.label} score={metrics.climbingEfficiency.score} maxScore={10} description={metrics.climbingEfficiency.description} variant="inline" explanation={localizedBike.climb_reason || localizedBike.climbing_efficiency_explanation} />
               {/* Show Suspension for MTB, Aerodynamics for others */}
@@ -305,17 +305,21 @@ export default async function BikePage({ params }: PageProps) {
           </ScoreSection>
 
           <ScoreSection>
-            <ScoreSectionWithToggle title={t('scores.fit') || "Fit Score"} subtitle="Dialed-in Fit & Comfort" gridCols="grid-cols-1 lg:grid-cols-4">
+            <ScoreSectionWithToggle title={t('scores.fit') || "Fit Score"} subtitle="Dialed-in Fit & Comfort" gridCols="grid-cols-1 lg:grid-cols-4" dict={dict}>
               <ScoreCard label={metrics.ridingPosition.label} score={metrics.ridingPosition.score} maxScore={10} description={metrics.ridingPosition.description} variant="inline" explanation={localizedBike.posture_reason || localizedBike.riding_position_explanation} />
-              <ScoreCard label={metrics.handling.label} score={metrics.handling.score} maxScore={10} description={metrics.handling.description} variant="inline" explanation={localizedBike.responsiveness_reason || localizedBike.handling_explanation} />
+              {metrics.handling && (
+                <ScoreCard label={metrics.handling.label} score={metrics.handling.score} maxScore={10} description={metrics.handling.description} variant="inline" explanation={localizedBike.responsiveness_reason || localizedBike.handling_explanation} />
+              )}
               <ScoreCard label={metrics.fitFlexibility.label} score={metrics.fitFlexibility.score} maxScore={10} description={metrics.fitFlexibility.description} variant="inline" explanation={localizedBike.fit_reason || localizedBike.fit_flexibility_explanation} />
               <ScoreCard label={metrics.rideComfort.label} score={metrics.rideComfort.score} maxScore={10} description={metrics.rideComfort.description} variant="inline" explanation={localizedBike.comfort_reason || localizedBike.ride_comfort_explanation} />
             </ScoreSectionWithToggle>
           </ScoreSection>
 
           <ScoreSection>
-            <ScoreSectionWithToggle title={t('scores.value') || "Value"} gridCols="grid-cols-1 lg:grid-cols-3">
-              <ScoreCard label={metrics.buildQuality.label} score={metrics.buildQuality.score} maxScore={10} description={metrics.buildQuality.description} variant="inline" metricType="value" explanation={localizedBike.build_reason || localizedBike.build_quality_explanation} />
+            <ScoreSectionWithToggle title={t('scores.value') || "Value"} gridCols="grid-cols-1 lg:grid-cols-3" dict={dict}>
+              {metrics.buildQuality && (
+                <ScoreCard label={metrics.buildQuality.label} score={metrics.buildQuality.score} maxScore={10} description={metrics.buildQuality.description} variant="inline" metricType="value" explanation={localizedBike.build_reason || localizedBike.build_quality_explanation} />
+              )}
               <ScoreCard label={metrics.valueForMoney.label} score={metrics.valueForMoney.score} maxScore={10} description={metrics.valueForMoney.description} variant="inline" metricType="value" explanation={localizedBike.vfm_reason || localizedBike.value_for_money_explanation} />
               <ScoreCard label={metrics.surfaceRange.label} score={metrics.surfaceRange.score} maxScore={10} description={metrics.surfaceRange.description} variant="inline" explanation={localizedBike.surface_reason || localizedBike.surface_range_explanation} hideValue={true} />
             </ScoreSectionWithToggle>

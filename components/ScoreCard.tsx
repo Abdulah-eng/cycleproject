@@ -64,7 +64,7 @@ export default function ScoreCard({ label, score, maxScore, description, variant
             />
           </div>
         )}
-        <span className="text-xs text-gray-600">{description}</span>
+        {description && <span className="text-xs text-gray-600">{description}</span>}
 
         {explanation && (
           <div className={`mt-4 pt-4 border-t border-gray-200 transition-all duration-300 ${isExpanded ? '' : 'hidden'}`}>
@@ -107,7 +107,7 @@ export default function ScoreCard({ label, score, maxScore, description, variant
             />
           </div>
         )}
-        <span className="text-xs text-gray-600">{description}</span>
+        {description && <span className="text-xs text-gray-600">{description}</span>}
 
         {explanation && (
           <div className={`mt-4 pt-4 border-t border-gray-200 transition-all duration-300 ${isExpanded ? '' : 'hidden'}`}>
@@ -149,7 +149,7 @@ export default function ScoreCard({ label, score, maxScore, description, variant
           />
         </div>
       )}
-      <span className="text-xs text-gray-600">{description}</span>
+      {description && <span className="text-xs text-gray-600">{description}</span>}
 
       {explanation && (
         <div className={`mt-4 pt-4 border-t border-gray-200 transition-all duration-300 ${isExpanded ? '' : 'hidden'}`}>

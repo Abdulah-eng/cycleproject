@@ -17,6 +17,7 @@ interface Bike {
   build_1_10: number | null
   speed_index: number | null
   performance_score: number | null
+  overall_score?: number | null
 }
 
 interface BikeCardProps {
@@ -31,7 +32,7 @@ export default function BikeCard({ bike, categorySlug, lang }: BikeCardProps) {
   // Prefer performance_score, fallback to build_1_10 (legacy)
   const performance = bike.performance_score || bike.build_1_10 || 5
   const value = bike.vfm_score_1_to_10 || 5
-  const overallScore = (value + performance) / 2
+  const overallScore = bike.overall_score !== null && bike.overall_score !== undefined ? bike.overall_score : (value + performance) / 2
 
   const formatPrice = (price: number | null) => {
     if (!price) return 'Price not available'

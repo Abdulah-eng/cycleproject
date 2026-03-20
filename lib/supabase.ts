@@ -209,6 +209,7 @@ export interface BikeScore {
   score: number
   maxScore: number
   description: string
+  explanation?: string | null
 }
 
 export interface BikeMetrics {
@@ -216,15 +217,15 @@ export interface BikeMetrics {
   performance: BikeScore
   value: BikeScore
   fit: BikeScore
-  general: BikeScore
+  general?: BikeScore
   speed: BikeScore
   climbingEfficiency: BikeScore
   aerodynamics: BikeScore
   ridingPosition: BikeScore
-  handling: BikeScore
+  handling?: BikeScore
   fitFlexibility: BikeScore
   rideComfort: BikeScore
-  buildQuality: BikeScore
+  buildQuality?: BikeScore
   valueForMoney: BikeScore
   surfaceRange: BikeScore
   battery?: BikeScore

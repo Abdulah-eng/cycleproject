@@ -1,224 +1,228 @@
 {
-    "nav": {
-        "home": "Home",
-        "compare": "Compare",
-        "admin": "Admin",
-        "search_placeholder": "Search bikes...",
-        "road": "Road",
-        "mountain": "Mountain",
-        "ebike": "E-Bike"
+  "nav": {
+    "home": "Home",
+    "compare": "Compare",
+    "admin": "Admin",
+    "search_placeholder": "Search bikes...",
+    "road": "Road",
+    "mountain": "Mountain",
+    "ebike": "E-Bike"
+  },
+  "common": {
+    "add_to_compare": "Add to Compare",
+    "remove_from_compare": "Remove from Compare",
+    "added": "Added",
+    "loading": "Loading...",
+    "back_to_home": "Back to Home",
+    "specifications": "Specifications",
+    "geometry": "Geometry",
+    "measurement": "Measurement",
+    "read_more": "Read More",
+    "score_summary": "Score Summary",
+    "show_explanations": "Show Explanations",
+    "hide_explanations": "Hide Explanations",
+    "rating": "Rating"
+  },
+  "scores": {
+    "summary_title": "Score Summary",
+    "overall": "Overall Score",
+    "performance": "Performance",
+    "value": "Value",
+    "fit": "Fit",
+    "general": "General",
+    "battery": "Battery",
+    "speed": "Speed",
+    "climbing": "Climbing Efficiency",
+    "aerodynamics": "Aerodynamics",
+    "riding_position": "Riding Position",
+    "handling": "Handling",
+    "fit_flexibility": "Fit Flexibility",
+    "ride_comfort": "Ride Comfort",
+    "build_quality": "Build Quality",
+    "value_for_money": "Value for Money",
+    "surface_range": "Surface Range",
+    "suspension": "Suspension"
+  },
+  "compare_page": {
+    "title": "Compare Bikes",
+    "subtitle": "Compare up to 4 bikes side-by-side to find your perfect ride.",
+    "clear_all": "Clear All",
+    "no_bikes": "No bikes selected",
+    "browse_bikes": "Browse Bikes"
+  },
+  "recommendations": {
+    "same_brand": "Other bikes from {brand}",
+    "year_models": "{year} Models",
+    "better_value": "More Value for Money Options"
+  },
+  "home": {
+    "hero_title_1": "ULTIMATE",
+    "hero_title_2": "BIKE DATABASE",
+    "hero_subtitle": "Data-driven insights, Expert analysis, and the most comprehensive bike comparisons on the planet.",
+    "future_cycling": "The Future of Cycling",
+    "road_bikes": "Road Bikes",
+    "mountain_bikes": "Mountain Bikes",
+    "e_road": "E-Road",
+    "e_mountain": "E-Mountain",
+    "browse_category": "BROWSE BY CATEGORY",
+    "explore_collection": "Explore Collection",
+    "browse_subcategory": "BROWSE BY SUB-CATEGORY",
+    "road_collections": "ROAD COLLECTIONS",
+    "road_desc": "Speed, endurance, and performance.",
+    "mountain_collections": "MOUNTAIN COLLECTIONS",
+    "mountain_desc": "Trail, enduro, and cross-country.",
+    "latest_arrivals": "LATEST ARRIVALS",
+    "latest_desc": "Fresh from the factory.",
+    "view_all_new": "View all new bikes",
+    "top_brands": "TOP TIER BRANDS",
+    "brands_desc": "Leading innovators in the cycling industry.",
+    "view_manufacturers": "View all manufacturers",
+    "top_rated": "TOP RATED",
+    "top_rated_desc": "The best bikes as scored by our experts.",
+    "view_collection": "View Collection"
+  },
+  "filters": {
+    "title": "Filters",
+    "reset": "Reset",
+    "sort_by": "Sort By",
+    "sub_category": "Sub Category",
+    "brand": "Brand",
+    "frame_material": "Frame Material",
+    "year": "Year",
+    "price_range": "Price Range",
+    "showing": "Showing",
+    "bikes": "bikes",
+    "no_bikes_match": "No bikes match your filters.",
+    "reset_filters": "Reset Filters",
+    "load_more": "Loading...",
+    "back_to_top": "Back to Top",
+    "all": "All",
+    "all_brands": "All Brands",
+    "all_frames": "All Frames",
+    "all_years": "All Years",
+    "sort_newest": "Newest First",
+    "sort_price_low": "Price: Low to High",
+    "sort_price_high": "Price: High to Low",
+    "sort_score": "Overall Score"
+  },
+  "buckets": {
+    "speed": {
+      "relaxed_pace": "Relaxed Pace",
+      "moderate_speed": "Moderate Speed",
+      "fast": "Fast",
+      "very_fast": "Very Fast",
+      "extremely_fast": "Extremely Fast"
     },
-    "common": {
-        "add_to_compare": "Add to Compare",
-        "remove_from_compare": "Remove from Compare",
-        "added": "Added",
-        "loading": "Loading...",
-        "back_to_home": "Back to Home",
-        "specifications": "Specifications",
-        "geometry": "Geometry",
-        "measurement": "Measurement",
-        "read_more": "Read More"
+    "climbing": {
+      "city_climber": "City Climber",
+      "moderate_climber": "Moderate Climber",
+      "good_climber": "Good Climber",
+      "excellent_climber": "Excellent Climber"
     },
-    "scores": {
-        "summary_title": "Score Summary",
-        "overall": "Overall Score",
-        "performance": "Performance",
-        "value": "Value",
-        "fit": "Fit",
-        "general": "General",
-        "battery": "Battery",
-        "speed": "Speed",
-        "climbing": "Climbing Efficiency",
-        "aerodynamics": "Aerodynamics",
-        "riding_position": "Riding Position",
-        "handling": "Handling",
-        "fit_flexibility": "Fit Flexibility",
-        "ride_comfort": "Ride Comfort",
-        "build_quality": "Build Quality",
-        "value_for_money": "Value for Money",
-        "surface_range": "Surface Range",
-        "suspension": "Suspension"
+    "aero": {
+      "non_aero": "Non-Aero",
+      "moderate_aero": "Moderate Aero",
+      "aero": "Aero",
+      "very_aero": "Very Aero"
     },
-    "compare_page": {
-        "title": "Compare Bikes",
-        "subtitle": "Compare up to 4 bikes side-by-side to find your perfect ride.",
-        "clear_all": "Clear All",
-        "no_bikes": "No bikes selected",
-        "browse_bikes": "Browse Bikes"
+    "posture": {
+      "relaxed": "Relaxed",
+      "balanced": "Balanced",
+      "sporty": "Sporty",
+      "aggressive": "Aggressive"
     },
-    "recommendations": {
-        "same_brand": "Other bikes from {brand}",
-        "year_models": "{year} Models",
-        "better_value": "More Value for Money Options"
+    "handling": {
+      "stable": "Stable",
+      "balanced_handling": "Balanced Handling",
+      "precise_control": "Precise Control",
+      "highly_responsive": "Highly Responsive"
     },
-    "home": {
-        "hero_title_1": "ULTIMATE",
-        "hero_title_2": "BIKE DATABASE",
-        "hero_subtitle": "Data-driven insights, Expert analysis, and the most comprehensive bike comparisons on the planet.",
-        "future_cycling": "The Future of Cycling",
-        "road_bikes": "Road Bikes",
-        "mountain_bikes": "Mountain Bikes",
-        "e_road": "E-Road",
-        "e_mountain": "E-Mountain",
-        "browse_category": "BROWSE BY CATEGORY",
-        "explore_collection": "Explore Collection",
-        "browse_subcategory": "BROWSE BY SUB-CATEGORY",
-        "road_collections": "ROAD COLLECTIONS",
-        "road_desc": "Speed, endurance, and performance.",
-        "mountain_collections": "MOUNTAIN COLLECTIONS",
-        "mountain_desc": "Trail, enduro, and cross-country.",
-        "latest_arrivals": "LATEST ARRIVALS",
-        "latest_desc": "Fresh from the factory.",
-        "view_all_new": "View all new bikes",
-        "top_brands": "TOP TIER BRANDS",
-        "brands_desc": "Leading innovators in the cycling industry.",
-        "view_manufacturers": "View all manufacturers",
-        "top_rated": "TOP RATED",
-        "top_rated_desc": "The best bikes as scored by our experts.",
-        "view_collection": "View Collection"
+    "fit_flexibility": {
+      "race_specific_fit": "Race Specific Fit",
+      "versatile": "Versatile",
+      "highly_adaptable": "Highly Adaptable",
+      "optimal_fit": "Optimal Fit"
     },
-    "filters": {
-        "title": "Filters",
-        "reset": "Reset",
-        "sort_by": "Sort By",
-        "sub_category": "Sub Category",
-        "brand": "Brand",
-        "frame_material": "Frame Material",
-        "year": "Year",
-        "price_range": "Price Range",
-        "showing": "Showing",
-        "bikes": "bikes",
-        "no_bikes_match": "No bikes match your filters.",
-        "reset_filters": "Reset Filters",
-        "load_more": "Loading...",
-        "back_to_top": "Back to Top",
-        "all": "All",
-        "all_brands": "All Brands",
-        "all_frames": "All Frames",
-        "all_years": "All Years",
-        "sort_newest": "Newest First",
-        "sort_price_low": "Price: Low to High",
-        "sort_price_high": "Price: High to Low",
-        "sort_score": "Overall Score"
+    "ride_comfort": {
+      "race_aggressive": "Race Aggressive",
+      "everyday_comfort": "Everyday Comfort",
+      "high_comfort": "High Comfort",
+      "endurance_focused": "Endurance Focused"
     },
-    "buckets": {
-        "speed": {
-            "relaxed_pace": "Relaxed Pace",
-            "moderate_speed": "Moderate Speed",
-            "fast": "Fast",
-            "very_fast": "Very Fast",
-            "extremely_fast": "Extremely Fast"
-        },
-        "climbing": {
-            "city_climber": "City Climber",
-            "moderate_climber": "Moderate Climber",
-            "good_climber": "Good Climber",
-            "excellent_climber": "Excellent Climber"
-        },
-        "aero": {
-            "non_aero": "Non-Aero",
-            "moderate_aero": "Moderate Aero",
-            "aero": "Aero",
-            "very_aero": "Very Aero"
-        },
-        "posture": {
-            "relaxed": "Relaxed",
-            "balanced": "Balanced",
-            "sporty": "Sporty",
-            "aggressive": "Aggressive"
-        },
-        "handling": {
-            "stable": "Stable",
-            "balanced_handling": "Balanced Handling",
-            "precise_control": "Precise Control",
-            "highly_responsive": "Highly Responsive"
-        },
-        "fit_flexibility": {
-            "race_specific_fit": "Race Specific Fit",
-            "versatile": "Versatile",
-            "highly_adaptable": "Highly Adaptable",
-            "optimal_fit": "Optimal Fit"
-        },
-        "ride_comfort": {
-            "race_aggressive": "Race Aggressive",
-            "everyday_comfort": "Everyday Comfort",
-            "high_comfort": "High Comfort",
-            "endurance_focused": "Endurance Focused"
-        },
-        "build_quality": {
-            "basic_build": "Basic Build",
-            "solid_build": "Solid Build",
-            "strong_build": "Strong Build",
-            "premium_build": "Premium Build"
-        },
-        "value": {
-            "premium_pricing": "Premium Pricing",
-            "good_value": "Good Value",
-            "strong_value": "Strong Value",
-            "extreme_value": "Extreme Value"
-        },
-        "battery": {
-            "limited_range": "Limited Range",
-            "moderate_range": "Moderate Range",
-            "good_range": "Good Range",
-            "excellent_range": "Excellent Range"
-        },
-        "surface_range": {
-            "all_road_capable": "All-Road Capable",
-            "paved_road_focused": "Paved Road Focused",
-            "mixed_surface": "Mixed Surface",
-            "off_road_ready": "Off-Road Ready"
-        },
-        "suspension": {
-            "rigid": "Rigid",
-            "firm": "Firm",
-            "balanced": "Balanced",
-            "plush": "Plush"
-        }
+    "build_quality": {
+      "basic_build": "Basic Build",
+      "solid_build": "Solid Build",
+      "strong_build": "Strong Build",
+      "premium_build": "Premium Build"
     },
-    "specs": {
-        "general": "General",
-        "brand": "Brand",
-        "model": "Model",
-        "year": "Year",
-        "price": "Price",
-        "weight": "Weight",
-        "category": "Category",
-        "sub_category": "Sub Category",
-        "groupset": "Groupset",
-        "wheels": "Wheels",
-        "frame": "Frame",
-        "suspension_fork": "Suspension Fork",
-        "rear_shock": "Rear Shock",
-        "drivetrain": "Drivetrain",
-        "shift_levers": "Shift Levers",
-        "rear_derailleur": "Rear Derailleur",
-        "front_derailleur": "Front Derailleur",
-        "cassette": "Cassette",
-        "crank": "Crank",
-        "bottom_bracket": "Bottom Bracket",
-        "chain": "Chain",
-        "front_hub": "Front Hub",
-        "rear_hub": "Rear Hub",
-        "rims": "Rims",
-        "spokes": "Spokes",
-        "tires": "Tires",
-        "brakes": "Brakes",
-        "brake_levers": "Brake Levers",
-        "cockpit": "Cockpit",
-        "stem": "Stem",
-        "handlebar": "Handlebar",
-        "grips": "Grips",
-        "seat": "Seat",
-        "saddle": "Saddle",
-        "seatpost": "Seatpost",
-        "suspension_type": "Suspension Type",
-        "brake_type": "Brake Type",
-        "brake_description": "Brake Description",
-        "electric_components": "E-Bike Components",
-        "motor": "Motor",
-        "battery": "Battery",
-        "charger": "Charger",
-        "battery_range": "Range"
+    "value": {
+      "premium_pricing": "Premium Pricing",
+      "good_value": "Good Value",
+      "strong_value": "Strong Value",
+      "extreme_value": "Extreme Value"
+    },
+    "battery": {
+      "limited_range": "Limited Range",
+      "moderate_range": "Moderate Range",
+      "good_range": "Good Range",
+      "excellent_range": "Excellent Range"
+    },
+    "surface_range": {
+      "all_road_capable": "All-Road Capable",
+      "paved_road_focused": "Paved Road Focused",
+      "mixed_surface": "Mixed Surface",
+      "off_road_ready": "Off-Road Ready"
+    },
+    "suspension": {
+      "rigid": "Rigid",
+      "firm": "Firm",
+      "balanced": "Balanced",
+      "plush": "Plush"
     }
+  },
+  "specs": {
+    "general": "General",
+    "brand": "Brand",
+    "model": "Model",
+    "year": "Year",
+    "price": "Price",
+    "weight": "Weight",
+    "category": "Category",
+    "sub_category": "Sub Category",
+    "groupset": "Groupset",
+    "wheels": "Wheels",
+    "frame": "Frame",
+    "suspension_fork": "Suspension Fork",
+    "rear_shock": "Rear Shock",
+    "drivetrain": "Drivetrain",
+    "shift_levers": "Shift Levers",
+    "rear_derailleur": "Rear Derailleur",
+    "front_derailleur": "Front Derailleur",
+    "cassette": "Cassette",
+    "crank": "Crank",
+    "bottom_bracket": "Bottom Bracket",
+    "chain": "Chain",
+    "front_hub": "Front Hub",
+    "rear_hub": "Rear Hub",
+    "rims": "Rims",
+    "spokes": "Spokes",
+    "tires": "Tires",
+    "brakes": "Brakes",
+    "brake_levers": "Brake Levers",
+    "cockpit": "Cockpit",
+    "stem": "Stem",
+    "handlebar": "Handlebar",
+    "grips": "Grips",
+    "seat": "Seat",
+    "saddle": "Saddle",
+    "seatpost": "Seatpost",
+    "suspension_type": "Suspension Type",
+    "brake_type": "Brake Type",
+    "brake_description": "Brake Description",
+    "electric_components": "E-Bike Components",
+    "motor": "Motor",
+    "battery": "Battery",
+    "charger": "Charger",
+    "battery_range": "Range"
+  }
 }

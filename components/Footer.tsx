@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { useState } from 'react'
 
 interface Category {
@@ -19,11 +20,19 @@ export default function Footer({ categories, lang }: FooterProps) {
 
   return (
     <footer className="bg-gray-900 text-gray-300">
-      <div className="container mx-auto px-4 py-16">
+      <div className="w-full max-w-[1600px] mx-auto px-4 lg:px-8 xl:px-12 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
           {/* Brand */}
           <div>
-            <h3 className="text-2xl font-bold text-white mb-4">MatchBikes</h3>
+            <div className="mb-4">
+              <Image 
+                src="/Matchbikes logo-2.png" 
+                alt="MatchBikes" 
+                width={270} 
+                height={40} 
+                className="h-8 md:h-10 w-auto object-contain object-left brightness-0 invert"
+              />
+            </div>
             <p className="text-gray-400 mb-6 leading-relaxed">
               Your trusted destination for finding the perfect bicycle. Quality bikes from leading brands worldwide.
             </p>

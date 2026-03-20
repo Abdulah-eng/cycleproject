@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { useRouter, useParams, usePathname } from 'next/navigation'
 import Image from 'next/image'
+import { generateBikeUrl } from '@/lib/utils'
 import { useComparison } from '@/context/ComparisonContext'
 import LanguageSwitcher from './LanguageSwitcher'
 
@@ -121,15 +122,7 @@ export default function Header() {
 
   const handleSuggestionClick = (suggestion: SearchSuggestion) => {
     // Generate new SEO-friendly URL
-    const categorySlug = suggestion.category.toLowerCase().replace(/\s+/g, '') + 'bikes'
-    const subCategorySlug = suggestion.sub_category
-      ? suggestion.sub_category.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-')
-      : 'general'
-    const brandSlug = suggestion.brand.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-')
-    const yearSlug = suggestion.year ? suggestion.year.toString() : 'unknown'
-    const modelSlug = suggestion.model.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-')
-
-    const newUrl = `/${lang}/${categorySlug}/${subCategorySlug}/${brandSlug}/${yearSlug}/${modelSlug}`
+    const newUrl = generateBikeUrl(suggestion as any, lang)
     router.push(newUrl)
     setSearchQuery('')
     setShowSuggestions(false)
@@ -169,7 +162,7 @@ export default function Header() {
 
   return (
     <header className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
-      <div className="container mx-auto px-4">
+      <div className="w-full max-w-[1600px] mx-auto px-4 lg:px-8 xl:px-12">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center gap-4">
             {/* Mobile Menu Button */}
@@ -187,10 +180,15 @@ export default function Header() {
             </button>
 
             {/* Logo */}
-            <Link href={`/${lang}`} className="flex items-center gap-2">
-              <div className="text-2xl font-bold text-blue-600">
-                MatchBikes
-              </div>
+            <Link href={`/${lang}`} className="flex items-center gap-2 -ml-2 lg:-ml-6">
+              <Image 
+                src="/Matchbikes logo-2.png" 
+                alt="MatchBikes" 
+                width={270} 
+                height={40} 
+                className="h-8 md:h-10 w-auto object-contain object-left"
+                priority
+              />
             </Link>
           </div>
 
@@ -218,13 +216,20 @@ export default function Header() {
           </nav>
 
           {/* Search Bar - Desktop */}
-          <div className="hidden md:block flex-1 max-w-xl mx-6" ref={searchRef}>
+          <div className="hidden md:block flex-1 max-w-[400px] mx-6" ref={searchRef}>
             <form onSubmit={handleSearch} className="flex relative">
               <div className="relative flex-1">
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
+                  onPaste={(e) => {
+                    const text = e.clipboardData.getData('text')
+                    if (text && text.trim().length >= 2) {
+                      setSearchQuery(text)
+                      setShowSuggestions(true)
+                    }
+                  }}
                   onFocus={() => searchQuery.trim().length >= 2 && setShowSuggestions(true)}
                   placeholder="Search bikes..."
                   className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-l-lg border-r-0 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-white"
@@ -365,6 +370,13 @@ export default function Header() {
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
+                  onPaste={(e) => {
+                    const text = e.clipboardData.getData('text')
+                    if (text && text.trim().length >= 2) {
+                      setSearchQuery(text)
+                      setShowSuggestions(true)
+                    }
+                  }}
                   onFocus={() => searchQuery.trim().length >= 2 && setShowSuggestions(true)}
                   placeholder="Search..."
                   className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-l-lg border-r-0 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-white"

@@ -7,9 +7,10 @@ interface ScoreSectionWithToggleProps {
   subtitle?: string
   children: ReactNode
   gridCols?: string
+  dict?: any
 }
 
-export default function ScoreSectionWithToggle({ title, subtitle, children, gridCols = 'grid-cols-3' }: ScoreSectionWithToggleProps) {
+export default function ScoreSectionWithToggle({ title, subtitle, children, gridCols = 'grid-cols-3', dict }: ScoreSectionWithToggleProps) {
   const [showAllExplanations, setShowAllExplanations] = useState(false)
 
   // Clone children and pass expanded state to ScoreCard components
@@ -39,14 +40,14 @@ export default function ScoreSectionWithToggle({ title, subtitle, children, grid
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
               </svg>
-              Hide Explanations
+              {dict?.common?.hide_explanations || "Hide Explanations"}
             </>
           ) : (
             <>
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
               </svg>
-              Show Explanations
+              {dict?.common?.show_explanations || "Show Explanations"}
             </>
           )}
         </button>

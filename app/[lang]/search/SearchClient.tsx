@@ -29,6 +29,7 @@ export default function SearchClient({ dict, lang }: SearchClientProps) {
 
     // Display state
     const [displayCount, setDisplayCount] = useState(15)
+    const [isFiltersOpen, setIsFiltersOpen] = useState(false)
 
     useEffect(() => {
         if (query && query.trim().length >= 2) {
@@ -118,6 +119,12 @@ export default function SearchClient({ dict, lang }: SearchClientProps) {
                             type="text"
                             value={searchInput}
                             onChange={(e) => setSearchInput(e.target.value)}
+                            onPaste={(e) => {
+                                const text = e.clipboardData.getData('text')
+                                if (text && text.trim().length >= 2) {
+                                    setSearchInput(text)
+                                }
+                            }}
                             placeholder={dict?.nav?.search_placeholder || "Search bikes..."}
                             className="flex-1 px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all text-gray-900"
                         />
@@ -132,7 +139,21 @@ export default function SearchClient({ dict, lang }: SearchClientProps) {
                 <div className="flex flex-col lg:flex-row gap-8">
                     {/* Filters Sidebar */}
                     <aside className="lg:w-64 flex-shrink-0">
-                        <div className="bg-white rounded-lg shadow-sm p-6 sticky top-24 border border-gray-100">
+                        {/* Mobile Toggle Button */}
+                        <div className="lg:hidden mb-4">
+                            <button 
+                                onClick={() => setIsFiltersOpen(!isFiltersOpen)}
+                                className="w-full flex items-center justify-between px-4 py-3 bg-white border border-gray-200 rounded-lg shadow-sm font-semibold text-gray-900"
+                            >
+                                <div className="flex items-center gap-2">
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" /></svg>
+                                    {dict?.filters?.title || 'Filters'}
+                                </div>
+                                <svg className={`w-5 h-5 transition-transform ${isFiltersOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                            </button>
+                        </div>
+
+                        <div className={`bg-white rounded-lg shadow-sm p-6 sticky top-24 border border-gray-100 ${isFiltersOpen ? 'block' : 'hidden lg:block'}`}>
                             <div className="flex items-center justify-between mb-6">
                                 <h2 className="text-lg font-bold text-gray-900">{dict?.filters?.title || 'Filters'}</h2>
                                 <button

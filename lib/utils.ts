@@ -35,28 +35,29 @@ export function getMetadataAlternates(pathSuffix: string, currentLang: string) {
 /**
  * Calculate bike metrics from raw data
  */
-export function calculateBikeMetrics(bike: Bike): BikeMetrics {
+export function calculateBikeMetrics(bike: Bike, lang: string = 'en'): BikeMetrics {
   // Use pre-calculated scores from CSV if available, otherwise calculate
   // Performance Score (use column if available, else calculate from climbing and aerodynamics)
   const climbScore = bike.climb_1_10 || 5
-  const aeroScore = bike.aero_1_10 || 5
+  const aeroScore = (bike.aero_1_10 && bike.aero_1_10 > 10) ? bike.aero_1_10 / 10 : (bike.aero_1_10 || 5)
   const performanceScore = bike.performance_score ?? Math.round(((climbScore + aeroScore) / 2) * 10) / 10
 
   // Value Score (use column if available, else use vfm_score_1_to_10)
   const valueScore = bike.value_score ?? bike.vfm_score_1_to_10 ?? 5
 
   // Fit Score (use column if available, else calculate from fit flexibility and posture)
-  const fitFlexScore = bike.fit_flexibility_1_10 || 5
-  const postureScore = bike.posture_1_10 || 5
+  const fitFlexScore = (bike.fit_flexibility_1_10 && bike.fit_flexibility_1_10 > 10) ? bike.fit_flexibility_1_10 / 10 : (bike.fit_flexibility_1_10 || 5)
+  const postureScore = (bike.posture_1_10 && bike.posture_1_10 > 10) ? bike.posture_1_10 / 10 : (bike.posture_1_10 || 5)
   const fitScore = bike.fit_score ?? Math.round(((fitFlexScore + postureScore) / 2) * 10) / 10
 
-  // General Score (use column if available, else calculate from build quality and ride comfort)
-  const buildScore = bike.build_1_10 || 5
-  const comfortScore = bike.ride_comfort_1_10 || 5
-  const generalScore = bike.general_score ?? Math.round(((buildScore + comfortScore) / 2) * 10) / 10
+  // General Score 
+  const generalScore = bike.general_score !== undefined ? bike.general_score : null
+  const buildScore = bike.build_1_10 !== undefined ? bike.build_1_10 : null
+
+  const comfortScore = (bike.ride_comfort_1_10 && bike.ride_comfort_1_10 > 10) ? bike.ride_comfort_1_10 / 10 : (bike.ride_comfort_1_10 || 5)
 
   // Overall Score (use column if available, else calculate average)
-  const overallScore = bike.overall_score ?? Math.round(((performanceScore + valueScore + fitScore + generalScore) / 4) * 10) / 10
+  const overallScore = bike.overall_score ?? Math.round(((performanceScore + valueScore + fitScore + (generalScore || 5)) / 4) * 10) / 10
 
   // Get descriptive labels
   const getPerformanceLabel = (score: number): string => {
@@ -123,7 +124,7 @@ export function calculateBikeMetrics(bike: Bike): BikeMetrics {
     return 'buckets.speed.relaxed_pace'
   }
 
-  const speedScore = bike.speed_index || 5
+  const speedScore = (bike.speed_index && bike.speed_index > 10) ? bike.speed_index / 10 : (bike.speed_index || 5)
 
   const getSuspensionLabel = (score: number): string => {
     if (score >= 8) return 'buckets.suspension.plush'
@@ -139,7 +140,6 @@ export function calculateBikeMetrics(bike: Bike): BikeMetrics {
     return 'buckets.battery.limited_range'
   }
 
-  // Battery should only show for E-bikeRoad and E-bikeMountain categories
   const categoryLower = bike.category?.toLowerCase() || ''
   const isEBikeWithBattery = categoryLower.includes('ebike') ||
     categoryLower.includes('electric') ||
@@ -154,7 +154,7 @@ export function calculateBikeMetrics(bike: Bike): BikeMetrics {
   const suspensionScore = bike.suspension_1_10 || 5
   // Determine if we should show suspension (mainly for MTB) - handled in UI, but we calculate it here.
 
-  return {
+  const result: BikeMetrics = {
     overallScore,
     performance: {
       label: 'scores.performance',
@@ -174,65 +174,71 @@ export function calculateBikeMetrics(bike: Bike): BikeMetrics {
       maxScore: 10,
       description: getFitLabel(fitScore),
     },
-    general: {
-      label: 'scores.general',
-      score: generalScore,
-      maxScore: 10,
-      description: getBuildLabel(generalScore),
-    },
+    ...(generalScore !== null && {
+      general: {
+        label: 'scores.general',
+        score: generalScore,
+        maxScore: 10,
+        description: getBuildLabel(generalScore),
+      }
+    }),
     speed: {
       label: 'scores.speed',
       score: speedScore,
       maxScore: 10,
-      description: getSpeedLabel(speedScore),
+      description: bike.speed_bucket || getSpeedLabel(speedScore),
     },
     climbingEfficiency: {
       label: 'scores.climbing',
       score: climbScore,
       maxScore: 10,
-      description: getPerformanceLabel(climbScore),
+      description: bike.climb_bucket || getPerformanceLabel(climbScore),
     },
     aerodynamics: {
       label: 'scores.aerodynamics',
       score: aeroScore,
       maxScore: 10,
-      description: getAeroLabel(aeroScore),
+      description: bike.aero_bucket || getAeroLabel(aeroScore),
     },
     ridingPosition: {
       label: 'scores.riding_position',
       score: postureScore,
       maxScore: 10,
-      description: getPostureLabel(postureScore),
+      description: bike.posture_bucket || getPostureLabel(postureScore),
     },
-    handling: {
-      label: 'scores.handling',
-      score: bike.responsiveness_1_10 || 5,
-      maxScore: 10,
-      description: getResponsivenessLabel(bike.responsiveness_1_10 || 5),
-    },
+    ...(bike.responsiveness_1_10 !== null && bike.responsiveness_1_10 !== undefined && {
+      handling: {
+        label: 'scores.handling',
+        score: bike.responsiveness_1_10,
+        maxScore: 10,
+        description: bike.responsiveness_bucket || getResponsivenessLabel(bike.responsiveness_1_10),
+      }
+    }),
     fitFlexibility: {
       label: 'scores.fit_flexibility',
       score: fitFlexScore,
       maxScore: 10,
-      description: getFitLabel(fitFlexScore),
+      description: bike.fit_flexibility_bucket || getFitLabel(fitFlexScore),
     },
     rideComfort: {
       label: 'scores.ride_comfort',
       score: comfortScore,
       maxScore: 10,
-      description: getComfortLabel(comfortScore),
+      description: bike.ride_comfort_bucket || getComfortLabel(comfortScore),
     },
-    buildQuality: {
-      label: 'scores.build_quality',
-      score: buildScore,
-      maxScore: 10,
-      description: getBuildLabel(buildScore),
-    },
+    ...(buildScore !== null && {
+      buildQuality: {
+        label: 'scores.build_quality',
+        score: buildScore,
+        maxScore: 10,
+        description: bike.build_bucket || getBuildLabel(buildScore),
+      }
+    }),
     valueForMoney: {
       label: 'scores.value_for_money',
       score: valueScore,
       maxScore: 10,
-      description: getValueLabel(valueScore),
+      description: bike.vfm_score_bucket || getValueLabel(valueScore),
     },
     surfaceRange: {
       label: 'scores.surface_range',
@@ -240,12 +246,15 @@ export function calculateBikeMetrics(bike: Bike): BikeMetrics {
       maxScore: 10,
       description: bike.surface_range || 'buckets.surface_range.all_road_capable', // Fallback key
     },
-    battery: isEBikeWithBattery ? {
-      label: 'scores.battery',
-      score: 7, // Placeholder score, UI will use custom text
-      maxScore: 10,
-      description: bike.battery_bucket || getBatteryLabel(7),
-    } : undefined,
+    ...(isEBikeWithBattery && {
+      battery: {
+        label: 'scores.battery',
+        score: 7, // Placeholder score, UI will use custom text
+        maxScore: 10,
+        description: bike.battery_bucket || getBatteryLabel(7),
+        explanation: (lang !== 'en' && !!bike[`battery_reason_${lang}`]) ? bike[`battery_reason_${lang}`] : (bike.battery_reason || null),
+      }
+    }),
     suspension: {
       label: 'scores.suspension',
       score: suspensionScore,
@@ -253,6 +262,8 @@ export function calculateBikeMetrics(bike: Bike): BikeMetrics {
       description: bike.suspension_bucket || getSuspensionLabel(suspensionScore),
     }
   }
+  
+  return result
 }
 
 /**
